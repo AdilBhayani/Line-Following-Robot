@@ -46,9 +46,10 @@ Thumbs.db
 *.uvopt
 *.uvproj
 *_timing.html
-*.cydsn/codegentemp
-*.cydsn/DP8051
-*.cydsn/Generated_Source
+codegentemp/
+DP8051/
+Generated_Source/
+CortexM3/
 
 # Altium Stuff #
 ################
