@@ -26,63 +26,61 @@
  * ========================================
 */
 
-#include <project.h>
-#include "defines.h"
+#include "motion_control.h"
 
-extern int16 speedL, speedR;
-extern int16 posL, posR;
-
-
-void get_position(void);
-void get_speed(void);
-
-//------------------------------------------------------
-void get_position()
-{
-    int pl, pr;
-
-    pl = QuadDec_M1_GetCounter();
-    pr = QuadDec_M2_GetCounter();
-
-    posL = pl;
-    posR = pr;
+void init_motion_control() {
+    PWM_1_Start();
+    PWM_2_Start();
 }
-//------------------------------------------------------
-void get_speed()
-{
-    int16 pl, pr;
-    
-    // get current position.
-    pl = QuadDec_M1_GetCounter();
-    pr = QuadDec_M2_GetCounter();
-    
-    speedL = pl - posL;
-    speedR = pr - posR;
-    posL = pl;
-    posR = pr;
-    
-    
-//    // Speed of Motor 1
-//    state = QuadDec_M1_GetEvents();
-//    speed = pl - posL;
-//    if ((state & QuadDec_M1_COUNTER_OVERFLOW) != 0x00)
-//        speed += 32767;
-//    
-//    if ((state & QuadDec_M1_COUNTER_UNDERFLOW) != 0x00)
-//        speed += -32768;
-//    speedL = speed;
-//    posL = pl;
-//    
-//    // Speed of Motor 2
-//    state = QuadDec_M2_GetEvents();
-//    speed = pr - posR;
-//    if ((state & QuadDec_M2_COUNTER_OVERFLOW) != 0x00)
-//        speed += 32767;
-//    
-//    if ((state & QuadDec_M2_COUNTER_UNDERFLOW) != 0x00)
-//        speed += -32768;
-//    speedR = speed;    
-//    posR = pr;
+
+void m_stop(){
+    PWM_1_WriteCompare(STOP_MOTOR);
+    PWM_2_WriteCompare(STOP_MOTOR);
 }
-//------------------------------------------------------
+
+void m_straight(){
+    PWM_1_WriteCompare(M1_FORWARD);
+    PWM_2_WriteCompare(M2_FORWARD);
+}
+
+void m_straight_slow(){
+    PWM_1_WriteCompare(M1_FORWARD_SLOW);
+    PWM_2_WriteCompare(M2_FORWARD_SLOW);
+}
+
+void m_reverse(){
+    PWM_1_WriteCompare(M1_BACKWARD);
+    PWM_2_WriteCompare(M2_BACKWARD);
+}
+
+void m_adjust_left_major(){
+    PWM_1_WriteCompare(M1_FORWARD);
+    PWM_2_WriteCompare(STOP_MOTOR);
+}
+
+void m_adjust_right_major(){
+    PWM_1_WriteCompare(STOP_MOTOR);
+    PWM_2_WriteCompare(M2_FORWARD);
+}
+
+void m_adjust_left_minor(){
+    PWM_1_WriteCompare(M1_FORWARD);
+    PWM_2_WriteCompare(M2_FORWARD_SLOW);
+}
+
+void m_adjust_right_minor(){
+    PWM_1_WriteCompare(M1_FORWARD_SLOW);
+    PWM_2_WriteCompare(M2_FORWARD);
+}
+
+void m_turn_left(){
+    PWM_1_WriteCompare(M1_FORWARD);
+    PWM_2_WriteCompare(M2_BACKWARD);
+}
+
+void m_turn_right(){
+    PWM_1_WriteCompare(M1_BACKWARD);
+    PWM_2_WriteCompare(M2_FORWARD);
+}
+
 /* [] END OF FILE */

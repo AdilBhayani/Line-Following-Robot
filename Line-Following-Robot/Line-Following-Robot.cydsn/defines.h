@@ -1,6 +1,6 @@
 /* ========================================
  *
- * Copyright (c) 2017, Alex Andela, Adil Bhayani, Vaishnavi Muppavaram, சகாயன் சிற்சபேசன்
+ * Copyright (c) 2017, Alex Andela, Adil Bhayani, Vaishnavi Muppavaram, Sakayan Sitsabesan
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

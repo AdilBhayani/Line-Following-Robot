@@ -6,7 +6,7 @@
  * USB      : port displays speed and position.
  * CMD: "PW xx"
  *
- * Copyright (c) 2017, Alex Andela, Adil Bhayani, Vaishnavi Muppavaram, சகாயன் சிற்சபேசன்
+ * Copyright (c) 2017, Alex Andela, Adil Bhayani, Vaishnavi Muppavaram, Sakayan Sitsabesan
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,8 @@
 //* ========================================
 #include "defines.h"
 #include "vars.h"
+#include "motion_control.h"
+
 //* ========================================
 void usbPutString(char *s);
 void usbPutChar(char c);

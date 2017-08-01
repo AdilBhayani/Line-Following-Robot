@@ -26,63 +26,38 @@
  * ========================================
 */
 
+#ifndef MOTION_CONTROL_H_
+#define MOTION_CONTROL_H_
+
 #include <project.h>
-#include "defines.h"
-
-extern int16 speedL, speedR;
-extern int16 posL, posR;
-
-
-void get_position(void);
-void get_speed(void);
-
-//------------------------------------------------------
-void get_position()
-{
-    int pl, pr;
-
-    pl = QuadDec_M1_GetCounter();
-    pr = QuadDec_M2_GetCounter();
-
-    posL = pl;
-    posR = pr;
-}
-//------------------------------------------------------
-void get_speed()
-{
-    int16 pl, pr;
     
-    // get current position.
-    pl = QuadDec_M1_GetCounter();
-    pr = QuadDec_M2_GetCounter();
+#define STOP_MOTOR 128
+
+#define M_FORWARD_MAX 255
+#define M_BACKWARD_MAX 0
+
+#define M1_FORWARD 160
+#define M2_FORWARD 160
+
+#define M1_FORWARD_SLOW 150
+#define M2_FORWARD_SLOW 150
+
+#define M1_BACKWARD 90
+#define M2_BACKWARD 90
     
-    speedL = pl - posL;
-    speedR = pr - posR;
-    posL = pl;
-    posR = pr;
+void init_motion_control();
+
+void m_stop();
+void m_straight();
+void m_straight_slow();
+void m_reverse();
+void m_adjust_left_major();
+void m_adjust_right_major();
+void m_adjust_left_minor();
+void m_adjust_right_minor();
+void m_turn_left();
+void m_turn_right();
     
-    
-//    // Speed of Motor 1
-//    state = QuadDec_M1_GetEvents();
-//    speed = pl - posL;
-//    if ((state & QuadDec_M1_COUNTER_OVERFLOW) != 0x00)
-//        speed += 32767;
-//    
-//    if ((state & QuadDec_M1_COUNTER_UNDERFLOW) != 0x00)
-//        speed += -32768;
-//    speedL = speed;
-//    posL = pl;
-//    
-//    // Speed of Motor 2
-//    state = QuadDec_M2_GetEvents();
-//    speed = pr - posR;
-//    if ((state & QuadDec_M2_COUNTER_OVERFLOW) != 0x00)
-//        speed += 32767;
-//    
-//    if ((state & QuadDec_M2_COUNTER_UNDERFLOW) != 0x00)
-//        speed += -32768;
-//    speedR = speed;    
-//    posR = pr;
-}
-//------------------------------------------------------
+#endif /* MOTION_CONTROL_H_ */
+
 /* [] END OF FILE */
