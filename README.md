@@ -5,11 +5,12 @@
 ## Analogue Circuits
 
 * Light Sensor Circuits
-    * Sensor Arrangement
-        * Very important to make an efficiently moving robot
-        * Need to consider ease of processing and accuracy/precision
+    * ~~Sensor Arrangement~~
+        * ~~Very important to make an efficiently moving robot~~
+        * ~~Need to consider ease of processing and accuracy/precision~~
+        * Decided on using the Straight Line Sensor Arrangment
     * Analogue processing of signals
-        * Pure SMT vs THM or Mixture?
+        * ~~Pure SMT vs THM or Mixture?~~ **Pure SMT**
         * Do we convert to Digital? or keep as Analogue?
         * What reference values do we use?
         * What sort of circuit do we use?
@@ -18,7 +19,8 @@
 
 * Quadrature Encoder/Decoder
     * Used to detect rotation of axis
-    * Need to get working to figure out angle of wheels
+    * Need to get working to figure out speed of robot
+    * Need it to calculate distance travelled
     * Necessary so that we can damp the oscillations of the robot
 
 * DIP Switches to control mode and On/Off switch
@@ -37,15 +39,16 @@
     * Intelligent way to figure out which algorithm to use for which situation
 
 * Motion Control Code (ALMOST DONE)
-    * Need to fine tune the parameters
+    * ~~Need to fine tune the parameters~~
     * Possibly use an FSM or two to do this
     * ~~Will control the H Bridge~~
     * ~~Use PWM to achieve necessary speeds~~
     * ~~Should be modular and easy to interface with~~
     * ~~Should never allow circuits to go past physical limits~~
 
-* RF Communication (WHEN ARE THEY GIVING US THIS MODULE????)
-    * Receive data and process
+* RF Communication
+    * ~~Receive data~~
+    * Recieve binary data stream and extract struct
     * Handle data to perform some useful function
 
 * Bluetooth Communication (WHEN ARE THEY GIVING US THIS MODULE????)
