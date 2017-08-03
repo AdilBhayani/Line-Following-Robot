@@ -40,6 +40,7 @@
 #include "defines.h"
 #include "vars.h"
 #include "motion_control.h"
+#include "battery_management.h"
 
 //* ========================================
 void usbPutString(char *s);
@@ -47,32 +48,41 @@ void usbPutChar(char c);
 void handle_usb();
 //* ========================================
 
-
 int main()
 {
-    
+    init_motion_control();
+    init_battery_management();
+    m_straight();
+    low_battery = 0;
 
 // --------------------------------    
 // ----- INITIALIZATIONS ----------
     CYGlobalIntEnable;
 
 // ------USB SETUP ----------------    
-#ifdef USE_USB    
+#ifdef USE_USB
     USBUART_Start(0,USBUART_5V_OPERATION);
 #endif        
         
     RF_BT_SELECT_Write(0);
 
     usbPutString(displaystring);
-    for(;;)
-    {
+    while(1)
+    {   
         /* Place your application code here. */
         handle_usb();
         if (flag_KB_string == 1)
         {
             usbPutString(line);
             flag_KB_string = 0;
-        }        
+        }
+        
+        if (low_battery == 1) {
+            m_stop();
+            stop_adc();
+            CYGlobalIntDisable
+            while(1);
+        }
     }   
 }
 //* ========================================
