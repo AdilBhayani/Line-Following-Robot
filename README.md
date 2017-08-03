@@ -29,7 +29,7 @@
 
 * MatLab Algorithms (Adil)
     * Pathfinding Stuff
-        * DFS Search
+        * DFS Search - Done in matlab
         * BFS Search
         * Greedy Best-First
         * Dijkstra's Algorithm
