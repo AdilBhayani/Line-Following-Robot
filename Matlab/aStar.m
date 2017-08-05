@@ -14,10 +14,11 @@ function [retMap,retVisited,retSteps] = aStar( mapFile,startLocation,target)
     
     hValues(startLocation(1),startLocation(2)) = abs(target(1)-startLocation(1)) * 10 + abs(target(2)-startLocation(2)) * 10;
     fValues(startLocation(1),startLocation(2)) = abs(target(1)-startLocation(1)) * 10 + abs(target(2)-startLocation(2)) * 10;
-
+    currentPosition = startLocation;
     while (size(openList,1) > 0)
-        lowestFSquareIndex = findLowestFSquare(fValues,openList);
+        lowestFSquareIndex = findLowestFSquare(fValues,openList, currentPosition);
         closedList(end+1,:) = openList(lowestFSquareIndex,:);
+        currentPosition = openList(lowestFSquareIndex,:);
         squareToCheck = closedList(end,:);
         retVisited(openList(lowestFSquareIndex,1),openList(lowestFSquareIndex,2)) = 0;
         openList(lowestFSquareIndex,:) = [];
