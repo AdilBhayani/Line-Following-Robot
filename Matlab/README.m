@@ -12,7 +12,7 @@ plotmap(m);
 
 
 % Your simulations will use this structure
-[m,v,s]=dfs('map_8.txt',[14,1],[1,18]);
+[m,v,s]= aStar('map_8.txt',[14,1],[1,18]);
 %Here   'm' is the map file returned as a matrix
 %       'v' is a matrix that shows which cells have been visited, '0' means
 %       visited, '1' means not visited
@@ -21,5 +21,8 @@ plotmap(m);
 %       [targetloc] is also a vector ie [4,18]
 
 %To view the path determined above use 
+figure();
+set(gcf,'numbertitle','off','name','Final path')
 plotmap(m,s);
+
 
