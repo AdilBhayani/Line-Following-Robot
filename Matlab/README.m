@@ -1,18 +1,18 @@
 %% Function descriptions
 %% To view a map, given a map file
 
-viewmap('map_8.txt',0); % shows walls
-viewmap('map_8.txt',1); % shows track
+viewmap('map_1.txt',0); % shows walls
+viewmap('map_1.txt',1); % shows track
 
 %or else
 
-[m]=map_convert('map_8.txt');
+[m]=map_convert('map_1.txt');
 plotmap(m);
 %Here   'm' is the map file returned as a matrix
 
 
 % Your simulations will use this structure
-[m,v,s]= aStar('map_8.txt',[14,1],[1,18]);
+[m,v,s]= aStar('map_1.txt' ,[2,18] ,[6,2]);
 %Here   'm' is the map file returned as a matrix
 %       'v' is a matrix that shows which cells have been visited, '0' means
 %       visited, '1' means not visited
