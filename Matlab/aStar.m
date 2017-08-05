@@ -14,26 +14,9 @@ function [retMap,retVisited,retSteps] = aStar( mapFile,startLocation,target)
     
     hValues(startLocation(1),startLocation(2)) = abs(target(1)-startLocation(1)) * 10 + abs(target(2)-startLocation(2)) * 10;
     fValues(startLocation(1),startLocation(2)) = abs(target(1)-startLocation(1)) * 10 + abs(target(2)-startLocation(2)) * 10;
-    currentPosition = startLocation;
-    totalSteps = 0;
+
     while (size(openList,1) > 0)
-        lowestFSquareIndex = findLowestFSquare(fValues,openList,currentPosition);
-        backwardPosition = currentPosition;
-        currentPosition = openList(lowestFSquareIndex,:);
-        if abs(currentPosition(1) - backwardPosition(1)) < 2 && abs(currentPosition(2) - backwardPosition(2)) < 2
-            
-            totalSteps = totalSteps + 1;
-        else
-            while parents(currentPosition(1),currentPosition(2),1) ~= backwardPosition(1) || parents(currentPosition(1),currentPosition(2),2) ~= backwardPosition(2)
-                totalSteps = totalSteps + 1;
-                tempX = parents(backwardPosition(1),backwardPosition(2),1);
-                tempY = parents(backwardPosition(1),backwardPosition(2),2);
-                backwardPosition(1) = tempX;
-                backwardPosition(2) = tempY;
-            end
-            totalSteps = totalSteps + 1;
-        end
-        
+        lowestFSquareIndex = findLowestFSquare(fValues,openList);
         closedList(end+1,:) = openList(lowestFSquareIndex,:);
         squareToCheck = closedList(end,:);
         retVisited(openList(lowestFSquareIndex,1),openList(lowestFSquareIndex,2)) = 0;
@@ -103,7 +86,6 @@ function [retMap,retVisited,retSteps] = aStar( mapFile,startLocation,target)
             end
             retSteps(end+1,:) = startLocation;
             retSteps = flipud(retSteps);
-            fprintf('Steps taken: %d',totalSteps);
             break
         end
     end
