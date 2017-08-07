@@ -4,58 +4,38 @@
 
 ## Analogue Circuits
 
-* Light Sensor Circuits
-    * ~~Sensor Arrangement~~
-        * ~~Very important to make an efficiently moving robot~~
-        * ~~Need to consider ease of processing and accuracy/precision~~
-        * Decided on using the Straight Line Sensor Arrangment
+* Light Sensor Circuits (Alex)
     * Analogue processing of signals
-        * ~~Pure SMT vs THM or Mixture?~~ **Pure SMT**
         * Do we convert to Digital? or keep as Analogue?
-        * What reference values do we use?
         * What sort of circuit do we use?
         * Use internal opamps/comparators of PSoC?
-        * If converting, how to set reference?
-
-* Quadrature Encoder/Decoder
-    * Used to detect rotation of axis
-    * Need to get working to figure out speed of robot
-    * Need it to calculate distance travelled
-    * Necessary so that we can damp the oscillations of the robot
-
-* DIP Switches to control mode and On/Off switch
+    * LTSpice Simulations of final signal processing circuit (DUE @ 12:00 09/08/2017)
+    * Breadboard circuit and test design for accuracy (DUE @ 18:00 11/08/2017)
+    * Altium Schematics (DUE @ 18:00 14/08/2017)
+    * Tentative PCB Design (DUE @ 18:00 16/08/2017)
+    * Final PCB Design for Production (DUE @ 12:00 23/08/2017)
 
 ## Digital Coding Stuff
 
 * MatLab Algorithms (Adil)
-    * Pathfinding Stuff
-        * DFS Search - Done in matlab
-        * BFS Search
-        * Greedy Best-First
-        * Dijkstra's Algorithm
-        * A* Algorithm
-    * Need to implement possibly multiple algorithms to best achieve the goals
-    * Integrate in PSoC
+    * ~~Pathfinding Stuff~~
+        * ~~DFS Search~~
+        * ~~A* Algorithm~~
+    * Port to GCC C
+    * Integrate into PSoC
     * Intelligent way to figure out which algorithm to use for which situation
 
-* Motion Control Code (ALMOST DONE)
-    * ~~Need to fine tune the parameters~~
-    * Possibly use an FSM or two to do this
-    * ~~Will control the H Bridge~~
-    * ~~Use PWM to achieve necessary speeds~~
-    * ~~Should be modular and easy to interface with~~
-    * ~~Should never allow circuits to go past physical limits~~
+* PID Controller (Sakayan)
+    * Control Loop Feedback mechanism to keep robot at constant speed
+    * Set up quadrature decoder and take values from it
+    * Use this to generate a auto-correcting function to keep speeds constant
+    * Use this to calculate distance travelled
 
-* RF Communication
+* RF Communication (Vaishnavi) (DUE @ 18:00 18/08/2017)
     * ~~Receive data~~
-    * Recieve binary data stream and extract struct
+    * Receive binary data stream and extract C struct
     * Handle data to perform some useful function
 
 * Bluetooth Communication (WHEN ARE THEY GIVING US THIS MODULE????)
     * Used for debugging purposes
     * Bidirectional connection
-
-* ADC to read Voltage/Current Levels of the battery
-    * Shouldn't be too hard, but for some reason its a deliverable
-
-* Software / Hardware Integration
