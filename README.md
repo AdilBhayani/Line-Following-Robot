@@ -4,7 +4,7 @@
 
 ## Analogue Circuits
 
-* Light Sensor Circuits (Alex)
+* Light Sensor Circuits (Alex and Vaishnavi)
     * Analogue processing of signals
         * Do we convert to Digital? or keep as Analogue?
         * What sort of circuit do we use?
@@ -31,7 +31,7 @@
     * Use this to generate a auto-correcting function to keep speeds constant
     * Use this to calculate distance travelled
 
-* RF Communication (Vaishnavi) (DUE @ 18:00 18/08/2017)
+* RF Communication (DUE @ 18:00 18/08/2017)
     * ~~Receive data~~
     * Receive binary data stream and extract C struct
     * Handle data to perform some useful function
