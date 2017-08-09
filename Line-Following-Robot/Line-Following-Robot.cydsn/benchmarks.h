@@ -32,8 +32,7 @@
 #include <project.h>
 #include "motion_control.h"
 
-volatile uint8 right_sensor;
-volatile uint8 left_sensor;
+#define DAMPING_FACTOR 3
 
 void benchmark_1();
 void benchmark_2();
