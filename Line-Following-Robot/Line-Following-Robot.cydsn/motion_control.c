@@ -31,6 +31,7 @@
 CY_ISR(QuadISR) {
     LED_Write(1);
     m_stop();
+    m_sleep();
     flag = 0;
 }
 
@@ -99,6 +100,10 @@ void m_turn_left(){
 void m_turn_right(){
     PWM_1_WriteCompare(M1_BACKWARD);
     PWM_2_WriteCompare(M2_FORWARD);
+}
+
+void m_sleep(){
+    CONTROL_Write(0x03);
 }
 
 void track_quadrature(){

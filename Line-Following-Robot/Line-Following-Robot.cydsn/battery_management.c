@@ -62,4 +62,13 @@ void check_battery_status(){
     }
 }
 
+void handle_low_battery(){
+    m_stop();
+    m_sleep();
+    stop_adc();
+    CYGlobalIntDisable
+    flag = 0;
+    while(1);
+}
+
 /* [] END OF FILE */

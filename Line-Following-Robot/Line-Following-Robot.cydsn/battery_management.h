@@ -30,15 +30,18 @@
 #define BATTERY_MANAGEMENT_H_
 
 #include <project.h>
+#include "motion_control.h"
+#include "timer.h"
     
 volatile uint16 adc_val;
-extern uint8 low_battery;
+uint8 low_battery;
     
 void init_battery_management();
 void start_adc();
 void stop_adc();
 float get_v_bat();
 void check_battery_status();
+void handle_low_battery();
     
 #endif /* BATTERY_MANAGEMENT_H_ */
 

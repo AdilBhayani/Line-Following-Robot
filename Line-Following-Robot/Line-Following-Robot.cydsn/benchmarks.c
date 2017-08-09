@@ -53,7 +53,9 @@ void benchmark_2(){
         right_sensor = Sensor_2_Read();
         if (left_sensor == 1){
             if (right_sensor == 1){
-                break;
+                m_stop();
+                m_sleep();
+                flag = 0;
             } else {
                 left_count = 0;
                 right_count++;

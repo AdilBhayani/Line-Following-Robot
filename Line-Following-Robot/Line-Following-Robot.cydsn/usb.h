@@ -26,63 +26,32 @@
  * ========================================
 */
 
+#ifndef USB_H_
+#define USB_H_
+
 #include <project.h>
-#include "defines.h"
+#include <stdio.h>
+//#include <string.h>
+//#include <stdlib.h>
 
-extern int16 speedL, speedR;
-extern int16 posL, posR;
+#define USE_USB
+#define BUF_SIZE 64 // USBUART fixed buffer size
+#define CHAR_NULL '0'
+#define CHAR_BACKSP 0x08
+#define CHAR_DEL 0x7F
+#define CHAR_ENTER 0x0D
+#define LOW_DIGIT '0'
+#define HIGH_DIGIT '9'
 
+void init_usb();
+void usbPutString(char *s);
+void usbPutChar(char c);
+void usbPutInt(int value);
+void handle_usb();
 
-void get_position(void);
-void get_speed(void);
-
-//------------------------------------------------------
-void get_position()
-{
-    int pl, pr;
-
-    pl = QuadDec_M1_GetCounter();
-    pr = QuadDec_M2_GetCounter();
-
-    posL = pl;
-    posR = pr;
-}
-//------------------------------------------------------
-void get_speed()
-{
-    int16 pl, pr;
+char line[BUF_SIZE], entry[BUF_SIZE];
+uint8 usbBuffer[BUF_SIZE];
     
-    // get current position.
-    pl = QuadDec_M1_GetCounter();
-    pr = QuadDec_M2_GetCounter();
-    
-    speedL = pl - posL;
-    speedR = pr - posR;
-    posL = pl;
-    posR = pr;
-    
-    
-//    // Speed of Motor 1
-//    state = QuadDec_M1_GetEvents();
-//    speed = pl - posL;
-//    if ((state & QuadDec_M1_COUNTER_OVERFLOW) != 0x00)
-//        speed += 32767;
-//    
-//    if ((state & QuadDec_M1_COUNTER_UNDERFLOW) != 0x00)
-//        speed += -32768;
-//    speedL = speed;
-//    posL = pl;
-//    
-//    // Speed of Motor 2
-//    state = QuadDec_M2_GetEvents();
-//    speed = pr - posR;
-//    if ((state & QuadDec_M2_COUNTER_OVERFLOW) != 0x00)
-//        speed += 32767;
-//    
-//    if ((state & QuadDec_M2_COUNTER_UNDERFLOW) != 0x00)
-//        speed += -32768;
-//    speedR = speed;    
-//    posR = pr;
-}
-//------------------------------------------------------
+#endif /* USB_H_ */
+
 /* [] END OF FILE */

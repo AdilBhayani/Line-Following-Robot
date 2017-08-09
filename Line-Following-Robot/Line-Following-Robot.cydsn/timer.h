@@ -30,7 +30,6 @@
 #define TIMER_H_
 
 #include <project.h>
-#include "defines.h"
 #include "battery_management.h"
 #include "motion_control.h"
 

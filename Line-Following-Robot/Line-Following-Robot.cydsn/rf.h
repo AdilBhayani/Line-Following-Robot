@@ -26,34 +26,34 @@
  * ========================================
 */
 
+#ifndef RF_H_
+#define RF_H_
+
 #include <project.h>
-#include "defines.h"
-//* ========================================
-uint8 ts = 0;
-uint16 ts_enc = 0;
-uint16 ts_update = 0;
-uint16 ts_speed = 0;
-uint16 ts_display = 0;
 
-uint8 flag_ts_enc = 0;
-uint8 flag_ts_update = 0;
-uint8 flag_ts_speed = 0;
-uint8 flag_ts_display = 0;
+#define SOP 0xaa
+#define PACKETSIZE 32    
+#define RXSTRINGSIZE 64 // 4+3+[4+4+4]+[4+4+4+4]+[4+4+4+4]+[4+4+4+4]+delimiters, i.e. no more than 64
 
+uint8 ts;
+uint16 ts_enc;
+uint16 ts_update;
+uint16 ts_speed;
+uint16 ts_display;
 
-uint8 flag_rx = 0;
-uint8 flag_packet = 0;
-uint8 flag_KB_string = 0;
+uint8 flag_ts_enc;
+uint8 flag_ts_update;
+uint8 flag_ts_speed;
+uint8 flag_ts_display;
 
-uint8 dataready_flag =0;
+uint8 flag_rx;
+uint8 flag_packet;
+uint8 flag_KB_string;
 
-uint8 flag_rf_transmission_active = UNKNOWN; // [TRUE if receieving data, FALSE is not, UNKNOWN at startup]
+uint8 dataready_flag;
 
-//* ========================================
-char displaystring[BUF_SIZE] = "CS301 2016\n";
-char line[BUF_SIZE], entry[BUF_SIZE];
-uint8 usbBuffer[BUF_SIZE];
-//* ========================================
+uint8 flag_rf_transmission_active;
+
 typedef struct data_main {
 	int8            rssi;	
     uint8           index;			// index number of packet. incremented number
@@ -74,9 +74,7 @@ typedef struct data_main {
     int16		g2_direction;	//
 } vtype1;    
 struct data_main system_state;
-//* ========================================
 
-uint8 low_battery;
+#endif /* RF_H_ */
 
-//* ========================================
 /* [] END OF FILE */
