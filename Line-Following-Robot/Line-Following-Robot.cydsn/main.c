@@ -66,6 +66,9 @@ int main()
         
     RF_BT_SELECT_Write(0);
 
+    int a = 0;
+    char a_text[BUF_SIZE];
+    
     usbPutString(displaystring);
     while(1)
     {   
@@ -83,6 +86,18 @@ int main()
             CYGlobalIntDisable
             while(1);
         }
+        
+        CyDelay(1000);
+        a = left_sensor;
+        sprintf(a_text,"%d",a);
+        a_text[3] = '\0';
+
+        a = right_sensor;
+        sprintf(a_text,"%d",a);
+        a_text[3] = '\0';
+
+        usbPutString("Sensors: ");
+        usbPutString(a_text);
     }   
 }
 //* ========================================
