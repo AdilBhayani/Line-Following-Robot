@@ -58,17 +58,13 @@ void check_battery_status(){
     if (adc_val > 2250) {
         return;
     } else {
-        low_battery = 1;
+        m_stop();
+        m_sleep();
+        stop_adc();
+        CYGlobalIntDisable
+        flag = 0;
+        while(1);
     }
-}
-
-void handle_low_battery(){
-    m_stop();
-    m_sleep();
-    stop_adc();
-    CYGlobalIntDisable
-    flag = 0;
-    while(1);
 }
 
 /* [] END OF FILE */

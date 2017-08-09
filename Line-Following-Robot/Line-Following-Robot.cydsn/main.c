@@ -43,7 +43,7 @@ int main()
 
     while(1)
     {        
-        if (low_battery == 1) handle_low_battery();
+        
     }   
 }
 
