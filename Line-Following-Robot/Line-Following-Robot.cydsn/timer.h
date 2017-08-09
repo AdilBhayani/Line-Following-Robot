@@ -32,6 +32,7 @@
 #include <project.h>
 #include "defines.h"
 #include "battery_management.h"
+#include "motion_control.h"
 
 volatile uint8 flag;
 volatile uint8 count;

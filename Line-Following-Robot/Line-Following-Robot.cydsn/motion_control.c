@@ -28,9 +28,22 @@
 
 #include "motion_control.h"
 
+CY_ISR(QuadISR) {
+    LED_Write(1);
+    m_stop();
+    flag = 0;
+}
+
 void init_motion_control() {
     PWM_1_Start();
     PWM_2_Start();
+    m_stop();
+    quad_a_old = 0;
+    quad_b_old = 0;
+    quad_isr_StartEx(QuadISR);
+    QuadDec_M1_SetInterruptMask(QuadDec_M1_COUNTER_OVERFLOW);
+    QuadDec_M1_Start();
+    QuadDec_M2_Start();
 }
 
 void m_stop(){
@@ -48,7 +61,12 @@ void m_straight_slow(){
     PWM_2_WriteCompare(M2_FORWARD_SLOW);
 }
 
-void m_reverse(){
+void m_straight_fast(){
+    PWM_1_WriteCompare(M_FORWARD_MAX);
+    PWM_2_WriteCompare(M_FORWARD_MAX);
+}
+
+void m_reverse(){  
     PWM_1_WriteCompare(M1_BACKWARD);
     PWM_2_WriteCompare(M2_BACKWARD);
 }
@@ -81,6 +99,20 @@ void m_turn_left(){
 void m_turn_right(){
     PWM_1_WriteCompare(M1_BACKWARD);
     PWM_2_WriteCompare(M2_FORWARD);
+}
+
+void track_quadrature(){
+    uint16 count_a = QuadDec_M1_GetCounter();
+    uint16 count_b = QuadDec_M2_GetCounter();
+    disp_a = count_a - quad_a_old;
+    disp_b = count_b - quad_b_old;
+    quad_a_old = count_a;
+    quad_b_old = count_b;
+}
+
+float calc_speed(){
+    float disp = (disp_a + disp_b) / 456; // 456 == 2 * 4 * 3 * 19
+    return disp * 6.2831853 * WHEELRADIUS; // 2 * pi
 }
 
 /* [] END OF FILE */

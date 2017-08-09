@@ -77,4 +77,6 @@
 #define SOP 0xaa
 #define PACKETSIZE 32    
 #define RXSTRINGSIZE 64 // 4+3+[4+4+4]+[4+4+4+4]+[4+4+4+4]+[4+4+4+4]+delimiters, i.e. no more than 64
+
+#define WHEELRADIUS 32
 /* [] END OF FILE */

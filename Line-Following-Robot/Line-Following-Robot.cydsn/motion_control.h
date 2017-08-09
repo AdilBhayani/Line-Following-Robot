@@ -30,6 +30,8 @@
 #define MOTION_CONTROL_H_
 
 #include <project.h>
+#include "defines.h"
+#include "timer.h"
     
 #define STOP_MOTOR 128
 
@@ -39,17 +41,23 @@
 #define M1_FORWARD 190
 #define M2_FORWARD 190
 
-#define M1_FORWARD_SLOW 165
-#define M2_FORWARD_SLOW 165
+#define M1_FORWARD_SLOW 170
+#define M2_FORWARD_SLOW 170
 
 #define M1_BACKWARD 64
 #define M2_BACKWARD 64
-    
+
+volatile uint16 quad_a_old;
+volatile uint16 quad_b_old;
+volatile uint16 disp_a;
+volatile uint16 disp_b;
+
 void init_motion_control();
 
 void m_stop();
 void m_straight();
 void m_straight_slow();
+void m_straight_fast();
 void m_reverse();
 void m_adjust_left_major();
 void m_adjust_right_major();
@@ -57,6 +65,9 @@ void m_adjust_left_minor();
 void m_adjust_right_minor();
 void m_turn_left();
 void m_turn_right();
+
+void track_quadrature();
+float calc_speed();
     
 #endif /* MOTION_CONTROL_H_ */
 

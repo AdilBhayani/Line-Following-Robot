@@ -30,9 +30,12 @@
 
 CY_ISR(TimerOneSecISR) {
     if (flag == 0) flag = 1;
-    else flag = 0;
+    else if (flag == 1) flag = 0;
     LED_Write(flag);
+    
     count++;
+    track_quadrature();
+    
     if (count > 60) {
         check_battery_status();
         count = 0;
