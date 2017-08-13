@@ -28,10 +28,19 @@
 
 #include "battery_management.h"
 
+/*
+ * ADC End of Conversion Interupt service routine.
+ * Takes adc value and stores it in a variable.
+ */
 CY_ISR(adc_isr){
     adc_val = ADC_SAR_1_GetResult16();
 }
 
+/*
+ * Initializes the battery management system.
+ * Turns on the SAR ADC 1 and starts the end
+ * of conversion interrupt.
+ */
 void init_battery_management(){
     isr_eoc_StartEx(adc_isr);
     ADC_SAR_1_IRQ_Enable();
@@ -41,18 +50,38 @@ void init_battery_management(){
     adc_val = 0;
 }
 
+/*
+ * Starts freerunning conversion of the ADC.
+ */
 void start_adc(){
     ADC_SAR_1_StartConvert();
 }
 
+/*
+ * Stops freerunning conversion of the ADC.
+ */
 void stop_adc(){
     ADC_SAR_1_StopConvert();
 }
 
+/*
+ * Calculates the current Voltage level of 
+ * the battery and returns it as a float.
+ */
 float get_v_bat(){
     return (((float)adc_val) * 0.002441406);
 }
 
+/*
+ * Called by the timer every 60 seconds to
+ * check that the battery values are not too
+ * low. If they are, the motors, adc & interupts
+ * are stopped and processor is left to idle.
+ *
+ * 2250 / 4096 => 2.74V on ADC terminal
+ *      => 5.49V on battery pack
+ *      => 0.915V for each battery
+ */
 void check_battery_status(){
     if (adc_val > 2250) {
         return;

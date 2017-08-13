@@ -28,6 +28,12 @@
 
 #include "timer.h"
 
+/*
+ * One Second timer interupt routine. This flashes the
+ * LED if this has been configured, and keeps track of quadrature
+ * readings. Every 60 seconds this checks the battery levels
+ * are not too low, if so shuts down the system.
+ */
 CY_ISR(TimerOneSecISR) {
     if (flag == 0) flag = 1;
     if (flag == 1) flag = 0;
@@ -42,6 +48,9 @@ CY_ISR(TimerOneSecISR) {
     }
 }
 
+/*
+ * Initializes the one second timer interupt.
+ */
 void timer_init() {
     count = 0;
     isr_TS_StartEx(TimerOneSecISR);

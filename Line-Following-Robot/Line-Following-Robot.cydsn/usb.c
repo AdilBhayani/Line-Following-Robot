@@ -28,43 +28,47 @@
 
 #include "usb.h"
 
-void init_usb()
-{
-    // ------USB SETUP ----------------    
+/*
+ * Initializes the USB UART and sends welcome message.
+ */
+void init_usb() {
     #ifdef USE_USB
         USBUART_Start(0,USBUART_5V_OPERATION);
     #endif        
-            
-        RF_BT_SELECT_Write(0);
-
-    usbPutString("CS301 2016\n");
+    RF_BT_SELECT_Write(0);
+    usbPutString("CS301 2017 Group 7\n");
 }
 
-//* ========================================
-void usbPutString(char *s)
-{
-// !! Assumes that *s is a string with allocated space >=64 chars     
-//  Since USB implementation retricts data packets to 64 chars, this function truncates the
-//  length to 62 char (63rd char is a '!')
+/*
+ * Outputs given string to the USB UART console.
+ * 
+ * Assumes that *s is a string with allocated space >=64 chars     
+ * Since USB implementation retricts data packets to 64 chars, this function truncates the
+ * length to 62 char (63rd char is a '!')
+ */
+void usbPutString(char *s) {
+    #ifdef USE_USB
+        while (USBUART_CDCIsReady() == 0);
+        s[63]='\0';
+        s[62]='!';
+        USBUART_PutData((uint8*)s,strlen(s));
+    #endif
+}
 
-#ifdef USE_USB     
-    while (USBUART_CDCIsReady() == 0);
-    s[63]='\0';
-    s[62]='!';
-    USBUART_PutData((uint8*)s,strlen(s));
-#endif
+/*
+ * Outputs given char to the USB UART console.
+ */
+void usbPutChar(char c) {
+    #ifdef USE_USB
+        while (USBUART_CDCIsReady() == 0);
+        USBUART_PutChar(c);
+    #endif    
 }
-//* ========================================
-void usbPutChar(char c)
-{
-#ifdef USE_USB     
-    while (USBUART_CDCIsReady() == 0);
-    USBUART_PutChar(c);
-#endif    
-}
-//* ========================================
-void usbPutInt(int value)
-{
+
+/*
+ * Outputs given integer to the USB UART console.
+ */
+void usbPutInt(int value) {
     char buffer_text[BUF_SIZE];
     sprintf(buffer_text,"%d",value);
     usbPutString(buffer_text);

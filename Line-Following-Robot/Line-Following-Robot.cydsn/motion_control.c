@@ -28,6 +28,10 @@
 
 #include "motion_control.h"
 
+/*
+ * Quadrature sensor overflow interrupt.
+ * Stops motors and puts them to sleep.
+ */
 CY_ISR(QuadISR) {
     LED_Write(1);
     m_stop();
@@ -35,6 +39,16 @@ CY_ISR(QuadISR) {
     flag = 0;
 }
 
+/*
+ * Initializes the motors and quadrature
+ * decoders for operation. Sets and enables
+ * the overflow interupt on the quadrature
+ * decoder. Starts the motor and leaves them
+ * in standby.
+ *
+ * M1 is the RIGHT MOTOR
+ * M2 is the  LEFT MOTOR
+ */
 void init_motion_control() {
     PWM_1_Start();
     PWM_2_Start();
@@ -106,6 +120,10 @@ void m_sleep(){
     CONTROL_Write(0x03);
 }
 
+/* 
+ * Called every one second by the timer.
+ * Keeps track of quadrature values.
+ */
 void track_quadrature(){
     uint16 count_a = QuadDec_M1_GetCounter();
     uint16 count_b = QuadDec_M2_GetCounter();
@@ -115,6 +133,10 @@ void track_quadrature(){
     quad_b_old = count_b;
 }
 
+/*
+ * Calculates current speed of the robot over the last second
+ * and returns the value as a float in mm/s
+ */
 float calc_speed(){
     float disp = (disp_a + disp_b) / 456; // 456 == 2 * 4 * 3 * 19
     return disp * 6.2831853 * WHEELRADIUS; // 2 * pi
