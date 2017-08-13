@@ -39,7 +39,6 @@ void init_battery_management(){
     ADC_SAR_1_SetPower(3);
     start_adc();
     adc_val = 0;
-    low_battery = 0;
 }
 
 void start_adc(){

@@ -35,6 +35,9 @@
 
 volatile uint8 flag;
 volatile uint8 count;
+
+CY_ISR(TimerOneSecISR);
+void timer_init();
     
 #endif /* TIMER_H_ */
 

@@ -39,6 +39,7 @@ int main()
     init_usb();
     init_motion_control();
     init_battery_management();
+    init_rf();
     benchmark_2();
 
     while(1)

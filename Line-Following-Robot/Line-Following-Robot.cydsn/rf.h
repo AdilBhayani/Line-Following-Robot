@@ -32,27 +32,7 @@
 #include <project.h>
 
 #define SOP 0xaa
-#define PACKETSIZE 32    
-#define RXSTRINGSIZE 64 // 4+3+[4+4+4]+[4+4+4+4]+[4+4+4+4]+[4+4+4+4]+delimiters, i.e. no more than 64
-
-uint8 ts;
-uint16 ts_enc;
-uint16 ts_update;
-uint16 ts_speed;
-uint16 ts_display;
-
-uint8 flag_ts_enc;
-uint8 flag_ts_update;
-uint8 flag_ts_speed;
-uint8 flag_ts_display;
-
-uint8 flag_rx;
-uint8 flag_packet;
-uint8 flag_KB_string;
-
-uint8 dataready_flag;
-
-uint8 flag_rf_transmission_active;
+#define PACKETSIZE 32
 
 typedef struct data_main {
 	int8            rssi;	
@@ -74,6 +54,14 @@ typedef struct data_main {
     int16		g2_direction;	//
 } vtype1;    
 struct data_main system_state;
+
+volatile uint8 counter;
+volatile uint8 start;
+volatile char buffer[PACKETSIZE];
+volatile char packet;
+
+CY_ISR(MyRxISR);
+void init_rf();
 
 #endif /* RF_H_ */
 
