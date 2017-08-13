@@ -1,39 +1,44 @@
 %A star implementation which should work when called from the README.m
 %file.
+%Implemented after reading
+%"https://www.raywenderlich.com/4946/introduction-to-a-pathfinding".
 
 function [retMap,retVisited,retSteps] = aStar( mapFile,startLocation,target)
-    retMap = map_convert(mapFile);
-    retVisited = ones(size(retMap));
-    openList = [startLocation(1),startLocation(2)];
-    closedList = [];
-    retSteps = [];
-    fValues = zeros(size(retMap));
-    gValues = zeros(size(retMap));
-    hValues = zeros(size(retMap));
-    parents = zeros([size(retMap),2]);
+    retMap = map_convert(mapFile); %Call given map_convert function to get map
+    retVisited = ones(size(retMap)); %Initially assume all blocks are unvisited
+    openList = [startLocation(1),startLocation(2)]; %Open list keeps track of blocks which need to be discovered
+    closedList = []; %No blocks have been explored yet
+    retSteps = []; %No steps have been taken yet
+    fValues = zeros(size(retMap)); %An array of values of f which is how far the block is estimated to be from end
+    gValues = zeros(size(retMap)); %Will be used for movement costs from start point to all index locations
+    hValues = zeros(size(retMap)); %Will be used for estimated movement costs
+    parents = zeros([size(retMap),2]); %Will be used to keep track of parents of each block to traverse path back once completed
     
+    %Calculating h and f values for the start location
     hValues(startLocation(1),startLocation(2)) = abs(target(1)-startLocation(1)) * 10 + abs(target(2)-startLocation(2)) * 10;
     fValues(startLocation(1),startLocation(2)) = abs(target(1)-startLocation(1)) * 10 + abs(target(2)-startLocation(2)) * 10;
 
-    while (size(openList,1) > 0)
-        lowestFSquareIndex = findLowestFSquare(fValues,openList);
-        closedList(end+1,:) = openList(lowestFSquareIndex,:);
-        squareToCheck = closedList(end,:);
-        retVisited(openList(lowestFSquareIndex,1),openList(lowestFSquareIndex,2)) = 0;
-        openList(lowestFSquareIndex,:) = [];
-             
-        [inClosedList,~] = inList(squareToCheck(1)-1,squareToCheck(2), closedList);
-        if squareToCheck(1) > 1 && retMap(squareToCheck(1)-1,squareToCheck(2)) == 0 && ~inClosedList;
-            [inOpenList, index] = inList(squareToCheck(1) - 1,squareToCheck(2),openList);
-            if ~inOpenList
+    while (size(openList,1) > 0) %Keep going while there is still a block to be discovered
+        lowestFSquareIndex = findLowestFSquare(fValues,openList); %Call helper function to get the block with lowest f value. (Assumed to be most likely to lead to finish)
+        closedList(end+1,:) = openList(lowestFSquareIndex,:); %Close off the current block
+        squareToCheck = closedList(end,:); %Keep a copy to use for checking
+        retVisited(openList(lowestFSquareIndex,1),openList(lowestFSquareIndex,2)) = 0; %Mark the block as visited
+        openList(lowestFSquareIndex,:) = []; %Removing block from openList
+        
+        %For block to the top of current block being checked
+        [inClosedList,~] = inList(squareToCheck(1)-1,squareToCheck(2), closedList); %Call helper function to check if the block to the top of current block is already closed
+        if squareToCheck(1) > 1 && retMap(squareToCheck(1)-1,squareToCheck(2)) == 0 && ~inClosedList; %If the block isnt out of bounds and not a wall and it is not already closed
+            [inOpenList, index] = inList(squareToCheck(1) - 1,squareToCheck(2),openList); %Call helper function to see if it is an open block
+            if ~inOpenList %If it isnt open then add it to the open list using helper function
             [openList,fValues,gValues,hValues, parents] = addSquare(squareToCheck(1), squareToCheck(2), squareToCheck(1)-1,squareToCheck(2),openList, fValues, gValues, hValues, parents, target);
-            else
-                if gValues(squareToCheck(1)-1,squareToCheck(2)) > 10 + gValues(squareToCheck(1),squareToCheck(2))
+            else %If it is already in the open list
+                if gValues(squareToCheck(1)-1,squareToCheck(2)) > 10 + gValues(squareToCheck(1),squareToCheck(2)) %Check if we have found a shorter path to the block, if so, update values by calling helper function
                     [openList,fValues,gValues,hValues, parents] = updateSquare(index, squareToCheck(1), squareToCheck(2), squareToCheck(1)-1,squareToCheck(2),openList, fValues, gValues, hValues, parents, target);
                 end
             end
         end
         
+        %Repeat for block to the right
         [inClosedList,~] = inList(squareToCheck(1),squareToCheck(2)+1, closedList);
         if squareToCheck(2) < size(retMap,2) && retMap(squareToCheck(1),squareToCheck(2)+1) == 0 && ~inClosedList
             [inOpenList,index] = inList(squareToCheck(1),squareToCheck(2)+1,openList);
@@ -46,6 +51,7 @@ function [retMap,retVisited,retSteps] = aStar( mapFile,startLocation,target)
             end
         end
         
+        %Repeat for block to the bottom
         [inClosedList,~] = inList(squareToCheck(1)+1,squareToCheck(2), closedList);
         if squareToCheck(1) < size(retMap,1) && retMap(squareToCheck(1)+1,squareToCheck(2)) == 0 && ~inClosedList
             [inOpenList,index] = inList(squareToCheck(1)+1,squareToCheck(2),openList);
@@ -57,6 +63,8 @@ function [retMap,retVisited,retSteps] = aStar( mapFile,startLocation,target)
                 end
             end
         end
+        
+        %Repeat for block to the left
         [inClosedList,~] = inList(squareToCheck(1),squareToCheck(2)-1, closedList);
         if squareToCheck(2) > 1 && retMap(squareToCheck(1),squareToCheck(2)-1) == 0 && ~inClosedList
             [inOpenList,index] = inList(squareToCheck(1),squareToCheck(2)-1,openList);
@@ -69,23 +77,24 @@ function [retMap,retVisited,retSteps] = aStar( mapFile,startLocation,target)
             end
         end
         
-        if size(closedList,1) > 1
+        if size(closedList,1) > 1 %Start graphing the map once we have more than one value in closedList
             plotmap(retMap,closedList);
             set(gcf,'numbertitle','off','name','Current Search Path')
-            pause(0.1);
+            pause(0.1); %Wait 0.1 seconds before continuing to allow time to visualise
         end
         
-        if closedList(end,1) == target(1) && closedList(end,2) == target(2)
+        if closedList(end,1) == target(1) && closedList(end,2) == target(2) %If we have just closed off a block which has coordinates of target block
             currentSquare = target;
-            while currentSquare(1) ~= startLocation(1) || currentSquare(2) ~= startLocation(2)
+            while currentSquare(1) ~= startLocation(1) || currentSquare(2) ~= startLocation(2) %Loop back over the linked list till we get to the start to get shortest path
                 retSteps(end+1,:) = currentSquare;
+                %Traversing back linked list from finish
                 tempX = parents(currentSquare(1),currentSquare(2),1);
                 tempY = parents(currentSquare(1),currentSquare(2),2);
                 currentSquare(1) = tempX;
                 currentSquare(2) = tempY;
             end
-            retSteps(end+1,:) = startLocation;
-            retSteps = flipud(retSteps);
+            retSteps(end+1,:) = startLocation; %Add the start location to the steps
+            retSteps = flipud(retSteps); %Reverse the path so it appears as if we started from start and traversed to finish
             break
         end
     end
@@ -108,7 +117,7 @@ end
 
 
 %Returns a boolean indicating whether the square given is in the provided
-%list.
+%list
 function [present,i] = inList(xPos,yPos,list)
     present = false;
     for i = 1:size(list,1)
@@ -129,6 +138,7 @@ function [openList,fValues,gValues,hValues, parents] = addSquare(parentX, parent
     fValues(x,y) = gValues(x,y) + hValues(x,y);
 end
 
+%Updates a existing square in the openList
 function [openList,fValues,gValues,hValues, parents] = updateSquare(index, parentX, parentY, x, y, openList, fValues, gValues, hValues, parents, target)
     openList(index,:) = [x,y];
     parents(x,y,1) = parentX;
