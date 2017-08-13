@@ -14,11 +14,10 @@ function [retMap,retVisited,retSteps] = aStar( mapFile,startLocation,target)
     
     hValues(startLocation(1),startLocation(2)) = abs(target(1)-startLocation(1)) * 10 + abs(target(2)-startLocation(2)) * 10;
     fValues(startLocation(1),startLocation(2)) = abs(target(1)-startLocation(1)) * 10 + abs(target(2)-startLocation(2)) * 10;
-    currentPosition = startLocation;
+
     while (size(openList,1) > 0)
-        lowestFSquareIndex = findLowestFSquare(fValues,openList, currentPosition);
+        lowestFSquareIndex = findLowestFSquare(fValues,openList);
         closedList(end+1,:) = openList(lowestFSquareIndex,:);
-        currentPosition = openList(lowestFSquareIndex,:);
         squareToCheck = closedList(end,:);
         retVisited(openList(lowestFSquareIndex,1),openList(lowestFSquareIndex,2)) = 0;
         openList(lowestFSquareIndex,:) = [];
@@ -95,11 +94,11 @@ end
 
 
 %Helper function returns the index of the lowest square in openList
-function [lowestFSquareIndex] = findLowestFSquare(fValues, openList,currentPosition)
+function [lowestFSquareIndex] = findLowestFSquare(fValues, openList)
     lowestFSquareValue = fValues(openList(1,1),openList(1,2));
     lowestFSquareIndex = 1;
     for i = 1:size(openList,1)
-        if fValues(openList(i,1),openList(i,2)) <= (lowestFSquareValue + 5 * abs(currentPosition(1) - openList(i,1)) + 5 * abs(currentPosition(2) - openList(i,2)))
+        if fValues(openList(i,1),openList(i,2)) <= lowestFSquareValue
             lowestFSquareValue = fValues(openList(i,1),openList(i,2));
             lowestFSquareIndex = i;
         end
@@ -125,7 +124,7 @@ function [openList,fValues,gValues,hValues, parents] = addSquare(parentX, parent
     openList(end+1,:) = [x,y];
     parents(x,y,1) = parentX;
     parents(x,y,2) = parentY;
-    gValues(x,y) = gValues(parentX, parentY) + 5;
+    gValues(x,y) = gValues(parentX, parentY) + 10;
     hValues(x,y) = abs(target(1)-x) * 10 + abs(target(2)-y) * 10;
     fValues(x,y) = gValues(x,y) + hValues(x,y);
 end
@@ -134,7 +133,7 @@ function [openList,fValues,gValues,hValues, parents] = updateSquare(index, paren
     openList(index,:) = [x,y];
     parents(x,y,1) = parentX;
     parents(x,y,2) = parentY;
-    gValues(x,y) = gValues(parentX, parentY) + 5;
+    gValues(x,y) = gValues(parentX, parentY) + 10;
     hValues(x,y) = abs(target(1)-x) * 10 + abs(target(2)-y) * 10;
     fValues(x,y) = gValues(x,y) + hValues(x,y);
 end
