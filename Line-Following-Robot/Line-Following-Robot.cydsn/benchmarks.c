@@ -49,10 +49,10 @@ void benchmark_2(){
     uint8 right_count = 0;
     while(1) {
         CyDelayUs(100);
-        left_sensor = Sensor_1_Read();
-        right_sensor = Sensor_2_Read();
-        if (left_sensor == 1){
-            if (right_sensor == 1){
+        left_sensor = Comp_0_GetCompare();
+        right_sensor = Comp_1_GetCompare();
+        if (left_sensor > 0){
+            if (right_sensor > 0){
                 m_stop();
                 m_sleep();
                 flag = 0;
@@ -62,7 +62,7 @@ void benchmark_2(){
                 if (right_count >= DAMPING_FACTOR) m_adjust_right_minor();
             }
         } else {
-            if (right_sensor == 1){
+            if (right_sensor > 0){
                 right_count = 0;
                 left_count++;
                 if (left_count >= DAMPING_FACTOR) m_adjust_left_minor();

@@ -27,28 +27,17 @@
 */
 
 #include "analogue.h"
-#include "battery_management.h"
-#include "benchmarks.h"
-#include "motion_control.h"
-#include "rf.h"
-#include "timer.h"
-#include "usb.h"
 
-int main()
-{
-    CYGlobalIntEnable;
-    init_analogue_subsytem();
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
+void init_analogue_subsytem() {
+    Opamp_0_Start();
+    Opamp_1_Start();
+    Opamp_2_Start();
+    Opamp_3_Start();
     
-    benchmark_2();
-
-    while(1)
-    {        
-        
-    }   
+    Comp_0_Start();
+    Comp_1_Start();
+    Comp_2_Start();
+    Comp_3_Start();
 }
 
 /* [] END OF FILE */

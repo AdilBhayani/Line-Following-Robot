@@ -26,29 +26,13 @@
  * ========================================
 */
 
-#include "analogue.h"
-#include "battery_management.h"
-#include "benchmarks.h"
-#include "motion_control.h"
-#include "rf.h"
-#include "timer.h"
-#include "usb.h"
+#ifndef ANALOGUE_H_
+#define ANALOGUE_H_
 
-int main()
-{
-    CYGlobalIntEnable;
-    init_analogue_subsytem();
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
-    
-    benchmark_2();
+#include <project.h>
 
-    while(1)
-    {        
-        
-    }   
-}
+void init_analogue_subsytem();
+
+#endif /* ANALOGUE_H_ */
 
 /* [] END OF FILE */
