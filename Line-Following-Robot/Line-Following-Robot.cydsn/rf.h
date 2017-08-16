@@ -26,26 +26,43 @@
  * ========================================
 */
 
-#include "battery_management.h"
-#include "benchmarks.h"
-#include "motion_control.h"
-#include "rf.h"
-#include "timer.h"
-#include "usb.h"
+#ifndef RF_H_
+#define RF_H_
 
-int main()
-{
-    CYGlobalIntEnable;
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
-    benchmark_2();
+#include <project.h>
 
-    while(1)
-    {        
-        
-    }   
-}
+#define SOP 0xaa
+#define PACKETSIZE 32
+
+typedef struct data_main {
+	int8            rssi;	
+    uint8           index;			// index number of packet. incremented number
+	int16			robot_xpos;	 	// 
+	int16			robot_ypos;		//
+    int16         robot_orientation;
+	int16			g0_xpos;		//
+	int16			g0_ypos;		//
+	int16			g0_speed;		//
+	int16		g0_direction;	//
+	int16			g1_xpos;		//
+	int16			g1_ypos;		//
+	int16			g1_speed;		//
+    int16		g1_direction;	//
+    int16			g2_xpos;		//
+    int16			g2_ypos;		//
+    int16			g2_speed;		//
+    int16		g2_direction;	//
+} vtype1;    
+struct data_main system_state;
+
+volatile uint8 counter;
+volatile uint8 start;
+volatile char buffer[PACKETSIZE];
+volatile char packet;
+
+CY_ISR(MyRxISR);
+void init_rf();
+
+#endif /* RF_H_ */
 
 /* [] END OF FILE */

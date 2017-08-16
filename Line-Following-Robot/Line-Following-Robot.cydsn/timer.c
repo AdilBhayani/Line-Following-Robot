@@ -26,26 +26,34 @@
  * ========================================
 */
 
-#include "battery_management.h"
-#include "benchmarks.h"
-#include "motion_control.h"
-#include "rf.h"
 #include "timer.h"
-#include "usb.h"
 
-int main()
-{
-    CYGlobalIntEnable;
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
-    benchmark_2();
+/*
+ * One Second timer interupt routine. This flashes the
+ * LED if this has been configured, and keeps track of quadrature
+ * readings. Every 60 seconds this checks the battery levels
+ * are not too low, if so shuts down the system.
+ */
+CY_ISR(TimerOneSecISR) {
+    if (flag == 0) flag = 1;
+    if (flag == 1) flag = 0;
+    if (flag < 2) LED_Write(flag);
+    
+    count++;
+    track_quadrature();
+    
+    if (count > 60) {
+        check_battery_status();
+        count = 0;
+    }
+}
 
-    while(1)
-    {        
-        
-    }   
+/*
+ * Initializes the one second timer interupt.
+ */
+void timer_init() {
+    count = 0;
+    isr_TS_StartEx(TimerOneSecISR);
 }
 
 /* [] END OF FILE */

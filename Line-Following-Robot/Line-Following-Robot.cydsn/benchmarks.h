@@ -26,26 +26,20 @@
  * ========================================
 */
 
-#include "battery_management.h"
-#include "benchmarks.h"
+#ifndef BENCHMARKS_H_
+#define BENCHMARKS_H_
+
+#include <project.h>
 #include "motion_control.h"
-#include "rf.h"
-#include "timer.h"
-#include "usb.h"
 
-int main()
-{
-    CYGlobalIntEnable;
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
-    benchmark_2();
+#define DAMPING_FACTOR 3
 
-    while(1)
-    {        
-        
-    }   
-}
+void benchmark_1();
+void benchmark_2();
+void benchmark_3();
+void benchmark_4();
+void benchmark_5();
+    
+#endif /* BENCHMARKS_H_ */
 
 /* [] END OF FILE */

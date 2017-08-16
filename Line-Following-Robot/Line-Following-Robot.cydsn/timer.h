@@ -26,26 +26,19 @@
  * ========================================
 */
 
+#ifndef TIMER_H_
+#define TIMER_H_
+
+#include <project.h>
 #include "battery_management.h"
-#include "benchmarks.h"
 #include "motion_control.h"
-#include "rf.h"
-#include "timer.h"
-#include "usb.h"
 
-int main()
-{
-    CYGlobalIntEnable;
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
-    benchmark_2();
+volatile uint8 flag;
+volatile uint8 count;
 
-    while(1)
-    {        
-        
-    }   
-}
+CY_ISR(TimerOneSecISR);
+void timer_init();
+    
+#endif /* TIMER_H_ */
 
 /* [] END OF FILE */

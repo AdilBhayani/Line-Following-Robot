@@ -26,26 +26,21 @@
  * ========================================
 */
 
-#include "battery_management.h"
-#include "benchmarks.h"
+#ifndef BATTERY_MANAGEMENT_H_
+#define BATTERY_MANAGEMENT_H_
+
+#include <project.h>
 #include "motion_control.h"
-#include "rf.h"
 #include "timer.h"
-#include "usb.h"
-
-int main()
-{
-    CYGlobalIntEnable;
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
-    benchmark_2();
-
-    while(1)
-    {        
-        
-    }   
-}
+    
+volatile uint16 adc_val;
+    
+void init_battery_management();
+void start_adc();
+void stop_adc();
+float get_v_bat();
+void check_battery_status();
+    
+#endif /* BATTERY_MANAGEMENT_H_ */
 
 /* [] END OF FILE */

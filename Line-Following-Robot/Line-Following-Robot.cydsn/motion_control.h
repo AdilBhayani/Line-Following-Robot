@@ -1,6 +1,6 @@
 /* ========================================
  *
- * Copyright (c) 2017, Alex Andela, Adil Bhayani, Vaishnavi Muppavaram, சகாயன் சிற்சபேசன்
+ * Copyright (c) 2017, Alex Andela, Adil Bhayani, Vaishnavi Muppavaram, Sakayan Sitsabesan
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,52 @@
  *
  * ========================================
 */
-#ifndef CYAPICALLBACKS_H
-#define CYAPICALLBACKS_H
-    
 
-    /*Define your macro callbacks here */
-    /*For more information, refer to the Writing Code topic in the PSoC Creator Help.*/
+#ifndef MOTION_CONTROL_H_
+#define MOTION_CONTROL_H_
 
+#include <project.h>
+#include "timer.h"
     
-#endif /* CYAPICALLBACKS_H */   
-/* [] */
+#define STOP_MOTOR 128
+
+#define M_FORWARD_MAX 255
+#define M_BACKWARD_MAX 0
+
+#define M1_FORWARD 190
+#define M2_FORWARD 190
+
+#define M1_FORWARD_SLOW 170
+#define M2_FORWARD_SLOW 170
+
+#define M1_BACKWARD 64
+#define M2_BACKWARD 64
+    
+#define WHEELRADIUS 32
+
+volatile uint16 quad_a_old;
+volatile uint16 quad_b_old;
+volatile uint16 disp_a;
+volatile uint16 disp_b;
+
+void init_motion_control();
+
+void m_stop();
+void m_straight();
+void m_straight_slow();
+void m_straight_fast();
+void m_reverse();
+void m_adjust_left_major();
+void m_adjust_right_major();
+void m_adjust_left_minor();
+void m_adjust_right_minor();
+void m_turn_left();
+void m_turn_right();
+void m_sleep();
+
+void track_quadrature();
+float calc_speed();
+    
+#endif /* MOTION_CONTROL_H_ */
+
+/* [] END OF FILE */

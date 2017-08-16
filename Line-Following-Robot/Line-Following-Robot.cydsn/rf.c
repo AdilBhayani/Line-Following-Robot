@@ -26,26 +26,41 @@
  * ========================================
 */
 
-#include "battery_management.h"
-#include "benchmarks.h"
-#include "motion_control.h"
 #include "rf.h"
-#include "timer.h"
-#include "usb.h"
 
-int main()
-{
-    CYGlobalIntEnable;
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
-    benchmark_2();
+/* RX interupt on UART. Takes byte and stores in temp variable
+ * 'packet'. Checks if this is SOP, if so prepares for receiving
+ * the rest of the data. Keeps track of how many bytes have been
+ * received and stores them in the array buffer. Once whole packet
+ * has been received, then the raw bytes are copied over to the C
+ * struct system_state and counters reset.
+ */
+CY_ISR(MyRxISR) {
+    packet = UART_GetByte();
+    if (packet == SOP) {
+        start++;
+    }
+    if (start > 1) {
+        buffer[counter] = packet;
+        counter++;
+        if (counter > 32) {
+            counter = 0;
+            start = 0;
+            memcpy(&system_state, &buffer[0], PACKETSIZE);
+        }
+    }
+}
 
-    while(1)
-    {        
-        
-    }   
+/*
+ * Initializes the UART system for sending/receiving data
+ * from the server. Sets up a RX interupt to be triggered.
+ * Sets start bit counter and current byte counter to 0.
+ */
+void init_rf(){
+    UART_Start();
+    isrRF_RX_StartEx(MyRxISR);
+    counter = 0;
+    start = 0;
 }
 
 /* [] END OF FILE */

@@ -26,26 +26,32 @@
  * ========================================
 */
 
-#include "battery_management.h"
-#include "benchmarks.h"
-#include "motion_control.h"
-#include "rf.h"
-#include "timer.h"
-#include "usb.h"
+#ifndef USB_H_
+#define USB_H_
 
-int main()
-{
-    CYGlobalIntEnable;
-    init_usb();
-    init_motion_control();
-    init_battery_management();
-    init_rf();
-    benchmark_2();
+#include <project.h>
+#include <stdio.h>
+//#include <string.h>
+//#include <stdlib.h>
 
-    while(1)
-    {        
-        
-    }   
-}
+#define USE_USB
+#define BUF_SIZE 64 // USBUART fixed buffer size
+#define CHAR_NULL '0'
+#define CHAR_BACKSP 0x08
+#define CHAR_DEL 0x7F
+#define CHAR_ENTER 0x0D
+#define LOW_DIGIT '0'
+#define HIGH_DIGIT '9'
+
+void init_usb();
+void usbPutString(char *s);
+void usbPutChar(char c);
+void usbPutInt(int value);
+void handle_usb();
+
+char line[BUF_SIZE], entry[BUF_SIZE];
+uint8 usbBuffer[BUF_SIZE];
+    
+#endif /* USB_H_ */
 
 /* [] END OF FILE */
