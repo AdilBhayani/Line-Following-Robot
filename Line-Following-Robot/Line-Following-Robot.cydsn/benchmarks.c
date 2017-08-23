@@ -49,8 +49,8 @@ void benchmark_2(){
     uint8 right_count = 0;
     while(1) {
         CyDelayUs(100);
-        left_sensor = Comp_0_GetCompare();
-        right_sensor = Comp_1_GetCompare();
+        left_sensor = Sensor_5_Read();
+        right_sensor = Sensor_4_Read();
         if (left_sensor > 0){
             if (right_sensor > 0){
                 m_stop();

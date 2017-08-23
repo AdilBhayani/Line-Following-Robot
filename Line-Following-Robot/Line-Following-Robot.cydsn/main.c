@@ -26,7 +26,6 @@
  * ========================================
 */
 
-#include "analogue.h"
 #include "battery_management.h"
 #include "benchmarks.h"
 #include "motion_control.h"
@@ -37,7 +36,6 @@
 int main()
 {
     CYGlobalIntEnable;
-    init_analogue_subsytem();
     init_usb();
     init_motion_control();
     init_battery_management();
