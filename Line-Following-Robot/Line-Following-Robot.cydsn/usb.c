@@ -35,7 +35,6 @@ void init_usb() {
     #ifdef USE_USB
         USBUART_Start(0,USBUART_5V_OPERATION);
     #endif        
-    RF_BT_SELECT_Write(0);
     usbPutString("CS301 2017 Group 7\n");
 }
 
