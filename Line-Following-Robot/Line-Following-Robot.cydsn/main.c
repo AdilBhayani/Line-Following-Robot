@@ -41,11 +41,35 @@ int main()
     init_battery_management();
     init_rf();
     
-    benchmark_2();
-
+    //benchmark_2();
+    //uint8 x;
+    //char cha;
+    //UART_Start();
+    
     while(1)
-    {        
+    {   
+        CyDelay(200);
+        usbPutString("Rssi value is: ");
+        usbPutInt(system_state.rssi);
+        usbPutString(" \n");
+        usbPutString("Index value is: ");
+        usbPutInt(system_state.index);
+        usbPutString(" \n");
+        usbPutString("Robot orientation is: ");
+        usbPutInt(system_state.robot_orientation);
+        usbPutString(" \n");
+        usbPutString("X position is: ");
+        usbPutInt(system_state.robot_xpos);
+        usbPutString(" \n");
+        usbPutString("Y position is: ");
+        usbPutInt(system_state.robot_ypos);
+        usbPutString(" \n");
+
         
+       // x = asciiMethod();
+        //char cha;
+        //cha = UART_GetChar();
+        //usbPutChar(cha);
     }   
 }
 
