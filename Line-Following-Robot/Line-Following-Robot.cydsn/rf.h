@@ -32,7 +32,7 @@
 #include <project.h>
 
 #define SOP 0xaa
-#define PACKETSIZE 32
+#define PACKETSIZE 320
 
 typedef struct data_main {
 	int8            rssi;	
@@ -62,6 +62,7 @@ volatile char packet;
 
 CY_ISR(MyRxISR);
 void init_rf();
+uint8 asciiMethod();
 
 #endif /* RF_H_ */
 

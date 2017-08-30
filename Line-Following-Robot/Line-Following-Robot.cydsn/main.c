@@ -40,12 +40,34 @@ int main()
     init_motion_control();
     init_battery_management();
     init_rf();
+    m_straight_fast();
+    float val;
     
-    benchmark_2();
-
     while(1)
-    {        
-        
+    {   
+        CyDelay(200);
+        val = (get_v_bat() * 1000);
+        usbPutString("-----------------------------------------------------\n");
+        usbPutString("------------ Technical Test 1 30/08/2017 ------------\n");
+        usbPutString("-----------------------------------------------------\n");
+        usbPutString("Rssi value is: ");
+        usbPutInt(system_state.rssi);
+        usbPutString(" \n");
+        usbPutString("Index value is: ");
+        usbPutInt(system_state.index);
+        usbPutString(" \n");
+        usbPutString("Robot orientation is: ");
+        usbPutInt(system_state.robot_orientation);
+        usbPutString(" \n");
+        usbPutString("X position is: ");
+        usbPutInt(system_state.robot_xpos);
+        usbPutString(" \n");
+        usbPutString("Y position is: ");
+        usbPutInt(system_state.robot_ypos);
+        usbPutString(" \n");
+        usbPutString("Battery Voltage: ");
+        usbPutInt((int)val);
+        usbPutString(" mV\n");
     }   
 }
 
