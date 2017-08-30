@@ -31,10 +31,7 @@
 
 #include <project.h>
 #include <stdio.h>
-//#include <string.h>
-//#include <stdlib.h>
 
-#define USE_USB
 #define BUF_SIZE 64 // USBUART fixed buffer size
 #define CHAR_NULL '0'
 #define CHAR_BACKSP 0x08

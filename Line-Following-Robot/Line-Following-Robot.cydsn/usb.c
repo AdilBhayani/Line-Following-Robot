@@ -32,10 +32,10 @@
  * Initializes the USB UART and sends welcome message.
  */
 void init_usb() {
-    #ifdef USE_USB
+    if (USBUART_VBusPresent() == 1) {
         USBUART_Start(0,USBUART_5V_OPERATION);
-    #endif        
-    usbPutString("CS301 2017 Group 7\n");
+        usbPutString("CS301 2017 Group 7\n");
+    }    
 }
 
 /*
@@ -46,22 +46,18 @@ void init_usb() {
  * length to 62 char (63rd char is a '!')
  */
 void usbPutString(char *s) {
-    #ifdef USE_USB
-        while (USBUART_CDCIsReady() == 0);
-        s[63]='\0';
-        s[62]='!';
-        USBUART_PutData((uint8*)s,strlen(s));
-    #endif
+    while (USBUART_CDCIsReady() == 0);
+    s[63]='\0';
+    s[62]='!';
+    USBUART_PutData((uint8*)s,strlen(s));    
 }
 
 /*
  * Outputs given char to the USB UART console.
  */
 void usbPutChar(char c) {
-    #ifdef USE_USB
-        while (USBUART_CDCIsReady() == 0);
-        USBUART_PutChar(c);
-    #endif    
+    while (USBUART_CDCIsReady() == 0);
+    USBUART_PutChar(c);
 }
 
 /*
