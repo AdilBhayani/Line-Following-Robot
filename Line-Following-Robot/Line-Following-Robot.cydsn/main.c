@@ -40,15 +40,16 @@ int main()
     init_motion_control();
     init_battery_management();
     init_rf();
-    
-    //benchmark_2();
-    //uint8 x;
-    //char cha;
-    //UART_Start();
+    m_straight_fast();
+    float val;
     
     while(1)
     {   
         CyDelay(200);
+        val = (get_v_bat() * 1000);
+        usbPutString("-----------------------------------------------------\n");
+        usbPutString("------------ Technical Test 1 30/08/2017 ------------\n");
+        usbPutString("-----------------------------------------------------\n");
         usbPutString("Rssi value is: ");
         usbPutInt(system_state.rssi);
         usbPutString(" \n");
@@ -64,12 +65,9 @@ int main()
         usbPutString("Y position is: ");
         usbPutInt(system_state.robot_ypos);
         usbPutString(" \n");
-
-        
-       // x = asciiMethod();
-        //char cha;
-        //cha = UART_GetChar();
-        //usbPutChar(cha);
+        usbPutString("Battery Voltage: ");
+        usbPutInt((int)val);
+        usbPutString(" mV\n");
     }   
 }
 
