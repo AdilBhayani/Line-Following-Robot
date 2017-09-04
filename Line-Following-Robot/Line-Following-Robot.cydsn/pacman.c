@@ -26,56 +26,35 @@
  * ========================================
 */
 
-#ifndef MOTION_CONTROL_H_
-#define MOTION_CONTROL_H_
+#include "pacman.h"
 
-#include <project.h>
-#include "timer.h"
-    
-#define STOP_MOTOR 128
+/*
+ * The static food pellets will be evenly distributed across the
+ * field. There are no ghosts or rewards. This is a passive, non
+ * aggressive, level and the only challenge is to complete the
+ * level within the time-limit. 
+ */
+void play_pacman_1(){
 
-#define M_FORWARD_MAX 255
-#define M_BACKWARD_MAX 0
+}
 
-#define M1_FORWARD 190
-#define M2_FORWARD 190
+/*
+ * In this level, 5 pellets will be placed across the field. The
+ * location of the pellets will be given to you as the list. The 
+ * challenge is to make the Pacman plan a route from the current
+ * position to first unconsumed pellet in the list. The robot’s
+ * starting position will be given.
+ */
+void play_pacman_2(){
 
-#define M1_FORWARD_SLOW 170
-#define M2_FORWARD_SLOW 170
+}
 
-#define M1_BACKWARD 64
-#define M2_BACKWARD 64
-    
-#define WHEELRADIUS 32
+/*
+ * This will be discussed in class and the specifics of this test
+ * will be based on discussions in class.
+ */
+void play_pacman_3(){
 
-volatile uint16 quad_a_old;
-volatile uint16 quad_b_old;
-volatile uint16 disp_a;
-volatile uint16 disp_b;
-
-void init_motion_control();
-
-void m_stop();
-void m_straight();
-void m_straight_slow();
-void m_straight_fast();
-void m_reverse();
-void m_adjust_left_major();
-void m_adjust_right_major();
-void m_adjust_left_minor();
-void m_adjust_right_minor();
-void m_turn_left();
-void m_turn_right();
-void m_sleep();
-
-void track_quadrature();
-float calc_speed();
-
-void robot_forward(uint8 value);
-void robot_backward(uint8 value);
-void robot_right_turn();
-void robot_left_turn();
-    
-#endif /* MOTION_CONTROL_H_ */
+}
 
 /* [] END OF FILE */

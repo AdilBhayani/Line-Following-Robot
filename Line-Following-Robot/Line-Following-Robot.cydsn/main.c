@@ -32,6 +32,7 @@
 #include "rf.h"
 #include "timer.h"
 #include "usb.h"
+#include "bluetooth.h"
 
 int main()
 {
@@ -40,6 +41,7 @@ int main()
     init_motion_control();
     init_battery_management();
     init_rf();
+    init_bluetooth();
     m_straight_fast();
     float val;
     

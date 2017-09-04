@@ -142,4 +142,32 @@ float calc_speed(){
     return disp * 6.2831853 * WHEELRADIUS; // 2 * pi
 }
 
+/*
+ * Robot moves forward value number of grid spaces.
+ */
+void robot_forward(uint8 value){
+
+}
+
+/*
+ * Robot moves backward value number of grid spaces.
+ */
+void robot_backward(uint8 value){
+    
+}
+
+/*
+ * Robot makes a 90° turn right.
+ */
+void robot_right_turn(){
+    
+}
+
+/*
+ * Robot makes a 90° turn left.
+ */
+void robot_left_turn(){
+    
+}
+
 /* [] END OF FILE */

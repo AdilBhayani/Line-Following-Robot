@@ -44,7 +44,6 @@ void init_usb();
 void usbPutString(char *s);
 void usbPutChar(char c);
 void usbPutInt(int value);
-void handle_usb();
 
 char line[BUF_SIZE], entry[BUF_SIZE];
 uint8 usbBuffer[BUF_SIZE];

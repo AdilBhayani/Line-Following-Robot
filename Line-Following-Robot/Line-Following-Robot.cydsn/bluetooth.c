@@ -26,56 +26,58 @@
  * ========================================
 */
 
-#ifndef MOTION_CONTROL_H_
-#define MOTION_CONTROL_H_
+#include "bluetooth.h"
 
-#include <project.h>
-#include "timer.h"
-    
-#define STOP_MOTOR 128
+/*
+ * Initializes the Bluetooth UART and sends welcome message.
+ */
+void init_bluetooth() {
+    USBUART_Start(0,USBUART_5V_OPERATION);
+    btPutString("CS301 2017 Group 7\n");
+}
 
-#define M_FORWARD_MAX 255
-#define M_BACKWARD_MAX 0
+/*
+ * Outputs given string to the Bluetooth UART console.
+ */
+void btPutString(char *s) {
 
-#define M1_FORWARD 190
-#define M2_FORWARD 190
+}
 
-#define M1_FORWARD_SLOW 170
-#define M2_FORWARD_SLOW 170
+/*
+ * Outputs given char to the Bluetooth UART console.
+ */
+void btPutChar(char c) {
 
-#define M1_BACKWARD 64
-#define M2_BACKWARD 64
-    
-#define WHEELRADIUS 32
+}
 
-volatile uint16 quad_a_old;
-volatile uint16 quad_b_old;
-volatile uint16 disp_a;
-volatile uint16 disp_b;
+/*
+ * Outputs given integer to the Bluetooth UART console.
+ */
+void btPutInt(int value) {
+    char buffer_text[BUF_SIZE];
+    sprintf(buffer_text,"%d",value);
+    btPutString(buffer_text);
+}
 
-void init_motion_control();
+/*
+ * Gets string from Bluetooth UART.
+ */
+const char* btGetString() {
+    return "COMPSYS 301";
+}
 
-void m_stop();
-void m_straight();
-void m_straight_slow();
-void m_straight_fast();
-void m_reverse();
-void m_adjust_left_major();
-void m_adjust_right_major();
-void m_adjust_left_minor();
-void m_adjust_right_minor();
-void m_turn_left();
-void m_turn_right();
-void m_sleep();
+/*
+* Gets char from Bluetooth UART.
+*/
+char btGetChar() {
+    return 's';
+}
 
-void track_quadrature();
-float calc_speed();
-
-void robot_forward(uint8 value);
-void robot_backward(uint8 value);
-void robot_right_turn();
-void robot_left_turn();
-    
-#endif /* MOTION_CONTROL_H_ */
+/*
+* Gets integer from Bluetooth UART.
+*/
+int btGetInt() {
+    return 99;
+}
 
 /* [] END OF FILE */

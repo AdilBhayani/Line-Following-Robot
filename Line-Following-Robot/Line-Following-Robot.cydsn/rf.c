@@ -39,7 +39,7 @@
  * struct system_state and counters reset.
  */
 CY_ISR(MyRxISR) {
-    packet = UART_GetByte();
+    packet = RF_UART_GetByte();
     if (packet == SOP) {
         start++;
     }
@@ -61,7 +61,7 @@ CY_ISR(MyRxISR) {
  * Sets start bit counter and current byte counter to 0.
  */
 void init_rf(){
-    UART_Start();
+    RF_UART_Start();
     isrRF_RX_StartEx(MyRxISR);
     counter = 0;
     start = 0;
@@ -70,14 +70,14 @@ void init_rf(){
 uint8 asciiMethod() {
     char cha;
     int firstValue[3] = {0, 0, 0};
-    cha = UART_GetChar();
+    cha = RF_UART_GetChar();
     if (cha != 0){
         if (cha == '#'){
             static char streamArray[96];
             int index = 0;
             int flag = 0;
             while(flag == 0){  
-                cha = UART_GetChar();
+                cha = RF_UART_GetChar();
                 firstValue[index] = cha - 48;
                 if (cha == 10 || cha == 13){
                     break;   
@@ -85,7 +85,7 @@ uint8 asciiMethod() {
                 while (cha != ','){
                     //usbPutChar(cha)
                     index++;
-                    cha = UART_GetChar();
+                    cha = RF_UART_GetChar();
                     firstValue[index] = cha - 48;
                     //append to something
                     if (cha == '#'){

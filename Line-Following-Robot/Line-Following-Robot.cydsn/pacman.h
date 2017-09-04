@@ -26,56 +26,42 @@
  * ========================================
 */
 
-#ifndef MOTION_CONTROL_H_
-#define MOTION_CONTROL_H_
+#ifndef PACMAN_H_
+#define PACMAN_H_
 
 #include <project.h>
-#include "timer.h"
-    
-#define STOP_MOTOR 128
+#include "motion_control.h"
+#include "rf.h"
 
-#define M_FORWARD_MAX 255
-#define M_BACKWARD_MAX 0
+uint8 map[15][19] = {
+{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+{1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
+{1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1},
+{1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1},
+{1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1},
+{1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1},
+{1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1},
+{1,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,0,1},
+{1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1},
+{1,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1},
+{1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1},
+{1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1},
+{1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1},
+{1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1},
+{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+};
 
-#define M1_FORWARD 190
-#define M2_FORWARD 190
+uint8 food_list[5][2]= 
+{{1,9},
+{5,5},
+{7,1},
+{13,5},
+{9,9}};
 
-#define M1_FORWARD_SLOW 170
-#define M2_FORWARD_SLOW 170
+void play_pacman_1();
+void play_pacman_2();
+void play_pacman_3();
 
-#define M1_BACKWARD 64
-#define M2_BACKWARD 64
-    
-#define WHEELRADIUS 32
-
-volatile uint16 quad_a_old;
-volatile uint16 quad_b_old;
-volatile uint16 disp_a;
-volatile uint16 disp_b;
-
-void init_motion_control();
-
-void m_stop();
-void m_straight();
-void m_straight_slow();
-void m_straight_fast();
-void m_reverse();
-void m_adjust_left_major();
-void m_adjust_right_major();
-void m_adjust_left_minor();
-void m_adjust_right_minor();
-void m_turn_left();
-void m_turn_right();
-void m_sleep();
-
-void track_quadrature();
-float calc_speed();
-
-void robot_forward(uint8 value);
-void robot_backward(uint8 value);
-void robot_right_turn();
-void robot_left_turn();
-    
-#endif /* MOTION_CONTROL_H_ */
+#endif /* PACMAN_H_ */
 
 /* [] END OF FILE */
