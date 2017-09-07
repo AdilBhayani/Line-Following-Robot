@@ -32,7 +32,7 @@
  * Initializes the Bluetooth UART and sends welcome message.
  */
 void init_bluetooth() {
-    USBUART_Start(0,USBUART_5V_OPERATION);
+    BT_UART_Start();
     btPutString("CS301 2017 Group 7\n");
 }
 
@@ -40,14 +40,14 @@ void init_bluetooth() {
  * Outputs given string to the Bluetooth UART console.
  */
 void btPutString(char *s) {
-
+    BT_UART_PutString(s);
 }
 
 /*
  * Outputs given char to the Bluetooth UART console.
  */
 void btPutChar(char c) {
-
+    BT_UART_PutChar(c);
 }
 
 /*
