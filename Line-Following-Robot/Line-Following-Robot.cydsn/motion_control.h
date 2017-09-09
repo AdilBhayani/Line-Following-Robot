@@ -31,6 +31,8 @@
 
 #include <project.h>
 #include "timer.h"
+#include "usb.h"
+#include "bluetooth.h"
     
 #define STOP_MOTOR 128
 
@@ -43,15 +45,19 @@
 #define M1_FORWARD_SLOW 170
 #define M2_FORWARD_SLOW 170
 
-#define M1_BACKWARD 64
-#define M2_BACKWARD 64
+#define M1_BACKWARD 30
+#define M2_BACKWARD 30
     
 #define WHEELRADIUS 32
+    
+#define GRIDSIZE 30
 
 volatile uint16 quad_a_old;
 volatile uint16 quad_b_old;
 volatile uint16 disp_a;
 volatile uint16 disp_b;
+volatile uint16 m1_flag;
+volatile uint16 m2_flag;
 
 void init_motion_control();
 
