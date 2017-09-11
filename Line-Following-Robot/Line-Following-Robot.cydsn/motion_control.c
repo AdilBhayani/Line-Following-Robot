@@ -35,14 +35,12 @@
 CY_ISR(QuadISR_1) {
     LED_Write(1);
     m_stop();
-    flag = 0;
     m1_flag = 1;
 }
 
 CY_ISR(QuadISR_2) {
     LED_Write(1);
     m_stop();
-    flag = 0;
     m2_flag = 1;
 }
 

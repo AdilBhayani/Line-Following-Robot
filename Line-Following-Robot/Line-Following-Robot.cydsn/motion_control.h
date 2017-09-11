@@ -30,7 +30,6 @@
 #define MOTION_CONTROL_H_
 
 #include <project.h>
-#include "timer.h"
 #include "usb.h"
 #include "bluetooth.h"
     

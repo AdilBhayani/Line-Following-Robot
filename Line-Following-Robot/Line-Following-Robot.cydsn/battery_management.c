@@ -29,6 +29,23 @@
 #include "battery_management.h"
 
 /*
+ * One Second timer interupt routine. Every 60
+ * seconds this checks the battery levels are
+ * not too low, if so shuts down the system.
+ */
+CY_ISR(TimerOneSecISR) {  
+    check_battery_status();
+}
+
+/*
+ * Initializes the one second timer interupt.
+ */
+void timer_init() {
+    Timer_TS_Start();
+    isr_TS_StartEx(TimerOneSecISR);
+}
+
+/*
  * ADC End of Conversion Interupt service routine.
  * Takes adc value and stores it in a variable.
  */
@@ -46,6 +63,7 @@ void init_battery_management(){
     ADC_SAR_1_IRQ_Enable();
     ADC_SAR_1_Start();
     ADC_SAR_1_SetPower(3);
+    timer_init();
     start_adc();
     adc_val = 0;
 }
@@ -78,19 +96,18 @@ float get_v_bat(){
  * low. If they are, the motors, adc & interupts
  * are stopped and processor is left to idle.
  *
- * 2250 / 4096 => 2.74V on ADC terminal
- *      => 5.49V on battery pack
- *      => 0.915V for each battery
+ * 2700 / 4096 => 3.30V on ADC terminal
+ *      => 6.60V on battery pack
+ *      => 1.10V for each battery
  */
 void check_battery_status(){
-    if (adc_val > 2250) {
+    if (adc_val > 2700) {
         return;
     } else {
         m_stop();
         m_sleep();
         stop_adc();
-        CYGlobalIntDisable
-        flag = 0;
+        CYGlobalIntDisable        
         while(1);
     }
 }

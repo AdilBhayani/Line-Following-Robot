@@ -54,8 +54,7 @@ void benchmark_2(){
         if (left_sensor > 0){
             if (right_sensor > 0){
                 m_stop();
-                m_sleep();
-                flag = 0;
+                m_sleep();                
             } else {
                 left_count = 0;
                 right_count++;
@@ -73,7 +72,6 @@ void benchmark_2(){
             }
         }
     }
-    flag = 0;
     return;
 }
 
