@@ -32,23 +32,24 @@
 #include <project.h>
 #include "usb.h"
 #include "bluetooth.h"
+
+// y = 0.0877x - 11.5
+// where y = pulses on quad per 10ms
+//   and x = PWM compare value
+
+// Following constants are quad pulses per 10ms
+#define STOP_MOTOR 0
+#define M_FORWARD_MAX 11
+#define M_BACKWARD_MAX (-11)
+#define M1_FORWARD 5
+#define M2_FORWARD 5
+#define M1_FORWARD_SLOW 3
+#define M2_FORWARD_SLOW 3
+#define M1_BACKWARD (-5)
+#define M2_BACKWARD (-5)
     
-#define STOP_MOTOR 128
-
-#define M_FORWARD_MAX 255
-#define M_BACKWARD_MAX 0
-
-#define M1_FORWARD 190
-#define M2_FORWARD 190
-
-#define M1_FORWARD_SLOW 170
-#define M2_FORWARD_SLOW 170
-
-#define M1_BACKWARD 30
-#define M2_BACKWARD 30
-    
-#define WHEELRADIUS 32
-    
+// Following defines are in mm
+#define WHEELRADIUS 32    
 #define GRIDSIZE 30
 
 volatile uint16 quad_a_old;
@@ -58,8 +59,15 @@ volatile uint16 disp_b;
 volatile uint16 m1_flag;
 volatile uint16 m2_flag;
 
-void init_motion_control();
+double InputA, OutputA, SetpointA;
+double InputB, OutputB, SetpointB;
+double ITermA, outputSumA, lastInputA;
+double ITermB, outputSumB, lastInputB;
+double kp, ki, kd;
+int outMin, outMax;
+double SampleTimeInSec;
 
+void init_motion_control();
 void m_stop();
 void m_straight();
 void m_straight_slow();
@@ -80,6 +88,11 @@ void robot_forward(uint8 value);
 void robot_backward(uint8 value);
 void robot_right_turn();
 void robot_left_turn();
+
+void init_pid();
+void ComputeA();
+void ComputeB();
+void SetPIDTunings(double Kp, double Ki, double Kd);
     
 #endif /* MOTION_CONTROL_H_ */
 

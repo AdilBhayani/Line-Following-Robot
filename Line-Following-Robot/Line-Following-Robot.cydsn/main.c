@@ -28,11 +28,10 @@
 
 #include "battery_management.h"
 #include "benchmarks.h"
+#include "bluetooth.h"
 #include "motion_control.h"
 #include "rf.h"
-#include "timer.h"
 #include "usb.h"
-#include "bluetooth.h"
 
 int main()
 {
@@ -40,8 +39,6 @@ int main()
     init_usb();
     init_motion_control();
     init_battery_management();
-    init_rf();
-    init_bluetooth();
     m_straight_fast();
     float val;
     

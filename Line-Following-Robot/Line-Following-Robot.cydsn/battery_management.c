@@ -41,8 +41,8 @@ CY_ISR(TimerOneSecISR) {
  * Initializes the one second timer interupt.
  */
 void timer_init() {
-    Timer_TS_Start();
-    isr_TS_StartEx(TimerOneSecISR);
+    Timer_0_Start();
+    isr_Timer0_StartEx(TimerOneSecISR);
 }
 
 /*
