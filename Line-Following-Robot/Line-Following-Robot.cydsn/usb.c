@@ -32,10 +32,8 @@
  * Initializes the USB UART and sends welcome message.
  */
 void init_usb() {
-    if (USBUART_VBusPresent() == 1) {
-        USBUART_Start(0,USBUART_5V_OPERATION);
-        usbPutString("CS301 2017 Group 7\n");
-    }    
+    USBUART_Start(0,USBUART_5V_OPERATION);
+    usbPutString("CS301 2017 Group 7\n"); 
 }
 
 /*
