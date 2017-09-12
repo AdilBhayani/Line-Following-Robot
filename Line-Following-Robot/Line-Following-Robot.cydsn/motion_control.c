@@ -147,6 +147,7 @@ void m_turn_right(){
 }
 
 void m_sleep(){
+    m_stop();
     CONTROL_Write(0x03);
 }
 
