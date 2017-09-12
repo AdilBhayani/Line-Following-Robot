@@ -52,19 +52,17 @@
 #define WHEELRADIUS 32    
 #define GRIDSIZE 30
 
-volatile uint16 quad_a_old;
-volatile uint16 quad_b_old;
-volatile uint16 disp_a;
-volatile uint16 disp_b;
-volatile uint16 m1_flag;
-volatile uint16 m2_flag;
+volatile int16 quad_a_old;
+volatile int16 quad_b_old;
+volatile int16 disp_a;
+volatile int16 disp_b;
 
 double InputA, OutputA, SetpointA;
 double InputB, OutputB, SetpointB;
 double ITermA, outputSumA, lastInputA;
 double ITermB, outputSumB, lastInputB;
 double kp, ki, kd;
-int outMin, outMax;
+double outMin, outMax;
 double SampleTimeInSec;
 
 void init_motion_control();

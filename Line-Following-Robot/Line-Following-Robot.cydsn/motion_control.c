@@ -48,11 +48,11 @@ CY_ISR(QuadISR_2) {
  * PID interrupt. Gets inputs, compute 
  * new PID values, and outputs to PWM.
  */
-CY_ISR(PID_ISR){    
+CY_ISR(PID_ISR){
     // Getting inputs for PID
     track_quadrature();
-    InputA = disp_a;
-    InputB = disp_b;
+    InputA = disp_a / 228;
+    InputB = disp_b / 228;
     
     // Computing PID calculations
     ComputeA();
@@ -76,10 +76,6 @@ CY_ISR(PID_ISR){
 void init_motion_control() {
     PWM_1_Start();
     PWM_2_Start();
-    m_stop();
-    
-    Timer_1_Start();
-    isr_Timer1_StartEx(PID_ISR);
     
     quad_a_old = 0;
     quad_b_old = 0;
@@ -89,6 +85,10 @@ void init_motion_control() {
     isr_quadB_StartEx(QuadISR_2);
     QuadDec_M1_SetInterruptMask(QuadDec_M1_COUNTER_OVERFLOW);
     QuadDec_M2_SetInterruptMask(QuadDec_M2_COUNTER_OVERFLOW);
+    
+    init_pid();
+    Timer_1_Start();
+    isr_Timer1_StartEx(PID_ISR);
 }
 
 void m_stop(){
@@ -155,8 +155,8 @@ void m_sleep(){
  * Keeps track of quadrature values.
  */
 void track_quadrature(){
-    uint16 count_a = QuadDec_M1_GetCounter();
-    uint16 count_b = QuadDec_M2_GetCounter();
+    int16 count_a = QuadDec_M1_GetCounter();
+    int16 count_b = QuadDec_M2_GetCounter();
     disp_a = count_a - quad_a_old;
     disp_b = count_b - quad_b_old;
     quad_a_old = count_a;
@@ -216,8 +216,8 @@ void robot_left_turn(){
  * each motor of the robot.
  */
 void init_pid(){
-    outMin = 11;
-    outMax = -11;
+    outMin = -11;
+    outMax = 11;
     
     SampleTimeInSec = 0.01;
     
