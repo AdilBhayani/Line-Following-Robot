@@ -76,7 +76,52 @@ void benchmark_2(){
  * Curve Tracking Test
  * =======================================*/
 void benchmark_3(){
-    benchmark_2();
+    CyDelay(1000);
+    uint8 left_sensor = 0;
+    uint8 right_sensor = 0;
+    uint8 center_left = 0;
+    uint8 center_right = 0;
+    uint8 center_front = 0;
+    uint8 direction = 0;
+    while(1) {
+        CyDelayUs(100);
+        left_sensor = Sensor_3_Read();
+        right_sensor = Sensor_5_Read();
+        center_left = Sensor_1_Read();
+        center_right = Sensor_2_Read();
+        center_front = Sensor_4_Read();
+        if (center_left > 0){
+            if (center_right > 0){
+                m_straight();
+            } else {
+                m_adjust_left_minor();
+            }
+        } else if (center_right > 0){
+            m_adjust_right_minor();
+        } else if (left_sensor > 0)  {
+            m_adjust_left_major();
+            direction = 0;
+        } else if (right_sensor > 0){
+            m_adjust_right_major();
+            direction = 1;
+        } else if (center_front == 0){
+            if (direction > 0){
+                m_turn_right();
+                while(center_right == 1){
+                    center_right = Sensor_2_Read();
+                }
+                CyDelay(100);
+                m_straight();
+            } else {
+                m_turn_left();
+                while(center_left == 1){
+                    center_left = Sensor_2_Read();
+                }
+                CyDelay(100);
+                m_straight();
+            }
+        }
+    }
     return;
 }
 
@@ -84,7 +129,7 @@ void benchmark_3(){
  * Turn Test
  * =======================================*/
 void benchmark_4(){
-    benchmark_2();
+    benchmark_3();
     return;
 }
 
