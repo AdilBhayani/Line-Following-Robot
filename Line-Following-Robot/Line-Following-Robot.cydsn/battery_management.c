@@ -45,6 +45,7 @@ CY_ISR(TimerOneSecISR) {
         ADC_SAR_1_StopConvert();
         CYGlobalIntDisable    
         while(1);
+        LED_6_Write(1);
     }
 }
 

@@ -49,18 +49,23 @@ CY_ISR(QuadISR_2) {
  * new PID values, and outputs to PWM.
  */
 CY_ISR(PID_ISR){
-    // Getting inputs for PID
-    track_quadrature();
-    InputA = disp_a / 228;
-    InputB = disp_b / 228;
-    
-    // Computing PID calculations
-    ComputeA();
-    ComputeB();
+    #ifndef DONT_USE_PID
+        // Getting inputs for PID
+        track_quadrature();
+        InputA = ((double)disp_a / 228);
+        InputB = ((double)disp_b / 228);
+        
+        // Computing PID calculations
+        ComputeA();
+        ComputeB();
+    #else
+        OutputA = SetpointA;
+        OutputB = SetpointB;
+    #endif
     
     // Outputting PID results to Motor
-    PWM_1_WriteCompare(11.4 * OutputA + 131.13);
-    PWM_2_WriteCompare(11.4 * OutputB + 131.13);
+    PWM_2_WriteCompare(11.4 * OutputA + 131.13);
+    PWM_1_WriteCompare(11.4 * OutputB + 131.13);
 }
 
 /*

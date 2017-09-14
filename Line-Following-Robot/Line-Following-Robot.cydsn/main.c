@@ -33,41 +33,46 @@
 #include "rf.h"
 #include "usb.h"
 
+void switch_mode(){
+    if (Switch_1_Read() > 0) {
+        benchmark_2();
+    } else if (Switch_2_Read() > 0) {
+        benchmark_3();        
+    } else if (Switch_3_Read() > 0) {
+        benchmark_4();
+    } else if (Switch_4_Read() > 0) {        
+        benchmark_5();
+    } else {
+        benchmark_1();
+    }
+}
+
+void DebugLEDs(){
+    if (Sensor_1_Read() > 0) LED_1_Write(1);
+    else LED_1_Write(0);
+    if (Sensor_2_Read() > 0) LED_2_Write(1);
+    else LED_2_Write(0);
+    if (Sensor_3_Read() > 0) LED_3_Write(1);
+    else LED_3_Write(0);
+    if (Sensor_4_Read() > 0) LED_4_Write(1);
+    else LED_4_Write(0);
+    if (Sensor_5_Read() > 0) LED_5_Write(1);
+    else LED_5_Write(0);
+    if (Sensor_6_Read() > 0) LED_6_Write(1);
+    else LED_6_Write(0);
+}
+
 int main()
 {
-    CYGlobalIntEnable;
-    init_usb();
+    //init_battery_management();
     init_motion_control();
-    init_battery_management();
-    m_straight_fast();
-    float val;
-    
-    while(1)
-    {   
-        CyDelay(200);
-        val = (get_v_bat() * 1000);
-        usbPutString("-----------------------------------------------------\n");
-        usbPutString("------------ Technical Test 1 30/08/2017 ------------\n");
-        usbPutString("-----------------------------------------------------\n");
-        usbPutString("Rssi value is: ");
-        usbPutInt(system_state.rssi);
-        usbPutString(" \n");
-        usbPutString("Index value is: ");
-        usbPutInt(system_state.index);
-        usbPutString(" \n");
-        usbPutString("Robot orientation is: ");
-        usbPutInt(system_state.robot_orientation);
-        usbPutString(" \n");
-        usbPutString("X position is: ");
-        usbPutInt(system_state.robot_xpos);
-        usbPutString(" \n");
-        usbPutString("Y position is: ");
-        usbPutInt(system_state.robot_ypos);
-        usbPutString(" \n");
-        usbPutString("Battery Voltage: ");
-        usbPutInt((int)val);
-        usbPutString(" mV\n");
-    }   
+    CYGlobalIntEnable;
+    init_rf();
+    switch_mode();
+    while(1){
+        DebugLEDs();
+        CyDelay(100);
+    }
 }
 
 /* [] END OF FILE */

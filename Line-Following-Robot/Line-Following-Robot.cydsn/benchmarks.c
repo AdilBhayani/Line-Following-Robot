@@ -45,31 +45,28 @@ void benchmark_2(){
     CyDelay(1000);
     uint8 left_sensor = 0;
     uint8 right_sensor = 0;
-    uint8 left_count = 0;
-    uint8 right_count = 0;
+    uint8 center_left = 0;
+    uint8 center_right = 0;
     while(1) {
         CyDelayUs(100);
-        left_sensor = Sensor_5_Read();
-        right_sensor = Sensor_4_Read();
-        if (left_sensor > 0){
-            if (right_sensor > 0){
-                m_stop();
-                m_sleep();                
+        left_sensor = Sensor_3_Read();
+        right_sensor = Sensor_5_Read();
+        center_left = Sensor_1_Read();
+        center_right = Sensor_2_Read();
+        if (center_left > 0){
+            if (center_right > 0){
+                m_straight();
             } else {
-                left_count = 0;
-                right_count++;
-                if (right_count >= DAMPING_FACTOR) m_adjust_right_minor();
+                m_adjust_left_minor();
             }
+        } else if (center_right > 0){
+            m_adjust_right_minor();
+        } else if (left_sensor > 0)  {
+            m_adjust_left_major();
+        } else if (right_sensor > 0){
+            m_adjust_right_major();
         } else {
-            if (right_sensor > 0){
-                right_count = 0;
-                left_count++;
-                if (left_count >= DAMPING_FACTOR) m_adjust_left_minor();
-            } else {
-                m_straight_fast();
-                left_count = 0;
-                right_count = 0;
-            }
+            m_sleep();
         }
     }
     return;

@@ -28,6 +28,8 @@
 
 #ifndef MOTION_CONTROL_H_
 #define MOTION_CONTROL_H_
+    
+#define DONT_USE_PID
 
 #include <project.h>
 #include "usb.h"
@@ -39,8 +41,8 @@
 
 // Following constants are quad pulses per 10ms
 #define STOP_MOTOR 0
-#define M_FORWARD_MAX 11
-#define M_BACKWARD_MAX (-11)
+#define M_FORWARD_MAX 10.85
+#define M_BACKWARD_MAX (-10.85)
 #define M1_FORWARD 5
 #define M2_FORWARD 5
 #define M1_FORWARD_SLOW 3
@@ -52,15 +54,15 @@
 #define WHEELRADIUS 32    
 #define GRIDSIZE 30
 
-volatile int16 quad_a_old;
+static volatile int16 quad_a_old;
 volatile int16 quad_b_old;
 volatile int16 disp_a;
 volatile int16 disp_b;
 
-double InputA, OutputA, SetpointA;
-double InputB, OutputB, SetpointB;
-double ITermA, outputSumA, lastInputA;
-double ITermB, outputSumB, lastInputB;
+volatile double InputA, OutputA, SetpointA;
+volatile double InputB, OutputB, SetpointB;
+volatile double ITermA, outputSumA, lastInputA;
+volatile double ITermB, outputSumB, lastInputB;
 double kp, ki, kd;
 double outMin, outMax;
 double SampleTimeInSec;
