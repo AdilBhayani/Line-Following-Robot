@@ -28,6 +28,21 @@
 
 #include "battery_management.h"
 
+void DebugLEDs(){
+    if (Sensor_1_Read() > 0) LED_1_Write(1);
+    else LED_1_Write(0);
+    if (Sensor_2_Read() > 0) LED_2_Write(1);
+    else LED_2_Write(0);
+    if (Sensor_3_Read() > 0) LED_3_Write(1);
+    else LED_3_Write(0);
+    if (Sensor_4_Read() > 0) LED_4_Write(1);
+    else LED_4_Write(0);
+    if (Sensor_5_Read() > 0) LED_5_Write(1);
+    else LED_5_Write(0);
+    if (Sensor_6_Read() > 0) LED_6_Write(1);
+    else LED_6_Write(0);
+}
+
 /*
  * One Second timer interupt routine. Every 60
  * seconds this checks the battery levels are
@@ -40,12 +55,18 @@
  *      => 1.10V for each battery
  */
 CY_ISR(TimerOneSecISR) {  
-    if (adc_val < 2700){
-        m_sleep();
-        ADC_SAR_1_StopConvert();
-        CYGlobalIntDisable    
-        while(1);
-        LED_6_Write(1);
+    isr_count++;
+
+    DebugLEDs();
+
+    if (isr_count > 9){
+        if (adc_val < 2700){
+            m_sleep();
+            ADC_SAR_1_StopConvert();
+            CYGlobalIntDisable    
+            while(1);
+            LED_6_Write(1);
+        }
     }
 }
 
