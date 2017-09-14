@@ -102,13 +102,13 @@ void m_stop(){
 }
 
 void m_straight(){
-    SetpointA = M1_FORWARD;
-    SetpointB = M2_FORWARD;
+    SetpointA = M_FORWARD;
+    SetpointB = M_FORWARD;
 }
 
 void m_straight_slow(){
-    SetpointA = M1_FORWARD_SLOW;
-    SetpointB = M2_FORWARD_SLOW;
+    SetpointA = M_FORWARD_SLOW;
+    SetpointB = M_FORWARD_SLOW;
 }
 
 void m_straight_fast(){
@@ -117,38 +117,38 @@ void m_straight_fast(){
 }
 
 void m_reverse(){  
-    SetpointA = M1_BACKWARD;
-    SetpointB = M2_BACKWARD;
+    SetpointA = M_BACKWARD;
+    SetpointB = M_BACKWARD;
 }
 
 void m_adjust_left_major(){
-    SetpointA = M1_FORWARD;
+    SetpointA = M_FORWARD;
     SetpointB = STOP_MOTOR;
 }
 
 void m_adjust_right_major(){
     SetpointA = STOP_MOTOR;
-    SetpointB = M2_FORWARD;
+    SetpointB = M_FORWARD;
 }
 
 void m_adjust_left_minor(){
-    SetpointA = M1_FORWARD;
-    SetpointB = M2_FORWARD_SLOW;
+    SetpointA = M_FORWARD;
+    SetpointB = M_FORWARD_SLOW;
 }
 
 void m_adjust_right_minor(){
-    SetpointA = M1_FORWARD_SLOW;
-    SetpointB = M2_FORWARD;
+    SetpointA = M_FORWARD_SLOW;
+    SetpointB = M_FORWARD;
 }
 
 void m_turn_left(){
-    SetpointA = M1_FORWARD;
-    SetpointB = M2_BACKWARD;
+    SetpointA = M_FORWARD_SLOW;
+    SetpointB = M_BACKWARD_SLOW;
 }
 
 void m_turn_right(){
-    SetpointA = M1_BACKWARD;
-    SetpointB = M2_FORWARD;
+    SetpointA = M_BACKWARD_SLOW;
+    SetpointB = M_FORWARD_SLOW;
 }
 
 void m_sleep(){
@@ -200,20 +200,22 @@ void robot_backward(uint8 value){
  * Robot makes a 90° turn right.
  */
 void robot_right_turn(){ 
-    double distance = (32*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19; 
-    QuadDec_M2_SetCounter(32767-distance);
+    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19; 
+    QuadDec_M1_SetCounter(32767-distance);
     m_turn_right();
     while (SetpointB != 0);
+    QuadDec_M1_SetCounter(0);
 }
 
 /*
  * Robot makes a 90° turn left.
  */
 void robot_left_turn(){
-    double distance = (45*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19;
-    QuadDec_M1_SetCounter(-(32767-distance));
+    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19;
+    QuadDec_M2_SetCounter(32767-distance);
     m_turn_left();
     while (SetpointA != 0);
+    QuadDec_M2_SetCounter(0);
 }
 
 /*

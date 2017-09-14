@@ -35,44 +35,32 @@
 
 void switch_mode(){
     if (Switch_1_Read() > 0) {
-        benchmark_2();
+        if (Switch_2_Read() > 0) {
+            if (Switch_3_Read() > 0) play_pacman_3();
+            else benchmark_4();
+        } else {
+            if (Switch_3_Read() > 0) play_pacman_1();
+            else benchmark_2();
+        } 
     } else if (Switch_2_Read() > 0) {
-        benchmark_3();        
-    } else if (Switch_3_Read() > 0) {
-        benchmark_4();
-    } else if (Switch_4_Read() > 0) {        
-        benchmark_5();
+        if (Switch_3_Read() > 0) play_pacman_2();
+        else benchmark_3();
     } else {
-        benchmark_1();
+        if (Switch_3_Read() > 0) benchmark_5();
+        else benchmark_1();
     }
-}
-
-void DebugLEDs(){
-    if (Sensor_1_Read() > 0) LED_1_Write(1);
-    else LED_1_Write(0);
-    if (Sensor_2_Read() > 0) LED_2_Write(1);
-    else LED_2_Write(0);
-    if (Sensor_3_Read() > 0) LED_3_Write(1);
-    else LED_3_Write(0);
-    if (Sensor_4_Read() > 0) LED_4_Write(1);
-    else LED_4_Write(0);
-    if (Sensor_5_Read() > 0) LED_5_Write(1);
-    else LED_5_Write(0);
-    if (Sensor_6_Read() > 0) LED_6_Write(1);
-    else LED_6_Write(0);
+    
+    if (Switch_4_Read() > 0) init_usb();
 }
 
 int main()
 {
-    //init_battery_management();
+    init_battery_management();
     init_motion_control();
     CYGlobalIntEnable;
     init_rf();
     switch_mode();
-    while(1){
-        DebugLEDs();
-        CyDelay(100);
-    }
+    while(1);
 }
 
 /* [] END OF FILE */

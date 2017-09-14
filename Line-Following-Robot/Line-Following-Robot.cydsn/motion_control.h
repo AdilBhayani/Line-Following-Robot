@@ -40,15 +40,13 @@
 //   and x = PWM compare value
 
 // Following constants are quad pulses per 10ms
-#define STOP_MOTOR 0
+#define TOP_MOTOR 0
 #define M_FORWARD_MAX 10.85
 #define M_BACKWARD_MAX (-10.85)
-#define M1_FORWARD 5
-#define M2_FORWARD 5
-#define M1_FORWARD_SLOW 3
-#define M2_FORWARD_SLOW 3
-#define M1_BACKWARD (-5)
-#define M2_BACKWARD (-5)
+#define M_FORWARD 5
+#define M_FORWARD_SLOW 3
+#define M_BACKWARD (-5)
+#define M_BACKWARD_SLOW (-3)
     
 // Following defines are in mm
 #define WHEELRADIUS 32    
