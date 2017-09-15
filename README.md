@@ -2,8 +2,6 @@
 
 > "Excellence is a continuous process and not an accident" - *A. P. J. Abdul Kalam*
 
-* Assembly of both PCBs (சகாயன்)
-
 * Pacman Algorithms (आदिल)
     * Calculate the shortest path initially then start moving in that path
     * We will assume that we are timed from when robot starts moving, not start-up
@@ -19,7 +17,7 @@
         * void robot_left_turn();
         * Note: These functions will only return once the movement has been finished.
     * Use 'system_state' to access RF data
-    * Sample map and food list in pacman.h
+    * Sample map and food list in pacman.c
 
 * Bluetooth Communication (వైష్ణవి)
     * Function definitions to abstract two way communication over Bluetooth have been added

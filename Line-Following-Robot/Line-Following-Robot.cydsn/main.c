@@ -32,6 +32,7 @@
 #include "motion_control.h"
 #include "rf.h"
 #include "usb.h"
+#include "pacman.h"
 
 void switch_mode(){
     if (Switch_1_Read() > 0) {

@@ -40,7 +40,7 @@
 //   and x = PWM compare value
 
 // Following constants are quad pulses per 10ms
-#define TOP_MOTOR 0
+#define STOP_MOTOR 0
 #define M_FORWARD_MAX 10.85
 #define M_BACKWARD_MAX (-10.85)
 #define M_FORWARD 5
