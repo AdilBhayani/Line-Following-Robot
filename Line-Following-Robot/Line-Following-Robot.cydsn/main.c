@@ -60,8 +60,10 @@ int main()
     init_motion_control();
     CYGlobalIntEnable;
     init_rf();
+    init_bluetooth();
     switch_mode();
     while(1);
 }
 
 /* [] END OF FILE */
+
