@@ -64,8 +64,8 @@ CY_ISR(PID_ISR){
     #endif
     
     // Outputting PID results to Motor
-    PWM_2_WriteCompare(11.4 * OutputA + 131.13);
-    PWM_1_WriteCompare(11.4 * OutputB + 131.13);
+    PWM_2_WriteCompare((11.4 * (OutputA + InputA)) + 131.13);
+    PWM_1_WriteCompare((11.4 * (OutputB + InputB)) + 131.13);
 }
 
 /*
@@ -222,63 +222,53 @@ void robot_left_turn(){
  * Initializes two PID systems, one for
  * each motor of the robot.
  */
-void init_pid(){
-    outMin = -11;
-    outMax = 11;
-    
+void init_pid(){  
     SampleTimeInSec = 0.01;
     
-    lastInputA = InputA;
-    lastInputB = InputB;
-    outputSumA = OutputA;
-    outputSumB = OutputB;
-
-    if (outputSumA > outMax) outputSumA = outMax;
-    else if (outputSumB < outMin) outputSumB = outMin;
-    if (outputSumA > outMax) outputSumA = outMax;
-    else if (outputSumB < outMin) outputSumB = outMin;
-
-    SetPIDTunings(0.8, 0.2, 0.0);
+    InputA = 0;
+    InputB = 0;
+    ITermA = 0;
+    ITermB = 0;
+    lastErrorA = 0;
+    lastErrorB = 0;
+    
+    kp = 0.95;
+    ki = 0.000025 * SampleTimeInSec;
+    kd = 10 / SampleTimeInSec;
 }
 
 void ComputeA(){
     // Compute all the working errors
     double error = SetpointA - InputA;
     ITermA += (ki * error);
-    if (ITermA > outMax) ITermA = outMax;
-    else if (ITermA < outMin) ITermA = outMin;
-    double dInput = (InputA - lastInputA);
+    if (ITermA > M_FORWARD_MAX) ITermA = M_FORWARD_MAX;
+    else if (ITermA < M_BACKWARD_MAX) ITermA = M_BACKWARD_MAX;
+    double dInput = (error - lastErrorA);
 
     // Compute the PID Output
-    OutputA = kp * error + ITermB - kd * dInput;
-    if (OutputA > outMax) OutputA = outMax;
-    else if (OutputA < outMin) OutputA = outMin;
+    OutputA = kp * error + ITermA - kd * dInput;
+    if (OutputA > M_FORWARD_MAX) OutputA = M_FORWARD_MAX;
+    else if (OutputA < M_BACKWARD_MAX) OutputA = M_BACKWARD_MAX;
 
     // Store for next time
-    lastInputA = InputA;
+    lastErrorA = error;
 }
 
 void ComputeB(){
     // Compute all the working errors
     double error = SetpointB - InputB;
     ITermB += (ki * error);
-    if (ITermB > outMax) ITermB = outMax;
-    else if (ITermB < outMin) ITermB = outMin;
-    double dInput = (InputB - lastInputB);
+    if (ITermB > M_FORWARD_MAX) ITermB = M_FORWARD_MAX;
+    else if (ITermB < M_BACKWARD_MAX) ITermB = M_BACKWARD_MAX;
+    double dInput = (error - lastErrorB);
 
     // Compute the PID Output
     OutputB = kp * error + ITermB - kd * dInput;
-    if (OutputB > outMax) OutputB = outMax;
-    else if (OutputB < outMin) OutputB = outMin;
+    if (OutputB > M_FORWARD_MAX) OutputB = M_FORWARD_MAX;
+    else if (OutputB < M_BACKWARD_MAX) OutputB = M_BACKWARD_MAX;
 
     // Store for next time
-    lastInputB = InputB;
-}
-  
-void SetPIDTunings(double Kp, double Ki, double Kd){
-    kp = Kp;
-    ki = Ki * SampleTimeInSec;
-    kd = Kd / SampleTimeInSec;
+    lastErrorB = error;
 }
 
 /* [] END OF FILE */

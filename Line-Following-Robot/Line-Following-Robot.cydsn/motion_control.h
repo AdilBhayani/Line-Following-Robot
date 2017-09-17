@@ -28,8 +28,6 @@
 
 #ifndef MOTION_CONTROL_H_
 #define MOTION_CONTROL_H_
-    
-#define DONT_USE_PID
 
 #include <project.h>
 #include "usb.h"
@@ -59,11 +57,14 @@ volatile int16 disp_b;
 
 volatile double InputA, OutputA, SetpointA;
 volatile double InputB, OutputB, SetpointB;
-volatile double ITermA, outputSumA, lastInputA;
-volatile double ITermB, outputSumB, lastInputB;
+volatile double ITermA, lastErrorA;
+volatile double ITermB, lastErrorB;
 double kp, ki, kd;
-double outMin, outMax;
 double SampleTimeInSec;
+
+CY_ISR(QuadISR_1);
+CY_ISR(QuadISR_2);
+CY_ISR(PID_ISR);
 
 void init_motion_control();
 void m_stop();
@@ -90,7 +91,6 @@ void robot_left_turn();
 void init_pid();
 void ComputeA();
 void ComputeB();
-void SetPIDTunings(double Kp, double Ki, double Kd);
     
 #endif /* MOTION_CONTROL_H_ */
 
