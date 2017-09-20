@@ -63,21 +63,27 @@ void btPutInt(int value) {
  * Gets string from Bluetooth UART.
  */
 const char* btGetString() {
-    return "COMPSYS 301";
+    int count = 1;
+    while (bluetooth_buffer[count-1] != 10) {
+        bluetooth_buffer[count] = BT_UART_GetChar();
+        count++;
+    }
+    bluetooth_buffer[count-1] = '\0';
+    return &bluetooth_buffer[0];
 }
 
 /*
 * Gets char from Bluetooth UART.
 */
-char btGetChar() {
-    return 's';
+char btGetChar() {    
+    return BT_UART_GetChar();
 }
 
 /*
 * Gets integer from Bluetooth UART.
 */
 int btGetInt() {
-    return 99;
+    return atoi(btGetString());
 }
 
 /* [] END OF FILE */

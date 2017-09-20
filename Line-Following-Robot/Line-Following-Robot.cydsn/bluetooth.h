@@ -31,8 +31,11 @@
 
 #include <project.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
     
 #define BUF_SIZE 64
+static char bluetooth_buffer[BUF_SIZE];
 
 void init_bluetooth();
 void btPutString(char *s);
