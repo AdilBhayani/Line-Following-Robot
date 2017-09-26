@@ -61,9 +61,7 @@ int main()
     CYGlobalIntEnable;
     init_rf();
     init_bluetooth();
-    //switch_mode();
-    int val;
-    set_speed(21); 
+    switch_mode();
     while(1);
 }
 

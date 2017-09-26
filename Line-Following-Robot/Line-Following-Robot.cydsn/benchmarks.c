@@ -115,7 +115,7 @@ void benchmark_3(){
             } else {
                 m_turn_left();
                 while(center_left == 1){
-                    center_left = Sensor_2_Read();
+                    center_left = Sensor_1_Read();
                 }
                 CyDelay(100);
                 m_straight();
@@ -137,6 +137,14 @@ void benchmark_4(){
  * Speed and Localisation Test
  * =======================================*/
 void benchmark_5(){
+    set_speed(60);
+    int flag = 0;
+    int dist = 150 * 11.3397;
+    while(flag == 0) {
+        if (QuadDec_M1_GetCounter() > dist) flag = 1;
+    }
+    m_stop();
+    
     btPutString("-----------------------------------------------------\n");
     btPutString("------------ Technical Test 2 29/09/2017 ------------\n");
     btPutString("-----------------------------------------------------\n");

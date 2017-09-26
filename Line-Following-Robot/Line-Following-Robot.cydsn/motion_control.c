@@ -27,7 +27,6 @@
 */
 
 #include "motion_control.h"
-#define DONT_USE_PID
 
 /*
  * Quadrature sensor overflow interrupt.
@@ -66,8 +65,9 @@ CY_ISR(PID_ISR){
     #endif
     
     // Outputting PID results to Motor
-    PWM_2_WriteCompare(11.4 * OutputA + 131.13);
-    PWM_1_WriteCompare(11.4 * OutputB + 131.13);
+    PWM_2_WriteCompare(11.4 * (InputA + OutputA) + 131.13);
+    if (OutputB == 0) PWM_1_WriteCompare(131.13);
+    else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 128.93);
 }
 
 /*
@@ -88,10 +88,10 @@ void init_motion_control() {
     quad_b_old = 0;
     QuadDec_M1_Start();
     QuadDec_M2_Start();
-    isr_quadA_StartEx(QuadISR_1);
-    isr_quadB_StartEx(QuadISR_2);
     QuadDec_M1_SetInterruptMask(QuadDec_M1_COUNTER_OVERFLOW);
     QuadDec_M2_SetInterruptMask(QuadDec_M2_COUNTER_OVERFLOW);
+    isr_quadA_StartEx(QuadISR_1);
+    isr_quadB_StartEx(QuadISR_2);
     
     printValue = 0;
     
@@ -198,15 +198,6 @@ void set_speed(float speed){
 }
 
 /*
- * Sets the distance the robot should move to in cm
- */
-void set_distance(float distance){
-    distance = distance * 11.3397;
-    QuadDec_M1_SetCounter(32767-distance);
-    QuadDec_M2_SetCounter(32767-distance);
-}
-
-/*
  * Robot moves forward value number of grid spaces.
  */
 void robot_forward(uint8 value){ 
@@ -264,7 +255,7 @@ void init_pid(){
     
     kp = 0.95;
     ki = 0.000025 * SampleTimeInSec;
-    kd = 10 / SampleTimeInSec;
+    kd = 2 / SampleTimeInSec;
 }
 
 void ComputeA(){
