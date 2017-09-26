@@ -27,6 +27,7 @@
 */
 
 #include "motion_control.h"
+#define DONT_USE_PID
 
 /*
  * Quadrature sensor overflow interrupt.
@@ -59,13 +60,14 @@ CY_ISR(PID_ISR){
         ComputeA();
         ComputeB();
     #else
+        track_quadrature();
         OutputA = SetpointA;
         OutputB = SetpointB;
     #endif
     
     // Outputting PID results to Motor
-    PWM_2_WriteCompare((11.4 * (OutputA + InputA)) + 131.13);
-    PWM_1_WriteCompare((11.4 * (OutputB + InputB)) + 131.13);
+    PWM_2_WriteCompare(11.4 * OutputA + 131.13);
+    PWM_1_WriteCompare(11.4 * OutputB + 131.13);
 }
 
 /*
@@ -90,6 +92,8 @@ void init_motion_control() {
     isr_quadB_StartEx(QuadISR_2);
     QuadDec_M1_SetInterruptMask(QuadDec_M1_COUNTER_OVERFLOW);
     QuadDec_M2_SetInterruptMask(QuadDec_M2_COUNTER_OVERFLOW);
+    
+    printValue = 0;
     
     init_pid();
     Timer_1_Start();
@@ -160,20 +164,46 @@ void m_sleep(){
  * Keeps track of quadrature values.
  */
 void track_quadrature(){
-    int16 count_a = QuadDec_M1_GetCounter();
-    int16 count_b = QuadDec_M2_GetCounter();
-    disp_a = count_a - quad_a_old;
-    disp_b = count_b - quad_b_old;
-    quad_a_old = count_a;
-    quad_b_old = count_b;
+    float count_a = (QuadDec_M1_GetCounter() * 1.0);
+    float count_b = (QuadDec_M2_GetCounter() * 1.0);
+    if (count_a > quad_a_old + 3) {
+        disp_a = count_a - quad_a_old;
+        quad_a_old = count_a;
+        printValue = 1;
+    }
+    if (count_b > quad_b_old + 3) {
+        disp_b = count_b - quad_b_old;
+        quad_b_old = count_b;
+        printValue = 1;
+    }
 }
 
 /*
- * Calculates current speed of the robot over the last 10ms
- * and returns the value as a float in mm/s
+ * Calculates current speed of the robot over the last 30ms
+ * and returns the value as a float in cm/s
  */
-float calc_speed(){
-    return disp_a * 2.75578 * WHEELRADIUS; // 4 * 3 * 19 * 100 * 2 * pi
+void calc_speed(){ 
+    if (printValue == 1){
+        robot_speed = disp_a * 8.81850569;
+        printValue = 0;
+    }
+}
+
+/*
+ * Sets the current straight line speed of the robot in cm/s
+ */
+void set_speed(float speed){
+    SetpointA = (double)(speed / 6.912442);
+    SetpointB = SetpointA;
+}
+
+/*
+ * Sets the distance the robot should move to
+ */
+void set_distance(float distance){
+    distance = ((distance)/(6.2831853*WHEELRADIUS))*228;
+    QuadDec_M1_SetCounter(32767-distance);
+    QuadDec_M2_SetCounter(32767-distance);
 }
 
 /*

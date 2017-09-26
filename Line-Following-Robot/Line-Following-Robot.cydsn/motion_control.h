@@ -50,10 +50,12 @@
 #define WHEELRADIUS 32    
 #define GRIDSIZE 30
 
-static volatile int16 quad_a_old;
-volatile int16 quad_b_old;
-volatile int16 disp_a;
-volatile int16 disp_b;
+static volatile float quad_a_old;
+static volatile float quad_b_old;
+static volatile float disp_a;
+static volatile float disp_b;
+static volatile float printValue;
+float robot_speed;
 
 volatile double InputA, OutputA, SetpointA;
 volatile double InputB, OutputB, SetpointB;
@@ -81,7 +83,9 @@ void m_turn_right();
 void m_sleep();
 
 void track_quadrature();
-float calc_speed();
+void calc_speed();
+void set_speed(float speed);
+void set_distance(float distance);
 
 void robot_forward(uint8 value);
 void robot_backward(uint8 value);

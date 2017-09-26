@@ -137,7 +137,19 @@ void benchmark_4(){
  * Speed and Localisation Test
  * =======================================*/
 void benchmark_5(){
-    return;
+    btPutString("-----------------------------------------------------\n");
+    btPutString("------------ Technical Test 2 29/09/2017 ------------\n");
+    btPutString("-----------------------------------------------------\n");
+    btPutString("Copyright (c) 2017, Alex Andela, Adil Bhayani, \n Vaishnavi Muppavaram, Sakayan Sitsabesan. All rights reserved.\n\n");
+    btPutString("The maximum speed this robot is capable of is: 125mm/s\n");
+    btPutString("Please enter the desired speed in mm/s: ");
+    int desiredSpeed = btGetInt();
+    btPutString("Please enter the desired distance in mm: ");
+    int desiredDistance = btGetInt();
+    set_distance(desiredDistance);
+    set_speed(desiredSpeed);
+    btPutString("Thank you for using the Pacman Self Service Benchmark 5 \n System.");
+    btPutString("We hope you enjoyed your service and look forward \n to working with you again in the future.\n");
 }
 
 /* [] END OF FILE */

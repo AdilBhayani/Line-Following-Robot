@@ -56,12 +56,14 @@ void switch_mode(){
 
 int main()
 {
-    init_battery_management();
+    //init_battery_management();
     init_motion_control();
     CYGlobalIntEnable;
     init_rf();
     init_bluetooth();
-    switch_mode();
+    //switch_mode();
+    int val;
+    set_speed(21); 
     while(1);
 }
 
