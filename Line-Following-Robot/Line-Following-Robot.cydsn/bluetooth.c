@@ -69,7 +69,7 @@ const char* btGetString() {
         count++;
     }
     bluetooth_buffer[count-1] = '\0';
-    return &bluetooth_buffer[0];
+    return &bluetooth_buffer[1];
 }
 
 /*

@@ -15,17 +15,16 @@
         * void robot_backward(uint8 value);
         * void robot_right_turn();
         * void robot_left_turn();
-        * Note: These functions will only return once the movement has been finished.
+        * void robot_full_turn();
     * Use 'system_state' to access RF data
     * Sample map and food list in pacman.c
 
 * Bluetooth Communication (వైష్ణవి)
-    * Function definitions to abstract two way communication over Bluetooth have been added
-    * Please complete the functions to enable this
-    * Treat as if this is just a normal UART port (BT_UART)
+    * Please test and fix btGetString & btGetInt
+    * Feel free to start from scratch
 
 * Motion Control Code (Alexandra)
-    * Complete the four new functions mentioned above
-    * Use quadrature readings to ensure both turns are exactly 90 and travelled distance is a multiple of grid units
-    * Some calibration will be required
-    * (Don't really know grid size, just make a good guess and keep it flexible (ie. maybe some #define ??))
+    * Grid size is in pixels and is approximately 4 pixels per cm
+    * You can't recall the init functions all the time
+    * Please try to bring an innovative solution
+    * Also you can't just go and set the quad values to your liking, because other stuff is relying on that being consistent
