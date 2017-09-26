@@ -198,10 +198,10 @@ void set_speed(float speed){
 }
 
 /*
- * Sets the distance the robot should move to
+ * Sets the distance the robot should move to in cm
  */
 void set_distance(float distance){
-    distance = ((distance)/(6.2831853*WHEELRADIUS))*228;
+    distance = distance * 11.3397;
     QuadDec_M1_SetCounter(32767-distance);
     QuadDec_M2_SetCounter(32767-distance);
 }
