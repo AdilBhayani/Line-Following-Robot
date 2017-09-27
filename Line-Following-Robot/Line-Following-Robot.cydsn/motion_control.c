@@ -63,11 +63,23 @@ CY_ISR(PID_ISR){
         OutputA = SetpointA;
         OutputB = SetpointB;
     #endif
-    
-    // Outputting PID results to Motor
-    PWM_2_WriteCompare(11.4 * (InputA + OutputA) + 131.13);
-    if (OutputB == 0) PWM_1_WriteCompare(131);
-    else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 128.93);
+    if (startCounter > 0){
+        ramp_loader();
+    }else{
+    //Outputting PID results to Motor
+        if (OutputA == 0) PWM_2_WriteCompare(131);
+        else PWM_2_WriteCompare(11.43 * (InputA + OutputA) + 131.13 + 0.15 * runningSum);
+        if (OutputB == 0) PWM_1_WriteCompare(131);
+        else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 128.9 - 0.15 * runningSum);
+        btPutString("\nRunning sum:");
+        btPutInt(runningSum);
+        btPutString("\nM1:");
+        btPutInt(QuadDec_M1_GetCounter());
+        btPutString("\nM2:");
+        btPutInt(QuadDec_M2_GetCounter());
+        //PWM_2_WriteCompare(255);
+        //PWM_1_WriteCompare(255);
+    }
 }
 
 /*
@@ -99,6 +111,49 @@ void init_motion_control() {
     Timer_1_Start();
     isr_Timer1_StartEx(PID_ISR);
 }
+
+void ramp_loader(){
+        if (startCounter == 12){
+            PWM_2_WriteCompare(175);
+            PWM_1_WriteCompare(175);
+        }else if (startCounter == 11){
+            PWM_2_WriteCompare(185);
+            PWM_1_WriteCompare(185);
+        }else if (startCounter == 10){
+            PWM_2_WriteCompare(195);
+            PWM_1_WriteCompare(195);
+        }else if (startCounter == 9){
+            PWM_2_WriteCompare(205);
+            PWM_1_WriteCompare(205);
+        }else if (startCounter == 8){
+            PWM_2_WriteCompare(210);
+            PWM_1_WriteCompare(210);
+        }else if (startCounter == 7){
+            PWM_2_WriteCompare(215);
+            PWM_1_WriteCompare(215);
+        }else if (startCounter == 6){
+            PWM_2_WriteCompare(220);
+            PWM_1_WriteCompare(220);
+        }else if (startCounter == 5){
+            PWM_2_WriteCompare(225);
+            PWM_1_WriteCompare(225);
+        }else if (startCounter == 4){
+            PWM_2_WriteCompare(230);
+            PWM_1_WriteCompare(230);
+        }else if (startCounter == 3){
+            PWM_2_WriteCompare(235);
+            PWM_1_WriteCompare(235);
+        }else if (startCounter == 2){
+            PWM_2_WriteCompare(245);
+            PWM_1_WriteCompare(245);
+        }else if (startCounter == 1){
+            PWM_2_WriteCompare(255);
+            PWM_1_WriteCompare(255);
+        }
+        startCounter--;
+        runningSum = 0;
+}
+
 
 void m_stop(){
     SetpointA = STOP_MOTOR;
@@ -166,16 +221,12 @@ void m_sleep(){
 void track_quadrature(){
     float count_a = (QuadDec_M1_GetCounter() * 1.0);
     float count_b = (QuadDec_M2_GetCounter() * 1.0);
-    if (count_a > quad_a_old + 3) {
-        disp_a = count_a - quad_a_old;
-        quad_a_old = count_a;
-        printValue = 1;
-    }
-    if (count_b > quad_b_old + 3) {
-        disp_b = count_b - quad_b_old;
-        quad_b_old = count_b;
-        printValue = 1;
-    }
+    disp_a = count_a - quad_a_old;
+    quad_a_old = count_a;
+    disp_b = count_b - quad_b_old;
+    quad_b_old = count_b;
+    printValue = 1;
+    runningSum += disp_a - disp_b;
 }
 
 /*
@@ -261,22 +312,23 @@ void robot_turn(){
  * Initializes two PID systems, one for
  * each motor of the robot.
  */
-void init_pid(){  
-    SampleTimeInSec = 0.01;
-    
+void init_pid(){      
     InputA = 0;
     InputB = 0;
     ITermA = 0;
     ITermB = 0;
     lastErrorA = 0;
     lastErrorB = 0;
+    runningSum = 0;
     
-    kp = 0.95;
+    kpa = 0.95;
+    kpb = 0.95;
     ki = 0.000025 * SampleTimeInSec;
     kd = 2 / SampleTimeInSec;
 }
 
 void ComputeA(){
+    
     // Compute all the working errors
     double error = SetpointA - InputA;
     ITermA += (ki * error);
@@ -285,7 +337,7 @@ void ComputeA(){
     double dInput = (error - lastErrorA);
 
     // Compute the PID Output
-    OutputA = kp * error + ITermA - kd * dInput;
+    OutputA = kpa * error + ITermA - kd * dInput;
     if (OutputA > M_FORWARD_MAX) OutputA = M_FORWARD_MAX;
     else if (OutputA < M_BACKWARD_MAX) OutputA = M_BACKWARD_MAX;
 
@@ -302,7 +354,7 @@ void ComputeB(){
     double dInput = (error - lastErrorB);
 
     // Compute the PID Output
-    OutputB = kp * error + ITermB - kd * dInput;
+    OutputB = kpb * error + ITermB - kd * dInput;
     if (OutputB > M_FORWARD_MAX) OutputB = M_FORWARD_MAX;
     else if (OutputB < M_BACKWARD_MAX) OutputB = M_BACKWARD_MAX;
 

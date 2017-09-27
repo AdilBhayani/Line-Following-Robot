@@ -150,23 +150,24 @@ void benchmark_5(){
     btPutString("The maximum speed this robot is capable of is: 125mm/s\n");
     btPutString("Please enter the desired speed in mm/s: ");
     //uint8 desiredSpeed = btGetInt();
-    desiredSpeed = 60;
+    desiredSpeed = 70;
     btPutString("\nPlease enter the desired distance in mm: ");
     //uint8 desiredDistance = btGetInt();
     int desiredDistance = 150;
     btPutString("\nThank you for using the Pacman Self Service Benchmark 5 \n System.");
     btPutString("We hope you enjoyed your service and look forward \n to working with you again in the future.\n");
-    set_speed_A(desiredSpeed);
-    set_speed_B(desiredSpeed);
+    set_speed_A(desiredSpeed * 1.0);
+    set_speed_B(desiredSpeed * 1.0);
     uint8 flag = 0;
     int dist = (desiredDistance - 4) * 11.3397;
     Timer_0_Start();
     isr_Timer0_StartEx(LINE_FOLLOWING);
-    
+    startCounter = 12;
     while(flag == 0) {
-        if (QuadDec_M1_GetCounter() > dist) flag = 1;
+        if (QuadDec_M1_GetCounter() > dist){
+            flag = 1;
+        }
     }
-    
     m_sleep();
     Timer_0_Stop();
     isr_Timer0_Stop();

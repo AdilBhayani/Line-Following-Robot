@@ -61,8 +61,11 @@ int main()
     init_rf();
     init_bluetooth();
     CyDelay(1000);
-    switch_mode();
-    while(1);
+    m_stop();
+    //m_sleep();
+    //m_straight_fast();
+    //switch_mode();
+    benchmark_5();
 }
 
 /* [] END OF FILE */

@@ -45,7 +45,7 @@
 #define M_FORWARD_SLOW 3
 #define M_BACKWARD (-5)
 #define M_BACKWARD_SLOW (-3)
-    
+#define SampleTimeInSec 0.01
 // Following defines are in mm
 #define WHEELRADIUS 32    
 #define GRIDSIZE 30
@@ -61,9 +61,10 @@ volatile double InputA, OutputA, SetpointA;
 volatile double InputB, OutputB, SetpointB;
 volatile double ITermA, lastErrorA;
 volatile double ITermB, lastErrorB;
-double kp, ki, kd;
-double SampleTimeInSec;
-
+double kpa, kpb, ki, kd;
+double runningSum;
+int startCounter;
+    
 CY_ISR(QuadISR_1);
 CY_ISR(QuadISR_2);
 CY_ISR(PID_ISR);
@@ -81,6 +82,7 @@ void m_adjust_right_minor();
 void m_turn_left();
 void m_turn_right();
 void m_sleep();
+void ramp_loader();
 
 void track_quadrature();
 void calc_speed();
