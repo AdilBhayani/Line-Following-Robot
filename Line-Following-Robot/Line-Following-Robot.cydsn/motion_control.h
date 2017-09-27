@@ -91,6 +91,7 @@ void robot_forward(uint8 value);
 void robot_backward(uint8 value);
 void robot_right_turn();
 void robot_left_turn();
+void robot_turn();
 
 void init_pid();
 void ComputeA();

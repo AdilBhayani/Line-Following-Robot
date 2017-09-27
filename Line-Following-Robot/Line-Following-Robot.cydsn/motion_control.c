@@ -202,9 +202,10 @@ void set_speed(float speed){
  */
 void robot_forward(uint8 value){ 
     uint16 distance = ((GRIDSIZE*value)/(6.2831853*WHEELRADIUS))*3*4*19;
-    QuadDec_M1_SetCounter(32767-distance);
-    m_straight_fast();
-    while (SetpointA != 0);
+    int16 originalCount = QuadDec_M1_GetCounter();
+    m_straight();
+    while (QuadDec_M1_GetCounter() > originalCount + distance);
+    m_stop();        
 }
 
 /*
@@ -212,20 +213,21 @@ void robot_forward(uint8 value){
  */
 void robot_backward(uint8 value){
     uint16 distance = ((GRIDSIZE*value)/(6.2831853*WHEELRADIUS))*3*4*19;
-    QuadDec_M1_SetCounter(-(32767-distance));
+    int16 originalCount = QuadDec_M1_GetCounter();
     m_reverse();
-    while (SetpointA != 0);
+    while (QuadDec_M1_GetCounter() < (originalCount - distance));
+    m_stop();   
 }
 
 /*
  * Robot makes a 90° turn right.
  */
 void robot_right_turn(){ 
-    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19; 
-    QuadDec_M1_SetCounter(32767-distance);
+    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19;
+    int16 originalCount = QuadDec_M1_GetCounter();
     m_turn_right();
-    while (SetpointB != 0);
-    QuadDec_M1_SetCounter(0);
+    while (QuadDec_M1_GetCounter() > (originalCount + distance));
+    m_stop();
 }
 
 /*
@@ -233,10 +235,23 @@ void robot_right_turn(){
  */
 void robot_left_turn(){
     double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19;
-    QuadDec_M2_SetCounter(32767-distance);
+    int16 originalCount = QuadDec_M2_GetCounter();
     m_turn_left();
-    while (SetpointA != 0);
-    QuadDec_M2_SetCounter(0);
+    while (QuadDec_M2_GetCounter() > (originalCount + distance));
+    m_stop();
+    
+}
+
+/*
+ * Robot makes a 180° turn.
+ */
+void robot_turn(){
+    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*8*19;
+    int16 originalCount = QuadDec_M1_GetCounter();
+    m_turn_right();
+    while (QuadDec_M1_GetCounter() > (originalCount + distance));
+    m_stop();    
+    
 }
 
 /*
