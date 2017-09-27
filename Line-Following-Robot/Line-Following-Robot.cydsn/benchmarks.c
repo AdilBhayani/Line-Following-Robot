@@ -29,12 +29,45 @@
 #include "benchmarks.h"
 
 /* ========================================
+ * Line Following ISR - FRONT 4 SENSORS ONLY
+ * =======================================*/
+CY_ISR(LINE_FOLLOWING){
+    isr_left_sensor = Sensor_3_Read();
+    isr_right_sensor = Sensor_5_Read();
+    isr_center_left = Sensor_1_Read();
+    isr_center_right = Sensor_2_Read();
+    if (isr_center_left > 0){
+        if (isr_center_right > 0){
+            set_speed(desiredSpeed);
+        } else {
+            m_adjust_left_minor();
+        }
+    } else if (isr_center_right > 0){
+        m_adjust_right_minor();
+    } else if (isr_left_sensor > 0)  {
+        m_adjust_left_major();
+    } else if (isr_right_sensor > 0){
+        m_adjust_right_major();
+    } else {
+        m_sleep();
+        Timer_0_Stop();
+        isr_Timer0_Stop();
+    }
+}
+
+/* ========================================
  * Open Loop Line Test
  * =======================================*/
 void benchmark_1(){
     CyDelay(1000);
-    QuadDec_M1_SetCounter(31293);
+    uint8 flag;
+    uint8 dist = 105 * 11.3397;
     m_straight_fast();
+    
+    while(flag == 0) {
+        if (QuadDec_M1_GetCounter() > dist) flag = 1;
+    }
+    m_sleep();
     return;
 }
 
@@ -43,32 +76,8 @@ void benchmark_1(){
  * =======================================*/
 void benchmark_2(){
     CyDelay(1000);
-    uint8 left_sensor = 0;
-    uint8 right_sensor = 0;
-    uint8 center_left = 0;
-    uint8 center_right = 0;
-    while(1) {
-        CyDelayUs(100);
-        left_sensor = Sensor_3_Read();
-        right_sensor = Sensor_5_Read();
-        center_left = Sensor_1_Read();
-        center_right = Sensor_2_Read();
-        if (center_left > 0){
-            if (center_right > 0){
-                m_straight();
-            } else {
-                m_adjust_left_minor();
-            }
-        } else if (center_right > 0){
-            m_adjust_right_minor();
-        } else if (left_sensor > 0)  {
-            m_adjust_left_major();
-        } else if (right_sensor > 0){
-            m_adjust_right_major();
-        } else {
-            m_sleep();
-        }
-    }
+    Timer_0_Start();
+    isr_Timer0_StartEx(LINE_FOLLOWING);  
     return;
 }
 
@@ -136,28 +145,34 @@ void benchmark_4(){
 /* ========================================
  * Speed and Localisation Test
  * =======================================*/
-void benchmark_5(){
-    set_speed(60);
-    int flag = 0;
-    int dist = 150 * 11.3397;
-    while(flag == 0) {
-        if (QuadDec_M1_GetCounter() > dist) flag = 1;
-    }
-    m_stop();
-    
+void benchmark_5(){ 
     btPutString("-----------------------------------------------------\n");
     btPutString("------------ Technical Test 2 29/09/2017 ------------\n");
     btPutString("-----------------------------------------------------\n");
     btPutString("Copyright (c) 2017, Alex Andela, Adil Bhayani, \n Vaishnavi Muppavaram, Sakayan Sitsabesan. All rights reserved.\n\n");
     btPutString("The maximum speed this robot is capable of is: 125mm/s\n");
     btPutString("Please enter the desired speed in mm/s: ");
-    int desiredSpeed = btGetInt();
-    btPutString("Please enter the desired distance in mm: ");
-    int desiredDistance = btGetInt();
-    set_distance(desiredDistance);
-    set_speed(desiredSpeed);
-    btPutString("Thank you for using the Pacman Self Service Benchmark 5 \n System.");
+    //uint8 desiredSpeed = btGetInt();
+    desiredSpeed = 60;
+    btPutString("\nPlease enter the desired distance in mm: ");
+    //uint8 desiredDistance = btGetInt();
+    uint8 desiredDistance = 150;
+    btPutString("\nThank you for using the Pacman Self Service Benchmark 5 \n System.");
     btPutString("We hope you enjoyed your service and look forward \n to working with you again in the future.\n");
+    set_speed(desiredSpeed);
+    uint8 flag = 0;
+    uint8 dist = desiredDistance * 11.3397;
+    CyDelay(1000);
+    Timer_0_Start();
+    isr_Timer0_StartEx(LINE_FOLLOWING);
+    
+    while(flag == 0) {
+        if (QuadDec_M1_GetCounter() > dist) flag = 1;
+    }
+    
+    m_sleep();
+    Timer_0_Stop();
+    isr_Timer0_Stop();
 }
 
 /* [] END OF FILE */

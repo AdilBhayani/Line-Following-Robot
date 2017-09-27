@@ -35,6 +35,8 @@
 #include "pacman.h"
 
 void switch_mode(){
+    if (Switch_4_Read() > 0) init_usb();
+    
     if (Switch_1_Read() > 0) {
         if (Switch_2_Read() > 0) {
             if (Switch_3_Read() > 0) play_pacman_3();
@@ -50,13 +52,10 @@ void switch_mode(){
         if (Switch_3_Read() > 0) benchmark_5();
         else benchmark_1();
     }
-    
-    if (Switch_4_Read() > 0) init_usb();
 }
 
 int main()
 {
-    //init_battery_management();
     init_motion_control();
     CYGlobalIntEnable;
     init_rf();
