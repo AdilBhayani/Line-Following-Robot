@@ -32,22 +32,19 @@
  * Line Following ISR - FRONT 4 SENSORS ONLY
  * =======================================*/
 CY_ISR(LINE_FOLLOWING){
-    isr_left_sensor = Sensor_3_Read();
-    isr_right_sensor = Sensor_5_Read();
     isr_center_left = Sensor_1_Read();
     isr_center_right = Sensor_2_Read();
     if (isr_center_left > 0){
         if (isr_center_right > 0){
-            set_speed(desiredSpeed);
+            set_speed_A(desiredSpeed);
+            set_speed_B(desiredSpeed);
         } else {
-            m_adjust_left_minor();
+            set_speed_A(desiredSpeed);
+            set_speed_B(desiredSpeed * 0.8);
         }
     } else if (isr_center_right > 0){
-        m_adjust_right_minor();
-    } else if (isr_left_sensor > 0)  {
-        m_adjust_left_major();
-    } else if (isr_right_sensor > 0){
-        m_adjust_right_major();
+        set_speed_A(desiredSpeed * 0.8);
+        set_speed_B(desiredSpeed);
     } else {
         m_sleep();
         Timer_0_Stop();
@@ -156,13 +153,13 @@ void benchmark_5(){
     desiredSpeed = 60;
     btPutString("\nPlease enter the desired distance in mm: ");
     //uint8 desiredDistance = btGetInt();
-    uint8 desiredDistance = 150;
+    int desiredDistance = 150;
     btPutString("\nThank you for using the Pacman Self Service Benchmark 5 \n System.");
     btPutString("We hope you enjoyed your service and look forward \n to working with you again in the future.\n");
-    set_speed(desiredSpeed);
+    set_speed_A(desiredSpeed);
+    set_speed_B(desiredSpeed);
     uint8 flag = 0;
-    uint8 dist = desiredDistance * 11.3397;
-    CyDelay(1000);
+    int dist = (desiredDistance - 4) * 11.3397;
     Timer_0_Start();
     isr_Timer0_StartEx(LINE_FOLLOWING);
     

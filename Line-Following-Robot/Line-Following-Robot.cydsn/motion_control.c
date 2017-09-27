@@ -66,8 +66,8 @@ CY_ISR(PID_ISR){
     
     // Outputting PID results to Motor
     PWM_2_WriteCompare(11.4 * (InputA + OutputA) + 131.13);
-    if (OutputB == 0) PWM_1_WriteCompare(131.13);
-    else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 129.05);
+    if (OutputB == 0) PWM_1_WriteCompare(131);
+    else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 128.93);
 }
 
 /*
@@ -192,9 +192,12 @@ void calc_speed(){
 /*
  * Sets the current straight line speed of the robot in cm/s
  */
-void set_speed(float speed){
+void set_speed_A(float speed){
     SetpointA = (double)(speed / 6.912442);
-    SetpointB = SetpointA;
+}
+
+void set_speed_B(float speed){
+    SetpointB = (double)(speed / 6.912442);
 }
 
 /*
@@ -268,9 +271,9 @@ void init_pid(){
     lastErrorA = 0;
     lastErrorB = 0;
     
-    kp = 0.99;
+    kp = 0.95;
     ki = 0.000025 * SampleTimeInSec;
-    kd = 10 / SampleTimeInSec;
+    kd = 2 / SampleTimeInSec;
 }
 
 void ComputeA(){

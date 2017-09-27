@@ -34,7 +34,7 @@
 #include "usb.h"
 #include "pacman.h"
 
-void switch_mode(){
+void switch_mode(){  
     if (Switch_4_Read() > 0) init_usb();
     
     if (Switch_1_Read() > 0) {
@@ -51,7 +51,7 @@ void switch_mode(){
     } else {
         if (Switch_3_Read() > 0) benchmark_5();
         else benchmark_1();
-    }
+    }    
 }
 
 int main()
@@ -60,6 +60,7 @@ int main()
     CYGlobalIntEnable;
     init_rf();
     init_bluetooth();
+    CyDelay(1000);
     switch_mode();
     while(1);
 }

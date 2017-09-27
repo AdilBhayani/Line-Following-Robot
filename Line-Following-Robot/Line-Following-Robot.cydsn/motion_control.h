@@ -84,7 +84,8 @@ void m_sleep();
 
 void track_quadrature();
 void calc_speed();
-void set_speed(float speed);
+void set_speed_A(float speed);
+void set_speed_B(float speed);
 
 void robot_forward(uint8 value);
 void robot_backward(uint8 value);
