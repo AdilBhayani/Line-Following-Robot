@@ -3704,7 +3704,7 @@
     </Group>
     <Group key="90c09b0d-d37d-484d-ae00-d4bdbb3e593d">
       <Group key="0">
-        <Data key="Port Format" value="12,1" />
+        <Data key="Port Format" value="12,7" />
       </Group>
     </Group>
     <Group key="91b8621d-0ca0-41bf-97f9-479fcdc535de">
@@ -3754,7 +3754,7 @@
     </Group>
     <Group key="1425177d-0d0e-4468-8bcc-e638e5509a9b">
       <Group key="0">
-        <Data key="Port Format" value="12,7" />
+        <Data key="Port Format" value="12,1" />
       </Group>
     </Group>
     <Group key="3076204a-988e-43fd-9383-4e3241436613">

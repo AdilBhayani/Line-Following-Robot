@@ -60,19 +60,6 @@ void btPutInt(int value) {
 }
 
 /*
- * Gets string from Bluetooth UART.
- */
-const char* btGetString() {
-    int count = 1;
-    while (bluetooth_buffer[count-1] != 10) {
-        bluetooth_buffer[count] = BT_UART_GetChar();
-        count++;
-    }
-    bluetooth_buffer[count-1] = '\0';
-    return &bluetooth_buffer[1];
-}
-
-/*
 * Gets char from Bluetooth UART.
 */
 char btGetChar() {    
@@ -82,8 +69,27 @@ char btGetChar() {
 /*
 * Gets integer from Bluetooth UART.
 */
-int btGetInt() {
-    return atoi(btGetString());
+uint16 btGetInt() {
+    char cha;
+    uint16 enn;
+    cha = BT_UART_GetChar();
+    while ((cha > 57) || (cha < 48)) cha = BT_UART_GetChar();
+    enn = cha - 48;
+    cha = BT_UART_GetChar();
+    while ((cha > 57) || ((cha < 48) && (cha > 13)) || (cha < 13)) cha = BT_UART_GetChar();
+    // Single digit number returns here
+    if (cha == 13) return enn;
+    
+    enn = (enn * 10) + (cha - 48);
+    cha = BT_UART_GetChar();
+    while ((cha > 57) || ((cha < 48) && (cha > 13)) || (cha < 13)) cha = BT_UART_GetChar();
+    // Double digit number returns here
+    if (cha == 13) return enn;
+    enn = (enn * 10) + (cha - 48);
+    cha = BT_UART_GetChar();
+    while (cha != 13) cha = BT_UART_GetChar();
+    return enn;    
+
 }
 
 /* [] END OF FILE */

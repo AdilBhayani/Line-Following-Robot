@@ -71,14 +71,6 @@ CY_ISR(PID_ISR){
         else PWM_2_WriteCompare(11.43 * (InputA + OutputA) + 131.13 + 0.15 * runningSum);
         if (OutputB == 0) PWM_1_WriteCompare(131);
         else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 128.9 - 0.15 * runningSum);
-        btPutString("\nRunning sum:");
-        btPutInt(runningSum);
-        btPutString("\nM1:");
-        btPutInt(QuadDec_M1_GetCounter());
-        btPutString("\nM2:");
-        btPutInt(QuadDec_M2_GetCounter());
-        //PWM_2_WriteCompare(255);
-        //PWM_1_WriteCompare(255);
     }
 }
 

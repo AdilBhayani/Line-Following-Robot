@@ -41,9 +41,8 @@ void init_bluetooth();
 void btPutString(char *s);
 void btPutChar(char c);
 void btPutInt(int value);
-const char* btGetString();
 char btGetChar();
-int btGetInt();
+uint16 btGetInt();
     
 #endif /* BLUETOOTH_H_ */
 
