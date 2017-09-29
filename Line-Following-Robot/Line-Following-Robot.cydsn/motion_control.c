@@ -32,11 +32,46 @@
  * Quadrature sensor overflow interrupt.
  * Stops motors and puts them to sleep.
  */
-CY_ISR(QuadISR) {
-    LED_Write(1);
+CY_ISR(QuadISR_1) {
     m_stop();
-    m_sleep();
-    flag = 0;
+}
+
+/*
+ * Quadrature sensor overflow interrupt.
+ * Stops motors and puts them to sleep.
+ */
+CY_ISR(QuadISR_2) {
+    m_stop();
+}
+
+/*
+ * PID interrupt. Gets inputs, compute 
+ * new PID values, and outputs to PWM.
+ */
+CY_ISR(PID_ISR){
+    #ifndef DONT_USE_PID
+        // Getting inputs for PID
+        track_quadrature();
+        InputA = ((double)disp_a / 228);
+        InputB = ((double)disp_b / 228);
+        
+        // Computing PID calculations
+        ComputeA();
+        ComputeB();
+    #else
+        track_quadrature();
+        OutputA = SetpointA;
+        OutputB = SetpointB;
+    #endif
+    if (startCounter > 0){
+        ramp_loader();
+    }else{
+    //Outputting PID results to Motor
+        if (OutputA == 0) PWM_2_WriteCompare(131);
+        else PWM_2_WriteCompare(11.43 * (InputA + OutputA) + 131.13 + 0.15 * runningSum);
+        if (OutputB == 0) PWM_1_WriteCompare(131);
+        else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 128.9 - 0.15 * runningSum);
+    }
 }
 
 /*
@@ -52,94 +87,271 @@ CY_ISR(QuadISR) {
 void init_motion_control() {
     PWM_1_Start();
     PWM_2_Start();
-    m_stop();
+    
     quad_a_old = 0;
     quad_b_old = 0;
-    quad_isr_StartEx(QuadISR);
-    QuadDec_M1_SetInterruptMask(QuadDec_M1_COUNTER_OVERFLOW);
     QuadDec_M1_Start();
     QuadDec_M2_Start();
+    QuadDec_M1_SetInterruptMask(QuadDec_M1_COUNTER_OVERFLOW);
+    QuadDec_M2_SetInterruptMask(QuadDec_M2_COUNTER_OVERFLOW);
+    isr_quadA_StartEx(QuadISR_1);
+    isr_quadB_StartEx(QuadISR_2);
+    
+    printValue = 0;
+    
+    init_pid();
+    Timer_1_Start();
+    isr_Timer1_StartEx(PID_ISR);
 }
 
+void ramp_loader(){
+        if (startCounter == 12){
+            PWM_2_WriteCompare(175);
+            PWM_1_WriteCompare(175);
+        }else if (startCounter == 11){
+            PWM_2_WriteCompare(185);
+            PWM_1_WriteCompare(185);
+        }else if (startCounter == 10){
+            PWM_2_WriteCompare(195);
+            PWM_1_WriteCompare(195);
+        }else if (startCounter == 9){
+            PWM_2_WriteCompare(205);
+            PWM_1_WriteCompare(205);
+        }else if (startCounter == 8){
+            PWM_2_WriteCompare(210);
+            PWM_1_WriteCompare(210);
+        }else if (startCounter == 7){
+            PWM_2_WriteCompare(215);
+            PWM_1_WriteCompare(215);
+        }else if (startCounter == 6){
+            PWM_2_WriteCompare(220);
+            PWM_1_WriteCompare(220);
+        }else if (startCounter == 5){
+            PWM_2_WriteCompare(225);
+            PWM_1_WriteCompare(225);
+        }else if (startCounter == 4){
+            PWM_2_WriteCompare(230);
+            PWM_1_WriteCompare(230);
+        }else if (startCounter == 3){
+            PWM_2_WriteCompare(235);
+            PWM_1_WriteCompare(235);
+        }else if (startCounter == 2){
+            PWM_2_WriteCompare(245);
+            PWM_1_WriteCompare(245);
+        }else if (startCounter == 1){
+            PWM_2_WriteCompare(255);
+            PWM_1_WriteCompare(255);
+        }
+        startCounter--;
+        runningSum = 0;
+}
+
+
 void m_stop(){
-    PWM_1_WriteCompare(STOP_MOTOR);
-    PWM_2_WriteCompare(STOP_MOTOR);
+    SetpointA = STOP_MOTOR;
+    SetpointB = STOP_MOTOR;
 }
 
 void m_straight(){
-    PWM_1_WriteCompare(M1_FORWARD);
-    PWM_2_WriteCompare(M2_FORWARD);
+    SetpointA = M_FORWARD;
+    SetpointB = M_FORWARD;
 }
 
 void m_straight_slow(){
-    PWM_1_WriteCompare(M1_FORWARD_SLOW);
-    PWM_2_WriteCompare(M2_FORWARD_SLOW);
+    SetpointA = M_FORWARD_SLOW;
+    SetpointB = M_FORWARD_SLOW;
 }
 
 void m_straight_fast(){
-    PWM_1_WriteCompare(M_FORWARD_MAX);
-    PWM_2_WriteCompare(M_FORWARD_MAX);
+    SetpointA = M_FORWARD_MAX;
+    SetpointB = M_FORWARD_MAX;
 }
 
 void m_reverse(){  
-    PWM_1_WriteCompare(M1_BACKWARD);
-    PWM_2_WriteCompare(M2_BACKWARD);
+    SetpointA = M_BACKWARD;
+    SetpointB = M_BACKWARD;
 }
 
 void m_adjust_left_major(){
-    PWM_1_WriteCompare(M1_FORWARD);
-    PWM_2_WriteCompare(STOP_MOTOR);
+    SetpointA = M_FORWARD;
+    SetpointB = STOP_MOTOR;
 }
 
 void m_adjust_right_major(){
-    PWM_1_WriteCompare(STOP_MOTOR);
-    PWM_2_WriteCompare(M2_FORWARD);
+    SetpointA = STOP_MOTOR;
+    SetpointB = M_FORWARD;
 }
 
 void m_adjust_left_minor(){
-    PWM_1_WriteCompare(M1_FORWARD);
-    PWM_2_WriteCompare(M2_FORWARD_SLOW);
+    SetpointA = M_FORWARD;
+    SetpointB = M_FORWARD_SLOW;
 }
 
 void m_adjust_right_minor(){
-    PWM_1_WriteCompare(M1_FORWARD_SLOW);
-    PWM_2_WriteCompare(M2_FORWARD);
+    SetpointA = M_FORWARD_SLOW;
+    SetpointB = M_FORWARD;
 }
 
 void m_turn_left(){
-    PWM_1_WriteCompare(M1_FORWARD);
-    PWM_2_WriteCompare(M2_BACKWARD);
+    SetpointA = M_FORWARD_SLOW;
+    SetpointB = M_BACKWARD_SLOW;
 }
 
 void m_turn_right(){
-    PWM_1_WriteCompare(M1_BACKWARD);
-    PWM_2_WriteCompare(M2_FORWARD);
+    SetpointA = M_BACKWARD_SLOW;
+    SetpointB = M_FORWARD_SLOW;
 }
 
 void m_sleep(){
+    m_stop();
     CONTROL_Write(0x03);
 }
 
 /* 
- * Called every one second by the timer.
  * Keeps track of quadrature values.
  */
 void track_quadrature(){
-    uint16 count_a = QuadDec_M1_GetCounter();
-    uint16 count_b = QuadDec_M2_GetCounter();
+    float count_a = (QuadDec_M1_GetCounter() * 1.0);
+    float count_b = (QuadDec_M2_GetCounter() * 1.0);
     disp_a = count_a - quad_a_old;
-    disp_b = count_b - quad_b_old;
     quad_a_old = count_a;
+    disp_b = count_b - quad_b_old;
     quad_b_old = count_b;
+    printValue = 1;
+    runningSum += disp_a - disp_b;
 }
 
 /*
- * Calculates current speed of the robot over the last second
- * and returns the value as a float in mm/s
+ * Calculates current speed of the robot over the last 30ms
+ * and returns the value as a float in cm/s
  */
-float calc_speed(){
-    float disp = (disp_a + disp_b) / 456; // 456 == 2 * 4 * 3 * 19
-    return disp * 6.2831853 * WHEELRADIUS; // 2 * pi
+void calc_speed(){ 
+    if (printValue == 1){
+        robot_speed = disp_a * 8.81850569;
+        printValue = 0;
+    }
+}
+
+/*
+ * Sets the current straight line speed of the robot in cm/s
+ */
+void set_speed_A(float speed){
+    SetpointA = (double)(speed / 6.912442);
+}
+
+void set_speed_B(float speed){
+    SetpointB = (double)(speed / 6.912442);
+}
+
+/*
+ * Robot moves forward value number of grid spaces.
+ */
+void robot_forward(uint8 value){ 
+    uint16 distance = ((GRIDSIZE*value)/(6.2831853*WHEELRADIUS))*3*4*19;
+    int16 originalCount = QuadDec_M1_GetCounter();
+    m_straight();
+    while (QuadDec_M1_GetCounter() > originalCount + distance);
+    m_stop();        
+}
+
+/*
+ * Robot moves backward value number of grid spaces.
+ */
+void robot_backward(uint8 value){
+    uint16 distance = ((GRIDSIZE*value)/(6.2831853*WHEELRADIUS))*3*4*19;
+    int16 originalCount = QuadDec_M1_GetCounter();
+    m_reverse();
+    while (QuadDec_M1_GetCounter() < (originalCount - distance));
+    m_stop();   
+}
+
+/*
+ * Robot makes a 90° turn right.
+ */
+void robot_right_turn(){ 
+    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19;
+    int16 originalCount = QuadDec_M1_GetCounter();
+    m_turn_right();
+    while (QuadDec_M1_GetCounter() > (originalCount + distance));
+    m_stop();
+}
+
+/*
+ * Robot makes a 90° turn left.
+ */
+void robot_left_turn(){
+    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19;
+    int16 originalCount = QuadDec_M2_GetCounter();
+    m_turn_left();
+    while (QuadDec_M2_GetCounter() > (originalCount + distance));
+    m_stop();
+    
+}
+
+/*
+ * Robot makes a 180° turn.
+ */
+void robot_turn(){
+    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*8*19;
+    int16 originalCount = QuadDec_M1_GetCounter();
+    m_turn_right();
+    while (QuadDec_M1_GetCounter() > (originalCount + distance));
+    m_stop();    
+    
+}
+
+/*
+ * Initializes two PID systems, one for
+ * each motor of the robot.
+ */
+void init_pid(){      
+    InputA = 0;
+    InputB = 0;
+    ITermA = 0;
+    ITermB = 0;
+    lastErrorA = 0;
+    lastErrorB = 0;
+    runningSum = 0;
+    
+    kpa = 0.95;
+    kpb = 0.95;
+    ki = 0.000025 * SampleTimeInSec;
+    kd = 2 / SampleTimeInSec;
+}
+
+void ComputeA(){
+    
+    // Compute all the working errors
+    double error = SetpointA - InputA;
+    ITermA += (ki * error);
+    if (ITermA > M_FORWARD_MAX) ITermA = M_FORWARD_MAX;
+    else if (ITermA < M_BACKWARD_MAX) ITermA = M_BACKWARD_MAX;
+    double dInput = (error - lastErrorA);
+
+    // Compute the PID Output
+    OutputA = kpa * error + ITermA - kd * dInput;
+    if (OutputA > M_FORWARD_MAX) OutputA = M_FORWARD_MAX;
+    else if (OutputA < M_BACKWARD_MAX) OutputA = M_BACKWARD_MAX;
+
+    // Store for next time
+    lastErrorA = error;
+}
+
+void ComputeB(){
+    // Compute all the working errors
+    double error = SetpointB - InputB;
+    ITermB += (ki * error);
+    if (ITermB > M_FORWARD_MAX) ITermB = M_FORWARD_MAX;
+    else if (ITermB < M_BACKWARD_MAX) ITermB = M_BACKWARD_MAX;
+    double dInput = (error - lastErrorB);
+
+    // Compute the PID Output
+    OutputB = kpb * error + ITermB - kd * dInput;
+    if (OutputB > M_FORWARD_MAX) OutputB = M_FORWARD_MAX;
+    else if (OutputB < M_BACKWARD_MAX) OutputB = M_BACKWARD_MAX;
+
+    // Store for next time
+    lastErrorB = error;
 }
 
 /* [] END OF FILE */

@@ -26,28 +26,60 @@
  * ========================================
 */
 
-#ifndef USB_H_
-#define USB_H_
+#include "pacman.h"
 
-#include <project.h>
-#include <stdio.h>
-
-#define BUF_SIZE 64 // USBUART fixed buffer size
-#define CHAR_NULL '0'
-#define CHAR_BACKSP 0x08
-#define CHAR_DEL 0x7F
-#define CHAR_ENTER 0x0D
-#define LOW_DIGIT '0'
-#define HIGH_DIGIT '9'
-
-void init_usb();
-void usbPutString(char *s);
-void usbPutChar(char c);
-void usbPutInt(int value);
-
-char line[BUF_SIZE], entry[BUF_SIZE];
-uint8 usbBuffer[BUF_SIZE];
+uint8 map[15][19] = {
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1},
+    {1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1},
+    {1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1},
+    {1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1},
+    {1,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,0,1},
+    {1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1},
+    {1,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1},
+    {1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1},
+    {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1},
+    {1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1},
+    {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    };
     
-#endif /* USB_H_ */
+uint8 food_list[5][2]= 
+{{1,9},
+{5,5},
+{7,1},
+{13,5},
+{9,9}};
+
+/*
+ * The static food pellets will be evenly distributed across the
+ * field. There are no ghosts or rewards. This is a passive, non
+ * aggressive, level and the only challenge is to complete the
+ * level within the time-limit. 
+ */
+void play_pacman_1(){
+
+}
+
+/*
+ * In this level, 5 pellets will be placed across the field. The
+ * location of the pellets will be given to you as the list. The 
+ * challenge is to make the Pacman plan a route from the current
+ * position to first unconsumed pellet in the list. The robot’s
+ * starting position will be given.
+ */
+void play_pacman_2(){
+
+}
+
+/*
+ * This will be discussed in class and the specifics of this test
+ * will be based on discussions in class.
+ */
+void play_pacman_3(){
+
+}
 
 /* [] END OF FILE */

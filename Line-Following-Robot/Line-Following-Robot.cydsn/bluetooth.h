@@ -26,19 +26,24 @@
  * ========================================
 */
 
-#ifndef TIMER_H_
-#define TIMER_H_
+#ifndef BLUETOOTH_H_
+#define BLUETOOTH_H_
 
 #include <project.h>
-#include "battery_management.h"
-#include "motion_control.h"
-
-volatile uint8 flag;
-volatile uint8 count;
-
-CY_ISR(TimerOneSecISR);
-void timer_init();
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
     
-#endif /* TIMER_H_ */
+#define BUF_SIZE 64
+static char bluetooth_buffer[BUF_SIZE];
+
+void init_bluetooth();
+void btPutString(char *s);
+void btPutChar(char c);
+void btPutInt(int value);
+char btGetChar();
+uint16 btGetInt();
+    
+#endif /* BLUETOOTH_H_ */
 
 /* [] END OF FILE */

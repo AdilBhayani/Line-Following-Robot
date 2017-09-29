@@ -28,47 +28,45 @@
 
 #include "battery_management.h"
 #include "benchmarks.h"
+#include "bluetooth.h"
 #include "motion_control.h"
 #include "rf.h"
-#include "timer.h"
 #include "usb.h"
+#include "pacman.h"
+
+void switch_mode(){  
+    if (Switch_4_Read() > 0) init_usb();
+    
+    if (Switch_1_Read() > 0) {
+        if (Switch_2_Read() > 0) {
+            if (Switch_3_Read() > 0) play_pacman_3();
+            else benchmark_4();
+        } else {
+            if (Switch_3_Read() > 0) play_pacman_1();
+            else benchmark_2();
+        } 
+    } else if (Switch_2_Read() > 0) {
+        if (Switch_3_Read() > 0) play_pacman_2();
+        else benchmark_3();
+    } else {
+        if (Switch_3_Read() > 0) benchmark_5();
+        else benchmark_1();
+    }    
+}
 
 int main()
 {
-    CYGlobalIntEnable;
-    init_usb();
     init_motion_control();
-    init_battery_management();
+    CYGlobalIntEnable;
     init_rf();
-    m_straight_fast();
-    float val;
-    
-    while(1)
-    {   
-        CyDelay(200);
-        val = (get_v_bat() * 1000);
-        usbPutString("-----------------------------------------------------\n");
-        usbPutString("------------ Technical Test 1 30/08/2017 ------------\n");
-        usbPutString("-----------------------------------------------------\n");
-        usbPutString("Rssi value is: ");
-        usbPutInt(system_state.rssi);
-        usbPutString(" \n");
-        usbPutString("Index value is: ");
-        usbPutInt(system_state.index);
-        usbPutString(" \n");
-        usbPutString("Robot orientation is: ");
-        usbPutInt(system_state.robot_orientation);
-        usbPutString(" \n");
-        usbPutString("X position is: ");
-        usbPutInt(system_state.robot_xpos);
-        usbPutString(" \n");
-        usbPutString("Y position is: ");
-        usbPutInt(system_state.robot_ypos);
-        usbPutString(" \n");
-        usbPutString("Battery Voltage: ");
-        usbPutInt((int)val);
-        usbPutString(" mV\n");
-    }   
+    init_bluetooth();
+    CyDelay(1000);
+    m_stop();
+    //m_sleep();
+    //m_straight_fast();
+    //switch_mode();
+    benchmark_5();
 }
 
 /* [] END OF FILE */
+

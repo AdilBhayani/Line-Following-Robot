@@ -26,28 +26,70 @@
  * ========================================
 */
 
-#ifndef USB_H_
-#define USB_H_
+#include "bluetooth.h"
 
-#include <project.h>
-#include <stdio.h>
+/*
+ * Initializes the Bluetooth UART and sends welcome message.
+ */
+void init_bluetooth() {
+    BT_UART_Start();
+    btPutString("CS301 2017 Group 7\n");
+}
 
-#define BUF_SIZE 64 // USBUART fixed buffer size
-#define CHAR_NULL '0'
-#define CHAR_BACKSP 0x08
-#define CHAR_DEL 0x7F
-#define CHAR_ENTER 0x0D
-#define LOW_DIGIT '0'
-#define HIGH_DIGIT '9'
+/*
+ * Outputs given string to the Bluetooth UART console.
+ */
+void btPutString(char *s) {
+    BT_UART_PutString(s);
+}
 
-void init_usb();
-void usbPutString(char *s);
-void usbPutChar(char c);
-void usbPutInt(int value);
+/*
+ * Outputs given char to the Bluetooth UART console.
+ */
+void btPutChar(char c) {
+    BT_UART_PutChar(c);
+}
 
-char line[BUF_SIZE], entry[BUF_SIZE];
-uint8 usbBuffer[BUF_SIZE];
+/*
+ * Outputs given integer to the Bluetooth UART console.
+ */
+void btPutInt(int value) {
+    char buffer_text[BUF_SIZE];
+    sprintf(buffer_text,"%d",value);
+    btPutString(buffer_text);
+}
+
+/*
+* Gets char from Bluetooth UART.
+*/
+char btGetChar() {    
+    return BT_UART_GetChar();
+}
+
+/*
+* Gets integer from Bluetooth UART.
+*/
+uint16 btGetInt() {
+    char cha;
+    uint16 enn;
+    cha = BT_UART_GetChar();
+    while ((cha > 57) || (cha < 48)) cha = BT_UART_GetChar();
+    enn = cha - 48;
+    cha = BT_UART_GetChar();
+    while ((cha > 57) || ((cha < 48) && (cha > 13)) || (cha < 13)) cha = BT_UART_GetChar();
+    // Single digit number returns here
+    if (cha == 13) return enn;
     
-#endif /* USB_H_ */
+    enn = (enn * 10) + (cha - 48);
+    cha = BT_UART_GetChar();
+    while ((cha > 57) || ((cha < 48) && (cha > 13)) || (cha < 13)) cha = BT_UART_GetChar();
+    // Double digit number returns here
+    if (cha == 13) return enn;
+    enn = (enn * 10) + (cha - 48);
+    cha = BT_UART_GetChar();
+    while (cha != 13) cha = BT_UART_GetChar();
+    return enn;    
+
+}
 
 /* [] END OF FILE */

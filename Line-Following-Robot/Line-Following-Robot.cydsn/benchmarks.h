@@ -32,8 +32,13 @@
 #include <project.h>
 #include "motion_control.h"
 
-#define DAMPING_FACTOR 3
+uint8 isr_left_sensor;
+uint8 isr_right_sensor;
+uint8 isr_center_left;
+uint8 isr_center_right;
+int desiredSpeed;
 
+CY_ISR(LINE_FOLLOWING);
 void benchmark_1();
 void benchmark_2();
 void benchmark_3();

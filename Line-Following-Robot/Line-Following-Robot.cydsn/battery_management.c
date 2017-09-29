@@ -28,6 +28,48 @@
 
 #include "battery_management.h"
 
+void DebugLEDs(){
+    if (Sensor_1_Read() > 0) LED_1_Write(1);
+    else LED_1_Write(0);
+    if (Sensor_2_Read() > 0) LED_2_Write(1);
+    else LED_2_Write(0);
+    if (Sensor_3_Read() > 0) LED_3_Write(1);
+    else LED_3_Write(0);
+    if (Sensor_4_Read() > 0) LED_4_Write(1);
+    else LED_4_Write(0);
+    if (Sensor_5_Read() > 0) LED_5_Write(1);
+    else LED_5_Write(0);
+    if (Sensor_6_Read() > 0) LED_6_Write(1);
+    else LED_6_Write(0);
+}
+
+/*
+ * One Second timer interupt routine. Every 60
+ * seconds this checks the battery levels are
+ * not too low, if they are the motors, adc
+ * & interupts are stopped and processor is
+ * left to idle.
+ *
+ * 2700 / 4096 => 3.30V on ADC terminal
+ *      => 6.60V on battery pack
+ *      => 1.10V for each battery
+ */
+CY_ISR(TimerOneSecISR) {  
+    isr_count++;
+
+    DebugLEDs();
+
+    if (isr_count > 9){
+        if (adc_val < 2700){
+            m_sleep();
+            ADC_SAR_1_StopConvert();
+            CYGlobalIntDisable    
+            while(1);
+            LED_6_Write(1);
+        }
+    }
+}
+
 /*
  * ADC End of Conversion Interupt service routine.
  * Takes adc value and stores it in a variable.
@@ -46,22 +88,10 @@ void init_battery_management(){
     ADC_SAR_1_IRQ_Enable();
     ADC_SAR_1_Start();
     ADC_SAR_1_SetPower(3);
-    start_adc();
-    adc_val = 0;
-}
-
-/*
- * Starts freerunning conversion of the ADC.
- */
-void start_adc(){
     ADC_SAR_1_StartConvert();
-}
-
-/*
- * Stops freerunning conversion of the ADC.
- */
-void stop_adc(){
-    ADC_SAR_1_StopConvert();
+    adc_val = 0;
+    Timer_0_Start();
+    isr_Timer0_StartEx(TimerOneSecISR);
 }
 
 /*
@@ -70,29 +100,6 @@ void stop_adc(){
  */
 float get_v_bat(){
     return (((float)adc_val) * 0.002441406);
-}
-
-/*
- * Called by the timer every 60 seconds to
- * check that the battery values are not too
- * low. If they are, the motors, adc & interupts
- * are stopped and processor is left to idle.
- *
- * 2250 / 4096 => 2.74V on ADC terminal
- *      => 5.49V on battery pack
- *      => 0.915V for each battery
- */
-void check_battery_status(){
-    if (adc_val > 2250) {
-        return;
-    } else {
-        m_stop();
-        m_sleep();
-        stop_adc();
-        CYGlobalIntDisable
-        flag = 0;
-        while(1);
-    }
 }
 
 /* [] END OF FILE */

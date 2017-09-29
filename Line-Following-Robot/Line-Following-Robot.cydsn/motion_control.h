@@ -30,31 +30,46 @@
 #define MOTION_CONTROL_H_
 
 #include <project.h>
-#include "timer.h"
+#include "usb.h"
+#include "bluetooth.h"
+
+// y = 0.0877x - 11.5
+// where y = pulses on quad per 10ms
+//   and x = PWM compare value
+
+// Following constants are quad pulses per 10ms
+#define STOP_MOTOR 0
+#define M_FORWARD_MAX 10.85
+#define M_BACKWARD_MAX (-10.85)
+#define M_FORWARD 5
+#define M_FORWARD_SLOW 3
+#define M_BACKWARD (-5)
+#define M_BACKWARD_SLOW (-3)
+#define SampleTimeInSec 0.01
+// Following defines are in mm
+#define WHEELRADIUS 32    
+#define GRIDSIZE 30
+
+static volatile float quad_a_old;
+static volatile float quad_b_old;
+static volatile float disp_a;
+static volatile float disp_b;
+static volatile float printValue;
+float robot_speed;
+
+volatile double InputA, OutputA, SetpointA;
+volatile double InputB, OutputB, SetpointB;
+volatile double ITermA, lastErrorA;
+volatile double ITermB, lastErrorB;
+double kpa, kpb, ki, kd;
+double runningSum;
+int startCounter;
     
-#define STOP_MOTOR 128
-
-#define M_FORWARD_MAX 255
-#define M_BACKWARD_MAX 0
-
-#define M1_FORWARD 190
-#define M2_FORWARD 190
-
-#define M1_FORWARD_SLOW 170
-#define M2_FORWARD_SLOW 170
-
-#define M1_BACKWARD 64
-#define M2_BACKWARD 64
-    
-#define WHEELRADIUS 32
-
-volatile uint16 quad_a_old;
-volatile uint16 quad_b_old;
-volatile uint16 disp_a;
-volatile uint16 disp_b;
+CY_ISR(QuadISR_1);
+CY_ISR(QuadISR_2);
+CY_ISR(PID_ISR);
 
 void init_motion_control();
-
 void m_stop();
 void m_straight();
 void m_straight_slow();
@@ -67,9 +82,22 @@ void m_adjust_right_minor();
 void m_turn_left();
 void m_turn_right();
 void m_sleep();
+void ramp_loader();
 
 void track_quadrature();
-float calc_speed();
+void calc_speed();
+void set_speed_A(float speed);
+void set_speed_B(float speed);
+
+void robot_forward(uint8 value);
+void robot_backward(uint8 value);
+void robot_right_turn();
+void robot_left_turn();
+void robot_turn();
+
+void init_pid();
+void ComputeA();
+void ComputeB();
     
 #endif /* MOTION_CONTROL_H_ */
 

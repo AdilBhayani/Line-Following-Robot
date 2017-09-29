@@ -31,10 +31,14 @@
 
 #include <project.h>
 #include "motion_control.h"
-#include "timer.h"
     
 volatile uint16 adc_val;
-    
+volatile uint8 isr_count;
+
+void DebugLEDs();
+CY_ISR(TimerOneSecISR);
+void timer_init();
+CY_ISR(adc_isr);
 void init_battery_management();
 void start_adc();
 void stop_adc();
