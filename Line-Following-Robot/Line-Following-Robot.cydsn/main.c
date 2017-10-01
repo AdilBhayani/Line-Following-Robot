@@ -61,11 +61,7 @@ int main()
     init_rf();
     init_bluetooth();
     CyDelay(1000);
-    m_stop();
-    //m_sleep();
-    //m_straight_fast();
-    //switch_mode();
-    benchmark_5();
+    play_pacman_2();
 }
 
 /* [] END OF FILE */

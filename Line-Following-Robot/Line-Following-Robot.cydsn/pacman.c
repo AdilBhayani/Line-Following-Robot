@@ -27,31 +27,9 @@
 */
 
 #include "pacman.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-uint8 map[15][19] = {
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,0,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1},
-    {1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1},
-    {1,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1},
-    {1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1},
-    {1,0,0,0,0,0,1,0,1,0,1,0,1,0,1,0,0,0,1},
-    {1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1},
-    {1,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1},
-    {1,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1},
-    {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1},
-    {1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1},
-    {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    };
-    
-uint8 food_list[5][2]= 
-{{1,9},
-{5,5},
-{7,1},
-{13,5},
-{9,9}};
 
 /*
  * The static food pellets will be evenly distributed across the
@@ -63,6 +41,7 @@ void play_pacman_1(){
 
 }
 
+
 /*
  * In this level, 5 pellets will be placed across the field. The
  * location of the pellets will be given to you as the list. The 
@@ -71,15 +50,260 @@ void play_pacman_1(){
  * starting position will be given.
  */
 void play_pacman_2(){
-
+    //printf("Inside pacman_2()\n");
+    //Todo: play_pacman_2() initialises start and end cooridinates
+    a_star();
+    //Todo: play_pacman_2() reads steps stored in ret_steps until first -1,-1 indicating destination has been reached.
 }
 
 /*
- * This will be discussed in class and the specifics of this test
- * will be based on discussions in class.
- */
+* This will be discussed in class and the specifics of this test
+* will be based on discussions in class.
+*/
 void play_pacman_3(){
 
 }
+
+void a_star(){
+    //printf("Inside a_star()\n");
+    //printf("start_coordinate is X: %d, Y: %d\n", start_coordinate[0][0], start_coordinate[0][1]);
+    //printf("end_coordinate is X: %d, Y: %d\n", end_coordinate[0][0], end_coordinate[0][1]);
+    
+    int x, y;
+    static int ret_visited[15][19];
+    for(x = 0; x < 15; x ++) {
+        for(y = 0; y < 19; y ++) ret_visited[x][y] = 1;
+    }
+    static int open_list[285][2];
+    static int closed_list[285][2];
+    open_list[0][0] = start_coordinate[0][0];
+    open_list[0][1] = start_coordinate[0][1];
+    closed_list[0][0] = -1;
+    closed_list[0][1] = -1;
+    for(x = 1; x < 285; x ++) {
+        for(y = 0; y < 2; y ++) {
+            open_list[x][y] = -1;
+            closed_list[x][y] = -1;
+        }
+    }
+    int open_index = 1;
+    int closed_index = 0;
+    static int f_values[15][19] = {{0}};
+    static int g_values[15][19] = {{0}};
+    static int h_values[15][19] = {{0}};
+    static int parents_x[15][19] = {{0}};
+    static int parents_y[15][19] = {{0}};
+    h_values[start_coordinate[0][0]][start_coordinate[0][1]] = abs(end_coordinate[0][0] - start_coordinate[0][0]) * 10 + abs(end_coordinate[0][1] - start_coordinate[0][1]) * 10;
+    f_values[start_coordinate[0][0]][start_coordinate[0][1]] = abs(end_coordinate[0][0] - start_coordinate[0][0]) * 10 + abs(end_coordinate[0][1] - start_coordinate[0][1]) * 10;
+
+    while (open_index > 0){
+        int lowest_f_index;
+        lowest_f_index = find_lowest_f_square(f_values, open_list, open_index);
+        //printf("lowest_f_index: %d\n", lowest_f_index);
+        closed_list[closed_index][0] = open_list[lowest_f_index][0];
+        closed_list[closed_index][1] = open_list[lowest_f_index][1];
+        closed_index++;
+        int square_to_check_x = closed_list[closed_index-1][0];
+        int square_to_check_y = closed_list[closed_index-1][1];
+        ret_visited[open_list[lowest_f_index][0]][open_list[lowest_f_index][1]] = 0;
+        open_list[lowest_f_index][0] = -1;
+        open_list[lowest_f_index][1] = -1;
+        //printf("square_to_check_x: %d\n", square_to_check_x);
+        //printf("square_to_check_y: %d\n", square_to_check_y);
+        
+        int closed_list_index = in_list(square_to_check_x - 1, square_to_check_y, closed_list, closed_index);
+        //printf("closed_list_index top: %d\n", closed_list_index);
+        if (closed_list_index == -1 && square_to_check_x > 0 && map1[square_to_check_x - 1][square_to_check_y] == 0){
+            int open_list_index = in_list(square_to_check_x - 1, square_to_check_y, open_list, open_index);
+            //printf("open_list_index top: %d\n", open_list_index);
+            if (open_list_index == -1){
+                //Add square
+                add_square(square_to_check_x, square_to_check_y, square_to_check_x - 1, square_to_check_y, open_list, f_values, g_values, h_values, parents_x, parents_y, &open_index);
+            }else{
+                //Check for shorter path
+                if (g_values[square_to_check_x-1][square_to_check_y] > 10 + g_values[square_to_check_x][square_to_check_y]){
+                    //If so update square
+                    update_square(open_list_index, square_to_check_x, square_to_check_y, square_to_check_x - 1, square_to_check_y, open_list, f_values, g_values, h_values, parents_x, parents_y);
+                }
+                
+            }
+        }
+        
+        closed_list_index = in_list(square_to_check_x, square_to_check_y + 1, closed_list, closed_index);
+        //printf("closed_list_index right: %d\n", closed_list_index);
+        if (closed_list_index == -1 && square_to_check_y < MAP_WIDTH - 1 && map1[square_to_check_x][square_to_check_y + 1] == 0){
+            int open_list_index = in_list(square_to_check_x, square_to_check_y + 1, open_list, open_index);
+            //printf("open_list_index right: %d\n", open_list_index);
+            if (open_list_index == -1){
+                //Add square
+                add_square(square_to_check_x, square_to_check_y, square_to_check_x, square_to_check_y + 1, open_list, f_values, g_values, h_values, parents_x, parents_y, &open_index);
+            }else{
+                //Check for shorter path
+                if (g_values[square_to_check_x][square_to_check_y + 1] > 10 + g_values[square_to_check_x][square_to_check_y]){
+                    //If so update square
+                    update_square(open_list_index, square_to_check_x, square_to_check_y, square_to_check_x, square_to_check_y + 1, open_list, f_values, g_values, h_values, parents_x, parents_y);
+                }
+            }
+        }
+        
+        closed_list_index = in_list(square_to_check_x + 1, square_to_check_y, closed_list, closed_index);
+        //printf("closed_list_index bottom: %d\n", closed_list_index);
+        if (closed_list_index == -1 && square_to_check_x < MAP_HEIGHT - 1 && map1[square_to_check_x + 1][square_to_check_y] == 0){
+            int open_list_index = in_list(square_to_check_x + 1, square_to_check_y, open_list, open_index);
+            //printf("open_list_index bottom: %d\n", open_list_index);
+            if (open_list_index == -1){
+                //Add square
+                add_square(square_to_check_x, square_to_check_y, square_to_check_x + 1, square_to_check_y, open_list, f_values, g_values, h_values, parents_x, parents_y, &open_index);
+            }else{
+                //Check for shorter path
+                if (g_values[square_to_check_x + 1][square_to_check_y] > 10 + g_values[square_to_check_x][square_to_check_y]){
+                    //If so update square
+                    update_square(open_list_index, square_to_check_x, square_to_check_y, square_to_check_x + 1, square_to_check_y, open_list, f_values, g_values, h_values, parents_x, parents_y);
+                }
+            }
+        }
+        
+        closed_list_index = in_list(square_to_check_x, square_to_check_y - 1, closed_list, closed_index);
+        //printf("closed_list_index left: %d\n", closed_list_index);
+        if (closed_list_index == -1 && square_to_check_y > 0 && map1[square_to_check_x][square_to_check_y - 1] == 0){
+            int open_list_index = in_list(square_to_check_x, square_to_check_y - 1, open_list, open_index);
+            //printf("open_list_index left: %d\n", open_list_index);
+            if (open_list_index == -1){
+                //Add square
+                add_square(square_to_check_x, square_to_check_y, square_to_check_x, square_to_check_y - 1, open_list, f_values, g_values, h_values, parents_x, parents_y, &open_index);
+            }else{
+                //Check for shorter path
+                if (g_values[square_to_check_x][square_to_check_y - 1] > 10 + g_values[square_to_check_x][square_to_check_y]){
+                    //If so update square
+                    update_square(open_list_index, square_to_check_x, square_to_check_y, square_to_check_x, square_to_check_y - 1, open_list, f_values, g_values, h_values, parents_x, parents_y);
+                }
+            }
+        }
+        
+        if (closed_list[closed_index - 1][0] == end_coordinate[0][0] && closed_list[closed_index - 1][1] == end_coordinate[0][1]){
+            //printf("Closed target!!!\n");
+            int ret_step_index = 284;
+            int current_x_pos = end_coordinate[0][0];
+            int current_y_pos = end_coordinate[0][1];
+            static int temp_ret_steps[285][2];
+            for(x = 0; x < 285; x ++) {
+                for(y = 0; y < 2; y ++){
+                    temp_ret_steps[x][y] = -1;
+                    ret_steps[x][y] = -1;
+                } 
+            }
+            while (current_x_pos != start_coordinate[0][0] || current_y_pos != start_coordinate[0][1]){
+                temp_ret_steps[ret_step_index][0] = current_x_pos;
+                temp_ret_steps[ret_step_index][1] = current_y_pos;
+                int temp_x = parents_x[current_x_pos][current_y_pos];
+                int temp_y = parents_y[current_x_pos][current_y_pos];
+                current_x_pos = temp_x;
+                current_y_pos = temp_y;
+                ret_step_index--;
+            }
+            temp_ret_steps[ret_step_index][0] = start_coordinate[0][0];
+            temp_ret_steps[ret_step_index][1] = start_coordinate[0][1];
+            int step_number = 285 - ret_step_index;
+            for (int i=0; i< step_number ; i++) {
+                for (int j=0; j<2; j++) {
+                    ret_steps[i][j] = temp_ret_steps[ret_step_index + i][j];
+                }
+            }
+            
+            for (int i=0; i<255 ; i++) {
+                for (int j=0; j<2; j++) {
+                    //printf(" %d", ret_steps[i][j]);
+                }
+                //printf("\n");
+            }
+            break;
+        }
+    }
+}
+
+int find_lowest_f_square(int f_values[15][19], int open_list[285][2], int open_index){
+    //printf("Inside find_lowest_f_square()\n");
+    int j = 0;
+    while(open_list[j][0] == -1){
+        j++;
+    }
+    int lowest_f_value = f_values[open_list[j][0]][open_list[j][1]];
+    //printf("lowest_f_value: %d\n", lowest_f_value);
+    int lowest_f_index = j;
+    for (int i = j; i < open_index; i++){
+        if (open_list[i][0] != -1 && open_list[i][1] != -1 ){
+            if (f_values[open_list[i][0]][open_list[i][1]] <= lowest_f_value){
+                //printf("lowest_f_value old: %d\n", lowest_f_value);
+                lowest_f_value = f_values[open_list[i][0]][open_list[i][1]];
+                //printf("lowest_f_value new: %d\n", lowest_f_value);
+                lowest_f_index = i;
+            }
+        }
+    }
+    return lowest_f_index;
+}
+
+int in_list(int x_pos, int y_pos, int list[285][2], int max_index){
+    for(int i = 0; i < max_index; i++){
+        if (list[i][0] == x_pos && list[i][1] == y_pos){
+            return i;
+        }
+    }
+    return -1;
+}
+
+void add_square(int parent_x, int parent_y, int x, int y, int open_list[285][2], int f_values[15][19], int g_values[15][19], int h_values[15][19], int parents_x[15][19], int parents_y[15][19], int* open_index){
+    //printf("Inside add_square()\n");
+    //printf("*open_index: %d\n", *open_index);
+    open_list[*open_index][0] = x;
+    open_list[*open_index][1] = y;
+    //printf("open_index was: %d\n", *open_index);
+    *open_index = *open_index + 1;
+    //printf("open_index is now: %d\n", *open_index);
+    parents_x[x][y] = parent_x;
+    parents_y[x][y] = parent_y;
+    g_values[x][y] = g_values[parent_x][parent_y] + 10;
+    h_values[x][y] = abs(end_coordinate[0][0] - x) * 10 + abs(end_coordinate[0][1] - y) * 10;
+    f_values[x][y] = g_values[x][y] + h_values[x][y];
+}
+
+/*
+Need to check this function later.
+*/
+void update_square(int index, int parent_x, int parent_y, int x, int y, int open_list[285][2], int f_values[15][19], int g_values[15][19], int h_values[15][19], int parents_x[15][19], int parents_y[15][19]){
+    //printf("Inside update_square()\n");
+    open_list[index][0] = x;
+    open_list[index][1] = y;
+    parents_x[x][y] = parent_x;
+    parents_y[x][y] = parent_y;
+    g_values[x][y] = g_values[parent_x][parent_y] + 10;
+    h_values[x][y] = abs(end_coordinate[0][0] - x) * 10 + abs(end_coordinate[0][1] - y) * 10;
+    f_values[x][y] = g_values[x][y] + h_values[x][y];
+}
+
+
+
+// //printf("open_index: %d\n", open_index);
+// for (int i=0; i<15; i++) {
+//     for (int j=0; j<19; j++) {
+//         //printf(" %d", h_values[i][j]);
+//     }
+//     //printf("\n");
+// }
+
+// for (int i=0; i<285; i++) {
+//     for (int j=0; j<2; j++) {
+//         //printf(" %d", closed_list[i][j]);
+//     }
+//     //printf("\n");
+// }
+
+// for (int i=0; i<15; i++) {
+//     for (int j=0; j<19; j++) {
+//         //printf(" %d", f_values[i][j]);
+//     }
+//     //printf("\n");
+// }
+
 
 /* [] END OF FILE */
