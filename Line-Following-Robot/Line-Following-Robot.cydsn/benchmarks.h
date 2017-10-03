@@ -32,10 +32,6 @@
 #include <project.h>
 #include "motion_control.h"
 
-uint8 isr_left_sensor;
-uint8 isr_right_sensor;
-uint8 isr_center_left;
-uint8 isr_center_right;
 int desiredSpeed;
 
 CY_ISR(LINE_FOLLOWING);

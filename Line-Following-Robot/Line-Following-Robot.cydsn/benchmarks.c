@@ -36,19 +36,12 @@ CY_ISR(LINE_FOLLOWING){
     isr_center_right = Sensor_2_Read();
     if (isr_center_left > 0){
         if (isr_center_right > 0){
-            set_speed_A(desiredSpeed);
-            set_speed_B(desiredSpeed);
+            m_straight();
         } else {
-            set_speed_A(desiredSpeed);
-            set_speed_B(desiredSpeed * 0.8);
+            m_adjust_left_minor();
         }
     } else if (isr_center_right > 0){
-        set_speed_A(desiredSpeed * 0.8);
-        set_speed_B(desiredSpeed);
-    } else {
-        m_sleep();
-        Timer_0_Stop();
-        isr_Timer0_Stop();
+        m_adjust_right_minor();
     }
 }
 
@@ -73,8 +66,9 @@ void benchmark_1(){
  * =======================================*/
 void benchmark_2(){
     CyDelay(1000);
+    m_straight_fast();
     Timer_0_Start();
-    isr_Timer0_StartEx(LINE_FOLLOWING);  
+    isr_Timer0_StartEx(LINE_FOLLOWING);
     return;
 }
 

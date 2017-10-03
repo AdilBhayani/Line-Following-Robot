@@ -68,9 +68,9 @@ CY_ISR(PID_ISR){
     }else{
     //Outputting PID results to Motor
         if (OutputA == 0) PWM_2_WriteCompare(131);
-        else PWM_2_WriteCompare(11.43 * (InputA + OutputA) + 131.13 + 0.15 * runningSum);
+        else PWM_2_WriteCompare(11.43 * (InputA + OutputA) + 131.13);
         if (OutputB == 0) PWM_1_WriteCompare(131);
-        else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 128.9 - 0.15 * runningSum);
+        else PWM_1_WriteCompare(11.34 * (InputB + OutputB) + 128.9);
     }
 }
 
@@ -143,7 +143,6 @@ void ramp_loader(){
             PWM_1_WriteCompare(255);
         }
         startCounter--;
-        runningSum = 0;
 }
 
 
@@ -218,7 +217,6 @@ void track_quadrature(){
     disp_b = count_b - quad_b_old;
     quad_b_old = count_b;
     printValue = 1;
-    runningSum += disp_a - disp_b;
 }
 
 /*
@@ -247,32 +245,44 @@ void set_speed_B(float speed){
  * Robot moves forward value number of grid spaces.
  */
 void robot_forward(uint8 value){ 
-    uint16 distance = ((GRIDSIZE*value)/(6.2831853*WHEELRADIUS))*3*4*19;
+    uint16 distance = ((GRIDSIZE * value) - 60) * 1.13397;
     int16 originalCount = QuadDec_M1_GetCounter();
     m_straight();
-    while (QuadDec_M1_GetCounter() > originalCount + distance);
-    m_stop();        
-}
-
-/*
- * Robot moves backward value number of grid spaces.
- */
-void robot_backward(uint8 value){
-    uint16 distance = ((GRIDSIZE*value)/(6.2831853*WHEELRADIUS))*3*4*19;
-    int16 originalCount = QuadDec_M1_GetCounter();
-    m_reverse();
-    while (QuadDec_M1_GetCounter() < (originalCount - distance));
-    m_stop();   
+    while (QuadDec_M1_GetCounter() < (originalCount + distance)){
+        isr_center_left = Sensor_1_Read();
+        isr_center_right = Sensor_2_Read();
+        isr_left_sensor = Sensor_3_Read();
+        isr_right_sensor = Sensor_5_Read();
+        if (isr_center_left > 0){
+            if (isr_center_right > 0){
+                m_straight();
+            } else {
+                m_adjust_left_minor();
+            }
+        } else if (isr_center_right > 0){
+            m_adjust_right_minor();
+        } else if (isr_left_sensor > 0){
+            m_adjust_left_major();
+        } else if (isr_right_sensor > 0){
+            m_adjust_right_major();
+        }
+    }
+    m_stop();
 }
 
 /*
  * Robot makes a 90° turn right.
  */
 void robot_right_turn(){ 
-    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19;
+    double distance = 104 * 1.13397;
+    double dist = 38 * 1.13397;
     int16 originalCount = QuadDec_M1_GetCounter();
     m_turn_right();
-    while (QuadDec_M1_GetCounter() > (originalCount + distance));
+    isr_flag = 0;
+    while (QuadDec_M1_GetCounter() < (originalCount + dist));
+    while ((QuadDec_M1_GetCounter() < (originalCount + distance)) || (isr_center_front > 0)) {
+        isr_center_front = Sensor_4_Read();
+    }
     m_stop();
 }
 
@@ -280,10 +290,15 @@ void robot_right_turn(){
  * Robot makes a 90° turn left.
  */
 void robot_left_turn(){
-    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*4*19;
+    double distance = 104 * 1.13397;
+    double dist = 38 * 1.13397;
     int16 originalCount = QuadDec_M2_GetCounter();
     m_turn_left();
-    while (QuadDec_M2_GetCounter() > (originalCount + distance));
+    isr_flag = 0;
+    while (QuadDec_M2_GetCounter() < (originalCount + dist));
+    while ((QuadDec_M2_GetCounter() < (originalCount + distance)) || (isr_center_front > 0)) {
+        isr_center_front = Sensor_4_Read();
+    }
     m_stop();
     
 }
@@ -292,7 +307,7 @@ void robot_left_turn(){
  * Robot makes a 180° turn.
  */
 void robot_turn(){
-    double distance = (55*1.570796327/(6.2831853*WHEELRADIUS))*3*8*19;
+    double distance = 192 * 1.13397;
     int16 originalCount = QuadDec_M1_GetCounter();
     m_turn_right();
     while (QuadDec_M1_GetCounter() > (originalCount + distance));
@@ -311,7 +326,6 @@ void init_pid(){
     ITermB = 0;
     lastErrorA = 0;
     lastErrorB = 0;
-    runningSum = 0;
     
     kpa = 0.95;
     kpb = 0.95;
