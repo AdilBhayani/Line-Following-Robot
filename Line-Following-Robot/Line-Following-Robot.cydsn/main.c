@@ -55,13 +55,13 @@ void switch_mode(){
 }
 
 int main()
-{    
+{
     init_motion_control();
     CYGlobalIntEnable;
     init_rf();
     init_bluetooth();
     CyDelay(1000);
-    play_pacman_2();
+    switch_mode();
     while(1);
 }
 

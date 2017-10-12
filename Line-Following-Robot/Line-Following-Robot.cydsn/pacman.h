@@ -28,6 +28,7 @@
 #include <project.h>
 #include "motion_control.h"
 #include "rf.h"
+#include "bluetooth.h"
 
 #ifndef PACMAN_H_
 #define PACMAN_H_

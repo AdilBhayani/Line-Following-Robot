@@ -38,7 +38,129 @@
  * level within the time-limit. 
  */
 void play_pacman_1(){
+    CyDelay(1000);
+    uint8 left_sensor = 0;
+    uint8 right_sensor = 0;
+    uint8 center_left = 0;
+    uint8 center_right = 0;
+    uint8 center_front = 0;
+    uint8 direction = 0;
+    uint8 prio = 0;
+    uint8 kodi = 0;
+    while(1) {
+        CyDelayUs(100);
+        left_sensor = Sensor_3_Read();
+        right_sensor = Sensor_5_Read();
+        center_left = Sensor_1_Read();
+        center_right = Sensor_2_Read();
+        center_front = Sensor_4_Read();
+        if ((left_sensor > 0) && (right_sensor > 0)) {
+            prio = (int)(rand() % 3);
+            if (prio == 2) {
+                m_straight();
+                kodi = 0;
+            } else if (prio == 1) {
+                m_adjust_right_major();
+                direction = 1;
+                kodi = 1;
+            } else {
+                m_adjust_left_major();
+                direction = 0;
+                kodi = 1;
+            }
 
+            if (kodi > 0) {
+                CyDelay(100);
+                if (direction > 0){
+                    m_turn_right();
+                    while(center_right == 1){
+                        center_right = Sensor_2_Read();
+                    }
+                    CyDelay(100);
+                    m_straight();
+                    prio = (int)(rand() % 2);
+                } else {
+                    m_turn_left();
+                    while(center_left == 1){
+                        center_left = Sensor_1_Read();
+                    }
+                    CyDelay(100);
+                    m_straight();
+                    prio = (int)(rand() % 2);
+                }
+            }
+        }
+        if (prio > 0) {
+            if (center_right > 0){
+                if (center_left > 0){
+                    m_straight();
+                } else {
+                    m_adjust_right_minor();
+                }
+            } else if (center_left > 0){
+                m_adjust_left_minor();
+            } else if (right_sensor > 0)  {
+                m_adjust_right_major();
+                direction = 1;
+            } else if (left_sensor > 0){
+                m_adjust_left_major();
+                direction = 0;
+            } else if (center_front == 0){
+                if (direction > 0){
+                    m_turn_right();
+                    while(center_right == 1){
+                        center_right = Sensor_2_Read();
+                    }
+                    CyDelay(100);
+                    m_straight();
+                    prio = (int)(rand() % 2);
+                } else {
+                    m_turn_left();
+                    while(center_left == 1){
+                        center_left = Sensor_1_Read();
+                    }
+                    CyDelay(100);
+                    m_straight();
+                    prio = (int)(rand() % 2);
+                }
+            }
+        } else {
+            if (center_left > 0){
+                if (center_right > 0){
+                    m_straight();
+                } else {
+                    m_adjust_left_minor();
+                }
+            } else if (center_right > 0){
+                m_adjust_right_minor();
+            } else if (left_sensor > 0)  {
+                m_adjust_left_major();
+                direction = 0;
+            } else if (right_sensor > 0){
+                m_adjust_right_major();
+                direction = 1;
+            } else if (center_front == 0){
+                if (direction > 0){
+                    m_turn_right();
+                    while(center_right == 1){
+                        center_right = Sensor_2_Read();
+                    }
+                    CyDelay(100);
+                    m_straight();
+                    prio = (int)(rand() % 2);
+                } else {
+                    m_turn_left();
+                    while(center_left == 1){
+                        center_left = Sensor_1_Read();
+                    }
+                    CyDelay(100);
+                    m_straight();
+                    prio = (int)(rand() % 2);
+                }
+            }
+        }
+    }
+    return;
 }
 
 
