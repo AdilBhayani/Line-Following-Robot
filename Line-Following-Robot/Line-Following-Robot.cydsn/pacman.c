@@ -232,6 +232,71 @@ void print_ret_steps() {
     }
 }
 
+void generate_directions() {
+    int i = 0;
+    while (ret_steps[i][0] != -1) {
+        i++;
+    }
+    int a;
+    for (a = 0; a < i + 1; a++) {
+        if (a == i) { //last value in ret_steps
+            //come back to this to figure out how to set directions between food particles
+        }
+        else if (ret_steps[a+1][1] > ret_steps[a][1]) { // column has increased
+            if (a == 0) {
+                //add straight to the array of directions
+            }
+            else if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn left
+                //add a left turn to the array of turns
+                //tell robot to go straight after the turn
+            }
+            else if (ret_steps[a-1][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn right
+                //add a right turn to the array of turns
+                //tell robot to go straight after the turn    
+            }
+        }
+        else if (ret_steps[a+1][1] < ret_steps[a][1]) { // column has decreased
+            if (a == 0) {
+                //add straight to the array of directions
+            }
+            else if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn right
+                //add a right turn to the array of turns
+                //tell robot to go straight after the turn
+            }
+            else if (ret_steps[a-1][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn left
+                //add a left turn to the array of turns
+                //tell robot to go straight after the turn    
+            }
+        }
+        else if (ret_steps[a+1][0] < ret_steps[a][0]) { // row has decreased
+            if (a == 0) {
+                //add straight to the array of directions
+            }
+            else if (ret_steps[a-1][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn left
+                //add a left turn to the array of turns
+                //tell robot to go straight after the turn
+            }
+            else if (ret_steps[a-1][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn right
+                //add a right turn to the array of turns
+                //tell robot to go straight after the turn    
+            }
+        }
+        else if (ret_steps[a+1][0] > ret_steps[a][0]) { // row has increased
+            if (a == 0) {
+                //add straight to the array of directions
+            }
+            else if (ret_steps[a-1][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn right
+                //add a right turn to the array of turns
+                //tell robot to go straight after the turn
+            }
+            else if (ret_steps[a-1][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn left
+                //add a left turn to the array of turns
+                //tell robot to go straight after the turn    
+            }
+        }
+    }
+}
+
 void a_star(){
     //printf("Inside a_star()\n");
     //printf("start_coordinate is X: %d, Y: %d\n", start_coordinate[0][0], start_coordinate[0][1]);
