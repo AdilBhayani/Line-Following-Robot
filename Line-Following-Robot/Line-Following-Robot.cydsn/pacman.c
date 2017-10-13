@@ -178,77 +178,30 @@ void play_pacman_2(){
     end_coordinate[0][0] = food_list[0][0]; //set x and y coordinates of first item in food list
     end_coordinate[0][1] = food_list[0][1]; 
     a_star();
-    btPutString("Finished a_star");
-    for (i = 0; i < 285; i++){ 
-        if (ret_steps[i][0] != -1){
-            btPutInt(ret_steps[i][0]);
-            btPutString(",");
-            btPutInt(ret_steps[i][1]);
-            btPutString("\n");
-        }
-    }
+    print_ret_steps();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
-    start_coordinate[0][0] = food_list[0][0];
-    start_coordinate[0][1] = food_list[0][1];
-    end_coordinate[0][0] = food_list[1][0];
-    end_coordinate[0][1] = food_list[1][1];
-    a_star();
-    for (i = 0; i < 285; i++){ 
-        if (ret_steps[i][0] != -1){
-            btPutInt(ret_steps[i][0]);
-            btPutString(",");
-            btPutInt(ret_steps[i][1]);
-            btPutString("\n");
-        }
-    }
+    set_start_end(1);
+    print_ret_steps();    
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
-    start_coordinate[0][0] = food_list[1][0];
-    start_coordinate[0][1] = food_list[1][1];
-    end_coordinate[0][0] = food_list[2][0];
-    end_coordinate[0][1] = food_list[2][1];
-    a_star();
-    for (i = 0; i < 285; i++){ 
-        if (ret_steps[i][0] != -1){
-            btPutInt(ret_steps[i][0]);
-            btPutString(",");
-            btPutInt(ret_steps[i][1]);
-            btPutString("\n");
-        }
-    }
+    set_start_end(2);
+    print_ret_steps();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
-    start_coordinate[0][0] = food_list[2][0];
-    start_coordinate[0][1] = food_list[2][1];
-    end_coordinate[0][0] = food_list[3][0];
-    end_coordinate[0][1] = food_list[3][1];
-    a_star();
-    for (i = 0; i < 285; i++){ 
-        if (ret_steps[i][0] != -1){
-            btPutInt(ret_steps[i][0]);
-            btPutString(",");
-            btPutInt(ret_steps[i][1]);
-            btPutString("\n");
-        }
-    }
-    start_coordinate[0][0] = food_list[3][0];
-    start_coordinate[0][1] = food_list[3][1];
-    end_coordinate[0][0] = food_list[4][0];
-    end_coordinate[0][1] = food_list[4][1];
-    a_star();
-    for (i = 0; i < 285; i++){ 
-        if (ret_steps[i][0] != -1){
-            btPutInt(ret_steps[i][0]);
-            btPutString(",");
-            btPutInt(ret_steps[i][1]);
-            btPutString("\n");
-        }
-    }
-    //Todo: play_pacman_2() reads steps stored in ret_steps until first -1,-1 indicating destination has been reached.
+    set_start_end(3);
+    print_ret_steps();
+    //Convert coordinates to directions for robot
+    //Implement directions
+    //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
+    set_start_end(4);
+    print_ret_steps();
+    //Convert coordinates to directions for robot
+    //Implement directions
+    //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
 }
 
 /*
@@ -257,6 +210,26 @@ void play_pacman_2(){
 */
 void play_pacman_3(){
 
+}
+
+void set_start_end(int next_pellet) {
+    start_coordinate[0][0] = food_list[next_pellet - 1][0];
+    start_coordinate[0][1] = food_list[next_pellet - 1][1];
+    end_coordinate[0][0] = food_list[next_pellet][0];
+    end_coordinate[0][1] = food_list[next_pellet][1];
+    a_star();
+}
+
+void print_ret_steps() {
+    int i;
+    for (i = 0; i < 285; i++){ 
+        if (ret_steps[i][0] != -1){
+            btPutInt(ret_steps[i][0]);
+            btPutString(",");
+            btPutInt(ret_steps[i][1]);
+            btPutString("\n");
+        }
+    }
 }
 
 void a_star(){
