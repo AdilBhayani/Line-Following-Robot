@@ -172,9 +172,82 @@ void play_pacman_1(){
  * starting position will be given.
  */
 void play_pacman_2(){
+    int i = 0;
     //printf("Inside pacman_2()\n");
-    //Todo: play_pacman_2() initialises start and end cooridinates
+    btPutString("Inside pacman_2()\n");
+    end_coordinate[0][0] = food_list[0][0]; //set x and y coordinates of first item in food list
+    end_coordinate[0][1] = food_list[0][1]; 
     a_star();
+    btPutString("Finished a_star");
+    for (i = 0; i < 285; i++){ 
+        if (ret_steps[i][0] != -1){
+            btPutInt(ret_steps[i][0]);
+            btPutString(",");
+            btPutInt(ret_steps[i][1]);
+            btPutString("\n");
+        }
+    }
+    //Convert coordinates to directions for robot
+    //Implement directions
+    //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
+    start_coordinate[0][0] = food_list[0][0];
+    start_coordinate[0][1] = food_list[0][1];
+    end_coordinate[0][0] = food_list[1][0];
+    end_coordinate[0][1] = food_list[1][1];
+    a_star();
+    for (i = 0; i < 285; i++){ 
+        if (ret_steps[i][0] != -1){
+            btPutInt(ret_steps[i][0]);
+            btPutString(",");
+            btPutInt(ret_steps[i][1]);
+            btPutString("\n");
+        }
+    }
+    //Convert coordinates to directions for robot
+    //Implement directions
+    //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
+    start_coordinate[0][0] = food_list[1][0];
+    start_coordinate[0][1] = food_list[1][1];
+    end_coordinate[0][0] = food_list[2][0];
+    end_coordinate[0][1] = food_list[2][1];
+    a_star();
+    for (i = 0; i < 285; i++){ 
+        if (ret_steps[i][0] != -1){
+            btPutInt(ret_steps[i][0]);
+            btPutString(",");
+            btPutInt(ret_steps[i][1]);
+            btPutString("\n");
+        }
+    }
+    //Convert coordinates to directions for robot
+    //Implement directions
+    //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
+    start_coordinate[0][0] = food_list[2][0];
+    start_coordinate[0][1] = food_list[2][1];
+    end_coordinate[0][0] = food_list[3][0];
+    end_coordinate[0][1] = food_list[3][1];
+    a_star();
+    for (i = 0; i < 285; i++){ 
+        if (ret_steps[i][0] != -1){
+            btPutInt(ret_steps[i][0]);
+            btPutString(",");
+            btPutInt(ret_steps[i][1]);
+            btPutString("\n");
+        }
+    }
+    start_coordinate[0][0] = food_list[3][0];
+    start_coordinate[0][1] = food_list[3][1];
+    end_coordinate[0][0] = food_list[4][0];
+    end_coordinate[0][1] = food_list[4][1];
+    a_star();
+    for (i = 0; i < 285; i++){ 
+        if (ret_steps[i][0] != -1){
+            btPutInt(ret_steps[i][0]);
+            btPutString(",");
+            btPutInt(ret_steps[i][1]);
+            btPutString("\n");
+        }
+    }
     //Todo: play_pacman_2() reads steps stored in ret_steps until first -1,-1 indicating destination has been reached.
 }
 
@@ -235,7 +308,7 @@ void a_star(){
         
         int closed_list_index = in_list(square_to_check_x - 1, square_to_check_y, closed_list, closed_index);
         //printf("closed_list_index top: %d\n", closed_list_index);
-        if (closed_list_index == -1 && square_to_check_x > 0 && map1[square_to_check_x - 1][square_to_check_y] == 0){
+        if (closed_list_index == -1 && square_to_check_x > 0 && currentMap[square_to_check_x - 1][square_to_check_y] == 0){
             int open_list_index = in_list(square_to_check_x - 1, square_to_check_y, open_list, open_index);
             //printf("open_list_index top: %d\n", open_list_index);
             if (open_list_index == -1){
@@ -253,7 +326,7 @@ void a_star(){
         
         closed_list_index = in_list(square_to_check_x, square_to_check_y + 1, closed_list, closed_index);
         //printf("closed_list_index right: %d\n", closed_list_index);
-        if (closed_list_index == -1 && square_to_check_y < MAP_WIDTH - 1 && map1[square_to_check_x][square_to_check_y + 1] == 0){
+        if (closed_list_index == -1 && square_to_check_y < MAP_WIDTH - 1 && currentMap[square_to_check_x][square_to_check_y + 1] == 0){
             int open_list_index = in_list(square_to_check_x, square_to_check_y + 1, open_list, open_index);
             //printf("open_list_index right: %d\n", open_list_index);
             if (open_list_index == -1){
@@ -270,7 +343,7 @@ void a_star(){
         
         closed_list_index = in_list(square_to_check_x + 1, square_to_check_y, closed_list, closed_index);
         //printf("closed_list_index bottom: %d\n", closed_list_index);
-        if (closed_list_index == -1 && square_to_check_x < MAP_HEIGHT - 1 && map1[square_to_check_x + 1][square_to_check_y] == 0){
+        if (closed_list_index == -1 && square_to_check_x < MAP_HEIGHT - 1 && currentMap[square_to_check_x + 1][square_to_check_y] == 0){
             int open_list_index = in_list(square_to_check_x + 1, square_to_check_y, open_list, open_index);
             //printf("open_list_index bottom: %d\n", open_list_index);
             if (open_list_index == -1){
@@ -287,7 +360,7 @@ void a_star(){
         
         closed_list_index = in_list(square_to_check_x, square_to_check_y - 1, closed_list, closed_index);
         //printf("closed_list_index left: %d\n", closed_list_index);
-        if (closed_list_index == -1 && square_to_check_y > 0 && map1[square_to_check_x][square_to_check_y - 1] == 0){
+        if (closed_list_index == -1 && square_to_check_y > 0 && currentMap[square_to_check_x][square_to_check_y - 1] == 0){
             int open_list_index = in_list(square_to_check_x, square_to_check_y - 1, open_list, open_index);
             //printf("open_list_index left: %d\n", open_list_index);
             if (open_list_index == -1){
