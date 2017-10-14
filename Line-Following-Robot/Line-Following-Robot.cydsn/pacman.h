@@ -129,6 +129,7 @@ static int ret_steps[285][2] = {{0}}; //maximum steps could be 19 * 15 = 285
 enum robotTurns {LEFT, RIGHT, STOP};
 static enum robotTurns pacmanDirections[300] = {STOP};
 static int pacmanDirectionsIndex = 0;
+static int firstPelletFlag = 1;
 static int prevPosition[1][2] = {
     {-1,-1}
 };

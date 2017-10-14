@@ -180,27 +180,31 @@ void play_pacman_2(){
     a_star();
     print_ret_steps();
     generate_directions();
-    while(1);
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     set_start_end(1);
-    print_ret_steps();    
+    print_ret_steps();
+    generate_directions();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     set_start_end(2);
     print_ret_steps();
+    generate_directions();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     set_start_end(3);
     print_ret_steps();
+    generate_directions();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     set_start_end(4);
     print_ret_steps();
+    generate_directions();
+    while(1);
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
@@ -241,9 +245,63 @@ void generate_directions() {
     }
     int a;
     for (a = 1; a < i - 1; a++) { //don't check first coordinate because we need to go straight anyways
-        if (a == i - 1) { //last value in ret_steps
-            //come back to this to figure out how to set directions between food particles
+        if (a == i - 2) { //save the second to last coordinate that the robot is in for in between particles
+            prevPosition[0][0] = ret_steps[a][0];
+            prevPosition[0][1] = ret_steps[a][1];
         }
+        if (a == 1 && firstPelletFlag == 0) { //robot needs to redirect based on where it previously was
+            btPutString("got inside the first if\n");
+            if (prevPosition[0][0] == ret_steps[a][0] && prevPosition[0][1] == ret_steps[a][1]) { //180 turn
+                btPutString("got inside the second if\n");
+                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                pacmanDirectionsIndex++;
+                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                pacmanDirectionsIndex++; 
+            }
+            /////////////THIS STUFF NEEDS TO BE MODULARISED INTO A FUNCTION//////////////////////////////////////////
+            else if (ret_steps[a+1][1] > ret_steps[a][1]) { // column has increased
+                if (prevPosition[0][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn left
+                    pacmanDirections[pacmanDirectionsIndex] = LEFT;
+                    pacmanDirectionsIndex++;
+                }
+                else if (prevPosition[0][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn right
+                    pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                    pacmanDirectionsIndex++;    
+                }
+            }   
+            else if (ret_steps[a+1][1] < ret_steps[a][1]) { // column has decreased
+                if (prevPosition[0][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn right
+                    pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                    pacmanDirectionsIndex++;
+                }
+                else if (prevPosition[0][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn left
+                    pacmanDirections[pacmanDirectionsIndex] = LEFT;
+                    pacmanDirectionsIndex++;   
+                }
+            }
+            else if (ret_steps[a+1][0] < ret_steps[a][0]) { // row has decreased
+                if (prevPosition[0][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn left
+                    pacmanDirections[pacmanDirectionsIndex] = LEFT;
+                    pacmanDirectionsIndex++;
+                }
+                else if (prevPosition[0][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn right
+                    pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                    pacmanDirectionsIndex++;   
+                }
+            }
+            else if (ret_steps[a+1][0] > ret_steps[a][0]) { // row has increased
+                if (prevPosition[0][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn right
+                    pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                    pacmanDirectionsIndex++;
+                }
+                else if (prevPosition[0][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn left
+                    pacmanDirections[pacmanDirectionsIndex] = LEFT;
+                    pacmanDirectionsIndex++;   
+                }
+            }
+        ///////////////////////////////////////////UP TO HERE//////////////////////////////////////////    
+        }
+        /////////////THIS STUFF NEEDS TO BE MODULARISED INTO A FUNCTION////////////////////////////////
         else if (ret_steps[a+1][1] > ret_steps[a][1]) { // column has increased
             if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn left
                 pacmanDirections[pacmanDirectionsIndex] = LEFT;
@@ -284,13 +342,18 @@ void generate_directions() {
                 pacmanDirectionsIndex++;   
             }
         }
+        ////////////////////////////////////////UP TO HERE////////////////////////////////
     }
     int b;
+    btPutString("PacmanDirectionsIndex is: ");
+        btPutInt(pacmanDirectionsIndex);
+        btPutString("\n");
     for(b = 0; b < pacmanDirectionsIndex; b++) {
         btPutString("The robot needs to turn: ");
-        btPutInt(pacmanDirections[pacmanDirectionsIndex]);
+        btPutInt(pacmanDirections[b]);
         btPutString("\n");
     }
+    firstPelletFlag = 0;
 }
 
 void a_star(){
