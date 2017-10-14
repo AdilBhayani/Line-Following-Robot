@@ -249,111 +249,79 @@ void generate_directions() {
             prevPosition[0][0] = ret_steps[a][0];
             prevPosition[0][1] = ret_steps[a][1];
         }
+        enum robotTurns turnToAdd = NO_TURN;
         if (a == 1 && firstPelletFlag == 0) { //robot needs to redirect based on where it previously was
-            btPutString("got inside the first if\n");
             if (prevPosition[0][0] == ret_steps[a][0] && prevPosition[0][1] == ret_steps[a][1]) { //180 turn
-                btPutString("got inside the second if\n");
                 pacmanDirections[pacmanDirectionsIndex] = RIGHT;
                 pacmanDirectionsIndex++;
                 pacmanDirections[pacmanDirectionsIndex] = RIGHT;
                 pacmanDirectionsIndex++; 
             }
-            /////////////THIS STUFF NEEDS TO BE MODULARISED INTO A FUNCTION//////////////////////////////////////////
-            else if (ret_steps[a+1][1] > ret_steps[a][1]) { // column has increased
-                if (prevPosition[0][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn left
-                    pacmanDirections[pacmanDirectionsIndex] = LEFT;
-                    pacmanDirectionsIndex++;
-                }
-                else if (prevPosition[0][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn right
-                    pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                    pacmanDirectionsIndex++;    
-                }
-            }   
-            else if (ret_steps[a+1][1] < ret_steps[a][1]) { // column has decreased
-                if (prevPosition[0][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn right
-                    pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                    pacmanDirectionsIndex++;
-                }
-                else if (prevPosition[0][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn left
-                    pacmanDirections[pacmanDirectionsIndex] = LEFT;
-                    pacmanDirectionsIndex++;   
-                }
-            }
-            else if (ret_steps[a+1][0] < ret_steps[a][0]) { // row has decreased
-                if (prevPosition[0][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn left
-                    pacmanDirections[pacmanDirectionsIndex] = LEFT;
-                    pacmanDirectionsIndex++;
-                }
-                else if (prevPosition[0][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn right
-                    pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                    pacmanDirectionsIndex++;   
-                }
-            }
-            else if (ret_steps[a+1][0] > ret_steps[a][0]) { // row has increased
-                if (prevPosition[0][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn right
-                    pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                    pacmanDirectionsIndex++;
-                }
-                else if (prevPosition[0][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn left
-                    pacmanDirections[pacmanDirectionsIndex] = LEFT;
-                    pacmanDirectionsIndex++;   
-                }
-            }
-        ///////////////////////////////////////////UP TO HERE//////////////////////////////////////////    
-        }
-        /////////////THIS STUFF NEEDS TO BE MODULARISED INTO A FUNCTION////////////////////////////////
-        else if (ret_steps[a+1][1] > ret_steps[a][1]) { // column has increased
-            if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn left
-                pacmanDirections[pacmanDirectionsIndex] = LEFT;
-                pacmanDirectionsIndex++;
-            }
-            else if (ret_steps[a-1][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn right
-                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                pacmanDirectionsIndex++;    
+            else {
+                turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
             }
         }
-        else if (ret_steps[a+1][1] < ret_steps[a][1]) { // column has decreased
-            if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn right
-                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                pacmanDirectionsIndex++;
-            }
-            else if (ret_steps[a-1][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn left
-                pacmanDirections[pacmanDirectionsIndex] = LEFT;
-                pacmanDirectionsIndex++;   
-            }
+        else {
+            turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
         }
-        else if (ret_steps[a+1][0] < ret_steps[a][0]) { // row has decreased
-            if (ret_steps[a-1][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn left
-                pacmanDirections[pacmanDirectionsIndex] = LEFT;
-                pacmanDirectionsIndex++;
-            }
-            else if (ret_steps[a-1][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn right
-                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                pacmanDirectionsIndex++;   
-            }
+        if (turnToAdd != NO_TURN) {
+            pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
+            pacmanDirectionsIndex++;
         }
-        else if (ret_steps[a+1][0] > ret_steps[a][0]) { // row has increased
-            if (ret_steps[a-1][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn right
-                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                pacmanDirectionsIndex++;
-            }
-            else if (ret_steps[a-1][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn left
-                pacmanDirections[pacmanDirectionsIndex] = LEFT;
-                pacmanDirectionsIndex++;   
-            }
-        }
-        ////////////////////////////////////////UP TO HERE////////////////////////////////
+        
+        turnToAdd = NO_TURN; //reset the value of turnToAdd
+        btPutString("The coordinate being considered is: ");
+        btPutInt(ret_steps[a][0]);
+        btPutString(", ");
+        btPutInt(ret_steps[a][1]);
+        btPutString("\n");
+        btPutString("The converted direction is: ");
+        btPutInt(turnToAdd);
+        btPutString("\n");
     }
     int b;
-    btPutString("PacmanDirectionsIndex is: ");
-        btPutInt(pacmanDirectionsIndex);
-        btPutString("\n");
     for(b = 0; b < pacmanDirectionsIndex; b++) {
         btPutString("The robot needs to turn: ");
         btPutInt(pacmanDirections[b]);
         btPutString("\n");
     }
     firstPelletFlag = 0;
+}
+
+enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPosRow, int currentPosCol, int nextPosRow, int nextPosCol) {
+    if (nextPosCol > currentPosCol) { // column has increased
+        if (prevPosRow < currentPosRow) { //if row is increasing then robot is going south, and needs to turn left
+            return LEFT;
+        }
+        else if (prevPosRow > currentPosRow) { //if row is decreasing then robot is going north, and needs to turn right
+            return RIGHT; 
+        }
+    }
+    else if (nextPosCol < currentPosCol) { // column has decreased
+        if (prevPosRow < currentPosRow) { //if row is increasing then robot is going south, and needs to turn right
+            return RIGHT;
+        }
+        else if (prevPosRow > currentPosRow) { //if row is decreasing then robot is going north, and needs to turn left
+            return LEFT;
+        }
+    }
+    else if (nextPosRow < currentPosRow) { // row has decreased
+        if (prevPosCol < currentPosCol) { //if column is increasing then robot is going east, and needs to turn left
+            return LEFT;
+        }
+        else if (prevPosCol > currentPosCol) { //if column is decreasing then robot is going west, and needs to turn right
+            return RIGHT;
+        }
+    }
+    else if (nextPosRow > currentPosRow) { // row has increased
+        if (prevPosCol < currentPosCol) { //if column is increasing then robot is going east, and needs to turn right
+            return RIGHT;
+        }
+        else if (prevPosCol > currentPosCol) { //if column is decreasing then robot is going west, and needs to turn left
+            return LEFT;
+        }
+    }
+    return NO_TURN; //else add straight
 }
 
 void a_star(){
