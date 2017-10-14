@@ -179,6 +179,8 @@ void play_pacman_2(){
     end_coordinate[0][1] = food_list[0][1]; 
     a_star();
     print_ret_steps();
+    generate_directions();
+    while(1);
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
@@ -238,62 +240,56 @@ void generate_directions() {
         i++;
     }
     int a;
-    for (a = 0; a < i + 1; a++) {
-        if (a == i) { //last value in ret_steps
+    for (a = 1; a < i - 1; a++) { //don't check first coordinate because we need to go straight anyways
+        if (a == i - 1) { //last value in ret_steps
             //come back to this to figure out how to set directions between food particles
         }
         else if (ret_steps[a+1][1] > ret_steps[a][1]) { // column has increased
-            if (a == 0) {
-                //add straight to the array of directions
-            }
-            else if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn left
-                //add a left turn to the array of turns
-                //tell robot to go straight after the turn
+            if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn left
+                pacmanDirections[pacmanDirectionsIndex] = LEFT;
+                pacmanDirectionsIndex++;
             }
             else if (ret_steps[a-1][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn right
-                //add a right turn to the array of turns
-                //tell robot to go straight after the turn    
+                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                pacmanDirectionsIndex++;    
             }
         }
         else if (ret_steps[a+1][1] < ret_steps[a][1]) { // column has decreased
-            if (a == 0) {
-                //add straight to the array of directions
-            }
-            else if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn right
-                //add a right turn to the array of turns
-                //tell robot to go straight after the turn
+            if (ret_steps[a-1][0] < ret_steps[a][0]) { //if row is increasing then robot is going south, and needs to turn right
+                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                pacmanDirectionsIndex++;
             }
             else if (ret_steps[a-1][0] > ret_steps[a][0]) { //if row is decreasing then robot is going north, and needs to turn left
-                //add a left turn to the array of turns
-                //tell robot to go straight after the turn    
+                pacmanDirections[pacmanDirectionsIndex] = LEFT;
+                pacmanDirectionsIndex++;   
             }
         }
         else if (ret_steps[a+1][0] < ret_steps[a][0]) { // row has decreased
-            if (a == 0) {
-                //add straight to the array of directions
-            }
-            else if (ret_steps[a-1][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn left
-                //add a left turn to the array of turns
-                //tell robot to go straight after the turn
+            if (ret_steps[a-1][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn left
+                pacmanDirections[pacmanDirectionsIndex] = LEFT;
+                pacmanDirectionsIndex++;
             }
             else if (ret_steps[a-1][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn right
-                //add a right turn to the array of turns
-                //tell robot to go straight after the turn    
+                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                pacmanDirectionsIndex++;   
             }
         }
         else if (ret_steps[a+1][0] > ret_steps[a][0]) { // row has increased
-            if (a == 0) {
-                //add straight to the array of directions
-            }
-            else if (ret_steps[a-1][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn right
-                //add a right turn to the array of turns
-                //tell robot to go straight after the turn
+            if (ret_steps[a-1][1] < ret_steps[a][1]) { //if column is increasing then robot is going east, and needs to turn right
+                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                pacmanDirectionsIndex++;
             }
             else if (ret_steps[a-1][1] > ret_steps[a][1]) { //if column is decreasing then robot is going west, and needs to turn left
-                //add a left turn to the array of turns
-                //tell robot to go straight after the turn    
+                pacmanDirections[pacmanDirectionsIndex] = LEFT;
+                pacmanDirectionsIndex++;   
             }
         }
+    }
+    int b;
+    for(b = 0; b < pacmanDirectionsIndex; b++) {
+        btPutString("The robot needs to turn: ");
+        btPutInt(pacmanDirections[pacmanDirectionsIndex]);
+        btPutString("\n");
     }
 }
 
