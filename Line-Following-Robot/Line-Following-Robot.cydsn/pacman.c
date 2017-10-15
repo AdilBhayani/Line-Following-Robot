@@ -180,7 +180,7 @@ void play_pacman_2(){
         set_start_end(i);
         print_ret_steps();
         generate_directions();
-        generate_movements();
+        //generate_movements();
         //Convert coordinates to directions for robot
         //Implement directions
         //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
@@ -217,23 +217,27 @@ void generate_directions() {
         i++;
     }
     int a;
-    for (a = 1; a < i - 1; a++) { ///////// should this be a = 0?? how will it know where to move a = 0 to 1?? ///////
+    for (a = 0; a < i - 1; a++) { 
         if (a == i - 2) { //save the second to last coordinate that the robot is in for in between particles
             prevPosition[0] = ret_steps[a][0];
             prevPosition[1] = ret_steps[a][1];
         }
         enum robotTurns turnToAdd = NO_TURN;
-        ///////logic for after a pellet was collected doesn't seem to account for all cases/////////
-        if (a == 1 && firstPelletFlag == 0) { //robot needs to redirect based on where it previously was
-            if (prevPosition[0] == ret_steps[a][0] && prevPosition[1] == ret_steps[a][1]) { //180 turn
+        if (a == 0 && firstPelletFlag == 0) {
+            usbPutString("Entered first if statement\n");
+            if (prevPosition[0] == ret_steps[a+1][0] && prevPosition[1] == ret_steps[a+1][1]) { //180 turn
+                usbPutString("Entered second if statement\n");
                 pacmanDirections[pacmanDirectionsIndex] = RIGHT;
                 pacmanDirectionsIndex++;
                 pacmanDirections[pacmanDirectionsIndex] = RIGHT;
                 pacmanDirectionsIndex++; 
             }
             else {
-                turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
+                turnToAdd = convertCoordinates(prevPosition[0], prevPosition[1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
             }
+        }
+        else if (a == 0 && firstPelletFlag == 1) {
+            turnToAdd = NO_TURN;
         }
         else {
             turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
@@ -242,22 +246,26 @@ void generate_directions() {
         ///////want to add NO_TURN too otherwise how will we know when to go straight??////////////
         pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
         pacmanDirectionsIndex++;
-       
+        if (turnToAdd == LEFT || turnToAdd == RIGHT) {
+            pacmanDirections[pacmanDirectionsIndex] = NO_TURN;
+            pacmanDirectionsIndex++;
+        }
+        usbPutString("The coordinate being considered is: ");
+        usbPutInt(ret_steps[a][0]);
+        usbPutString(", ");
+        usbPutInt(ret_steps[a][1]);
+        usbPutString("\n");
+        usbPutString("The converted direction is: ");
+        usbPutInt(turnToAdd);
+        usbPutString("\n");
         turnToAdd = NO_TURN; //reset the value of turnToAdd
-        btPutString("The coordinate being considered is: ");
-        btPutInt(ret_steps[a][0]);
-        btPutString(", ");
-        btPutInt(ret_steps[a][1]);
-        btPutString("\n");
-        btPutString("The converted direction is: ");
-        btPutInt(turnToAdd);
-        btPutString("\n");
+       
     }
     int b;
     for(b = 0; b < pacmanDirectionsIndex; b++) {
-        btPutString("The robot needs to turn: ");
-        btPutInt(pacmanDirections[b]);
-        btPutString("\n");
+        usbPutString("The robot needs to turn: ");
+        usbPutInt(pacmanDirections[b]);
+        usbPutString("\n");
     }
     firstPelletFlag = 0;
 }
@@ -303,11 +311,9 @@ void generate_movements() {
     for(i = 0; i < pacmanDirectionsIndex; i++) {
         if (pacmanDirections[i] == LEFT) {
             robot_left_turn();
-            robot_forward(1);
         }
         else if (pacmanDirections[i] == RIGHT) {
             robot_right_turn();
-            robot_forward(1);
         }
         else if (pacmanDirections[i] == NO_TURN) {
             robot_forward(1); //move forward 1 grid space
