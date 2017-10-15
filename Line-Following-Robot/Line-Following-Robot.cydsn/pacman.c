@@ -180,30 +180,35 @@ void play_pacman_2(){
     a_star();
     print_ret_steps();
     generate_directions();
+    generate_movements();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     set_start_end(1);
     print_ret_steps();
     generate_directions();
+    generate_movements();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     set_start_end(2);
     print_ret_steps();
     generate_directions();
+    generate_movements();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     set_start_end(3);
     print_ret_steps();
     generate_directions();
+    generate_movements();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     set_start_end(4);
     print_ret_steps();
     generate_directions();
+    generate_movements();
     while(1);
     //Convert coordinates to directions for robot
     //Implement directions
@@ -244,12 +249,13 @@ void generate_directions() {
         i++;
     }
     int a;
-    for (a = 1; a < i - 1; a++) { //don't check first coordinate because we need to go straight anyways
+    for (a = 1; a < i - 1; a++) { ///////// should this be a = 0?? how will it know where to move a = 0 to 1?? ///////
         if (a == i - 2) { //save the second to last coordinate that the robot is in for in between particles
             prevPosition[0][0] = ret_steps[a][0];
             prevPosition[0][1] = ret_steps[a][1];
         }
         enum robotTurns turnToAdd = NO_TURN;
+        ///////logic for after a pellet was collected doesn't seem to account for all cases/////////
         if (a == 1 && firstPelletFlag == 0) { //robot needs to redirect based on where it previously was
             if (prevPosition[0][0] == ret_steps[a][0] && prevPosition[0][1] == ret_steps[a][1]) { //180 turn
                 pacmanDirections[pacmanDirectionsIndex] = RIGHT;
@@ -264,11 +270,11 @@ void generate_directions() {
         else {
             turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
         }
-        if (turnToAdd != NO_TURN) {
-            pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
-            pacmanDirectionsIndex++;
-        }
-        
+
+        ///////want to add NO_TURN too otherwise how will we know when to go straight??////////////
+        pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
+        pacmanDirectionsIndex++;
+       
         turnToAdd = NO_TURN; //reset the value of turnToAdd
         btPutString("The coordinate being considered is: ");
         btPutInt(ret_steps[a][0]);
@@ -319,9 +325,29 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
         }
         else if (prevPosCol > currentPosCol) { //if column is decreasing then robot is going west, and needs to turn left
             return LEFT;
-        }
+        } 
     }
     return NO_TURN; //else add straight
+}
+
+void generate_movements() {
+    int i;
+    for(i = 0; i < pacmanDirectionsIndex; i++) {
+        if (pacmanDirections[i] == LEFT) {
+            robot_left_turn();
+            robot_forward(1);
+        }
+        else if (pacmanDirections[i] == RIGHT) {
+            robot_right_turn();
+            robot_forward(1);
+        }
+        else if (pacmanDirections[i] == NO_TURN) {
+            robot_forward(1); //move forward 1 grid space
+        }
+        else if (pacmanDirections[i] == STOP) {
+            m_sleep();
+        }
+    }
 }
 
 void a_star(){

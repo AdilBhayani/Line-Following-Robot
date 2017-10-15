@@ -141,6 +141,8 @@ void a_star();
 void set_start_end(int next_pellet);
 void print_ret_steps();
 void generate_directions();
+void generate_movements();
+
 int find_lowest_f_square(int f_values[15][19], int open_list[285][2], int open_index);
 int in_list(int x_pos, int y_pos, int list[285][2], int max_index);
 void add_square(int parent_x, int parent_y, int x, int y, int open_list[285][2], int f_values[15][19], int g_values[15][19], int h_values[15][19], int parents_x[15][19], int parents_y[15][19], int* open_index);
