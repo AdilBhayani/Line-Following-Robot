@@ -1,11 +1,11 @@
 \documentclass{article}
 \usepackage{FinalYearProjectReport}
 
-% uncomment this line to double line spacing for proof reading
-% \linespread{2}
+\sloppy
 
 % packages and settings for graphics
 \usepackage[pdftex]{graphicx}
+\usepackage{booktabs}
 \graphicspath{{./}}
 \DeclareGraphicsExtensions{.png}
 \usepackage[final]{pdfpages}
@@ -114,7 +114,6 @@ The Mini Project consists of designing a game on a FPGA device which incorporate
 
 \end{abstract}
 
-
 %----------------------------------------------------------------------------------------
 %	INTRODUCTION
 %----------------------------------------------------------------------------------------
@@ -132,11 +131,23 @@ This project consisted of the design and construction of part of an autonomous l
 
 \section{Analogue}
 
+The portion of the hardware that needed to be developed as part of this project centred around the collection and processing of vision information. This was in the form of a surface mounted phototransistor, the TEMT6200. The map is projected down from a ceiling mounted projector, where black lines represent lines and white areas symbolizes the walls. To be able to sense the difference between these and convey this information on to the PSoC is the aim of the analogue section of this project.
+
 \subsection{Phototransistor output signal}
+
+The phototransistor can be configured in two ways: common emitter or common collector. In the common emitter configuration, the output signal was very flat $(Black: V_{avg} = 2.58V, V_{Pk-Pk} = 0.05V, White: V_{avg} = 2.74V, V_{Pk-Pk} = 0.10V)$ and difficult to differentiate between the black and white lines. On the other hand in the common collector configuration, there was a sharp difference between the black and white lines $(Black: V_{avg} = 4.09V, V_{Pk-Pk} = 0.09V, White: V_{avg} = 2.84V, V_{Pk-Pk} = 1.54V)$. As a result a decision was made to use the common collector configuration for the light sensors.
 
 \subsection{Circuitry}
 
+There are two main concerns in the phototransistor output signal that must be resolved by the circuitry; these being the removal of the DC offset in the signal, and the filtering of noise. The DC offset needed to be removed as this varied depending on projector brightness in various parts of the map \& external lighting. The projector to be used for this project has a refresh rate of 120Hz, while the ambient light source in the laboratory has a refresh rate of 100Hz. Therefore a High pass filter with a cut-off less than 120Hz is necessary for this project. In this regard, the group's decision was to implement a RC High Pass filter with a cut-off frequency of 106Hz.
+
+The next thing that needed to be considered was how the signal will be passed onto the PSoC, in digital or analogue form. If the signal were to be passed on as a analogue signal, the PSoC must sample the signal and process this into a binary output (black or white) at a fast enough rate for the robot to accurately follow the line. Alternatively a hardware Schmitt Trigger can be used on the output signal to create a digital binary output which can be read by the PSoC from one of it's digital pins. This solution process the information into what is relevant to us in real time. After much thought and weighting of the pros and cons, a decision was reached to  use a Schmitt Trigger and process the signal into a digital signal to be passed into the PSoC.
+
 \subsection{Light sensor array and robot orientation}
+
+The project requires a sensor circuit layout such that it can communicate as much information as possible about the current position of the robot to the PSoC, so that the robot can interpret the track well to make an informed decision on where to move to next. After doing much research into the intricacies of line following robots, it became apparent that a line could be followed with as few as two sensors. One sensor immediately on either side of the inside of the line is sufficient to track a line and follow it. These two sensors must be placed as far forward as possible so as to make the deviations of the robot more pronounced and easier to detect \& correct. This would result in the robot being able to follow the lines more smoothly and jerk a lot less than if the sensors were near the axis of the wheels.
+
+In our project it is not sufficient for the robot to follow a line, it must also be able detect intersections and take 90° turns. For this purpose two addition sensors were used, these were placed on either side of the line slightly behind the front two sensors. These were placed forward so that when an intersection is detected by these sensors, there is enough of a braking distance for the robot to brake in time to take a turn at the intersection.
 
 \subsection{PCB Design}
 
@@ -153,17 +164,15 @@ This project consisted of the design and construction of part of an autonomous l
 
 \subsection{Path Finding Algorithms}
 
+There are numerous ways to find the shortest path to a particular location in a maze, of these we considered the Depth First Search (DFS) \& A* algorithms.
+
+When trying to reach the target, DFS navigates by following a path till the depth is reached, then traverse backwards till the previous intersection then choosing the next undiscovered path. A maze can be modelled as a tree with nodes in it. Each intersection can be considered a node. This can be implemented using recursion or iteration. There are few issues with this method: it doesn't find the shortest path, if loops exist additional making is necessary to solve, often suboptimal performance because it doesn't prioritise direction based on goal.
+
+On the other hand the A* algorithm is a much better transversal algorithm in most cases. Given a start \& end, A* prioritises which nodes to discover by using heuristic to estimate how far node is from goal. It then continues the search from the it thinks is closest to the goal. We have decided to use the Manhattan heuristic in our implementation. Manhattan distance is the distance between in a grid assuming strictly horizontal or vertical movements and the absence of objects. Often in multipath mazes where there is more than one path to the destination, finding the shortest path can take longer due to backtracking. Sometimes it is better to continue on a chosen path then to travers back a large distance to get the shortest path.
+
 \subsection{Line Following}
 
 \subsection{Motion Control \& PID}
-
-\subsection{Block Diagram}
-
-\begin{figure}[!h]
-\centerline{\includegraphics[width=0.5\textwidth]{uoa}}
-\caption{Block Diagram}
-\label{fig:rawFrame}
-\end{figure}
 
 \subsection{RF \& Bluetooth}
 
@@ -179,7 +188,27 @@ This project consisted of the design and construction of part of an autonomous l
 
 \section{Conclusions}
 
+\clearpage
+
 \section{Contributions}
+
+\begin{table}[h]
+\centering
+\label{my-label}
+\begin{tabular}{@{}l|cccc@{}}
+\toprule
+Task                          & \multicolumn{1}{l}{Alex Andela} & \multicolumn{1}{l}{Adil Bhayani} & \multicolumn{1}{l}{Vaishnavi Muppavaram} & \multicolumn{1}{l}{Sakayan Sitsabesan} \\ \midrule
+Analogue Design               & 40\%                            & 0\%                              & 50\%                                     & 10\%                                   \\
+Analogue Testing              & 50\%                            & 0\%                              & 40\%                                     & 10\%                                   \\
+Hardware Assembly             & 0\%                             & 10\%                             & 30\%                                     & 60\%                                   \\
+PID Control                   & 0\%                             & 40\%                             & 0\%                                      & 60\%                                   \\
+Matlab Algorithm              & 0\%                             & 100\%                            & 0\%                                      & 0\%                                    \\
+Pacman Algorithms             & 30\%                            & 40\%                             & 30\%                                     & 0\%                                    \\
+Benchmark Tasks               & 20\%                            & 30\%                             & 20\%                                     & 30\%                                   \\
+Project Archiving             & 55\%                            & 5\%                              & 25\%                                     & 15\%                                   \\
+Integration & 30\%                            & 0\%                              & 30\%                                     & 40\%                                   \\ \bottomrule
+\end{tabular}
+\end{table}
 
 %----------------------------------------------------------------------------------------
 %	APPENDICES
