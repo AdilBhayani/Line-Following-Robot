@@ -110,11 +110,11 @@ static int currentMap[15][19] = {
 };
     
 static int food_list[5][2] = 
-{{4,3},
-{7,6},
-{3,9},
-{7,11},
-{11,15}};
+{{1,3},
+{9,12},
+{11,5},
+{13,9},
+{3,17}};
 
 static int start_coordinate[2] = {1,1};
 

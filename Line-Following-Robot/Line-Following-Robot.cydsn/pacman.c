@@ -180,12 +180,12 @@ void play_pacman_2(){
         set_start_end(i);
         print_ret_steps();
         generate_directions();
-        //generate_movements();
+        
         //Convert coordinates to directions for robot
         //Implement directions
         //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     }
-
+    generate_movements();
     while(1);
 }
 
@@ -203,10 +203,10 @@ void print_ret_steps() {
     int i;
     for (i = 0; i < 285; i++){ 
         if (ret_steps[i][0] != -1){
-            btPutInt(ret_steps[i][0]);
-            btPutString(",");
-            btPutInt(ret_steps[i][1]);
-            btPutString("\n");
+            usbPutInt(ret_steps[i][0]);
+            usbPutString(",");
+            usbPutInt(ret_steps[i][1]);
+            usbPutString("\n");
         }
     }
 }
@@ -310,17 +310,28 @@ void generate_movements() {
     int i;
     for(i = 0; i < pacmanDirectionsIndex; i++) {
         if (pacmanDirections[i] == LEFT) {
-            robot_left_turn();
+            //robot_left_turn();
         }
         else if (pacmanDirections[i] == RIGHT) {
-            robot_right_turn();
+            //robot_right_turn();
         }
         else if (pacmanDirections[i] == NO_TURN) {
-            robot_forward(1,0); //move forward 1 grid space
+            int forwardAmount = 0;
+            while (pacmanDirections[i] == NO_TURN) {
+                i++;
+                forwardAmount++;
+            }
+            usbPutString("The forward amount is: ");
+            usbPutInt(forwardAmount);
+            usbPutString("\n");
+            //robot_forward(forwardAmount); //move forward 1 grid space
         }
         else if (pacmanDirections[i] == STOP) {
-            m_stop();
+            //m_stop();
         }
+        usbPutString("The value of i is: ");
+        usbPutInt(i);
+        usbPutString("\n");
     }
 }
 
