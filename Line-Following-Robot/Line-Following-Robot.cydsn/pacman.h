@@ -116,13 +116,9 @@ static int food_list[5][2] =
 {7,11},
 {11,15}};
 
-static int start_coordinate[1][2] = {
-    {1,1}
-};
+static int start_coordinate[2] = {1,1};
 
-static int end_coordinate[1][2] = {
-    {-1,-1}
-};
+static int end_coordinate[2] = {-1,-1};
 
 static int ret_steps[285][2] = {{0}}; //maximum steps could be 19 * 15 = 285
 enum robotTurns {LEFT, RIGHT, NO_TURN, STOP};
@@ -130,15 +126,13 @@ static enum robotTurns pacmanDirections[300] = {STOP};
 enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPosRow, int currentPosCol, int nextPosRow, int nextPosCol);
 static int pacmanDirectionsIndex = 0;
 static int firstPelletFlag = 1;
-static int prevPosition[1][2] = {
-    {-1,-1}
-};
+static int prevPosition[2] = {-1,-1};
 
 void play_pacman_1();
 void play_pacman_2();
 void play_pacman_3();
 void a_star();
-void set_start_end(int next_pellet);
+void set_start_end(uint8 next_pellet);
 void print_ret_steps();
 void generate_directions();
 void generate_movements();
@@ -151,3 +145,4 @@ void update_square(int index, int parent_x, int parent_y, int x, int y, int open
 #endif /* PACMAN_H_ */
 
 /* [] END OF FILE */
+

@@ -39,7 +39,7 @@ void switch_mode(){
     
     if (Switch_1_Read() > 0) {
         if (Switch_2_Read() > 0) {
-            if (Switch_3_Read() > 0) play_pacman_3();
+            if (Switch_3_Read() > 0) play_pacman_2();
             else benchmark_4();
         } else {
             if (Switch_3_Read() > 0) play_pacman_1();
