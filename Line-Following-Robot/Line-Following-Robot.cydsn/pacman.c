@@ -316,7 +316,7 @@ void generate_movements() {
             robot_right_turn();
         }
         else if (pacmanDirections[i] == NO_TURN) {
-            robot_forward(1); //move forward 1 grid space
+            robot_forward(1,0); //move forward 1 grid space
         }
         else if (pacmanDirections[i] == STOP) {
             m_stop();

@@ -244,8 +244,10 @@ void set_speed_B(float speed){
 /*
  * Robot moves forward value number of grid spaces.
  */
-void robot_forward(uint8 value){ 
-    uint16 distance = ((GRIDSIZE * value) - 60) * 1.13397;
+void robot_forward(uint8 value, uint8 direction){ 
+    uint16 distance;
+    if (direction == 0) distance = ((GRIDSIZE * value) - 60) * 1.13397;
+    else distance = ((GRIDSIZEOTHER * value) - 60) * 1.13397;
     int16 originalCount = QuadDec_M1_GetCounter();
     m_straight();
     while (QuadDec_M1_GetCounter() < (originalCount + distance)){
@@ -253,18 +255,22 @@ void robot_forward(uint8 value){
         isr_center_right = Sensor_2_Read();
         isr_left_sensor = Sensor_3_Read();
         isr_right_sensor = Sensor_5_Read();
-        if (isr_center_left > 0){
-            if (isr_center_right > 0){
-                m_straight();
-            } else {
-                m_adjust_left_minor();
+        if (QuadDec_M1_GetCounter() < (originalCount + distance) * 0.9){
+            if (isr_center_left > 0){
+                if (isr_center_right > 0){
+                    m_straight();
+                } else {
+                    m_adjust_left_minor();
+                }
+            } else if (isr_center_right > 0){
+                m_adjust_right_minor();
+            } else if (isr_left_sensor > 0){
+                m_adjust_left_major();
+            } else if (isr_right_sensor > 0){
+                m_adjust_right_major();
             }
-        } else if (isr_center_right > 0){
-            m_adjust_right_minor();
-        } else if (isr_left_sensor > 0){
-            m_adjust_left_major();
-        } else if (isr_right_sensor > 0){
-            m_adjust_right_major();
+        }else{
+            m_straight();
         }
     }
     m_stop();
@@ -280,8 +286,8 @@ void robot_right_turn(){
     m_turn_right();
     isr_flag = 0;
     while (QuadDec_M1_GetCounter() < (originalCount + dist));
-    while ((QuadDec_M1_GetCounter() < (originalCount + distance)) || (isr_center_front > 0)) {
-        isr_center_front = Sensor_4_Read();
+    while ((QuadDec_M1_GetCounter() < (originalCount + distance)) || (isr_center_right > 0)) {
+        isr_center_right = Sensor_4_Read();
     }
     m_stop();
 }
@@ -296,11 +302,10 @@ void robot_left_turn(){
     m_turn_left();
     isr_flag = 0;
     while (QuadDec_M2_GetCounter() < (originalCount + dist));
-    while ((QuadDec_M2_GetCounter() < (originalCount + distance)) || (isr_center_front > 0)) {
-        isr_center_front = Sensor_4_Read();
+    while ((QuadDec_M2_GetCounter() < (originalCount + distance)) || (isr_center_left > 0)) {
+        isr_center_left = Sensor_3_Read();
     }
     m_stop();
-    
 }
 
 /*

@@ -41,14 +41,15 @@
 #define STOP_MOTOR 0
 #define M_FORWARD_MAX 10.85
 #define M_BACKWARD_MAX (-10.85)
-#define M_FORWARD 6
-#define M_FORWARD_SLOW 4
-#define M_BACKWARD (-6)
-#define M_BACKWARD_SLOW (-4)
+#define M_FORWARD 5.5
+#define M_FORWARD_SLOW 3.5
+#define M_BACKWARD (-5.5)
+#define M_BACKWARD_SLOW (-3.5)
 #define SampleTimeInSec 0.01
 // Following defines are in mm
 #define WHEELRADIUS 32
 #define GRIDSIZE 130
+#define GRIDSIZEOTHER 140
 
 static volatile float quad_a_old;
 static volatile float quad_b_old;
@@ -95,7 +96,7 @@ void calc_speed();
 void set_speed_A(float speed);
 void set_speed_B(float speed);
 
-void robot_forward(uint8 value);
+void robot_forward(uint8 value, uint8 direction);
 void robot_right_turn();
 void robot_left_turn();
 void robot_turn();
