@@ -28,6 +28,10 @@
 
 #include "battery_management.h"
 
+/* 
+ * Outputs the current values of the sensors
+ * to the debug LEDs. Used for debugging purposes.
+ */
 void DebugLEDs(){
     if (Sensor_1_Read() > 0) LED_1_Write(1);
     else LED_1_Write(0);

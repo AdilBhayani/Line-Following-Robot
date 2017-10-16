@@ -104,6 +104,10 @@ void init_motion_control() {
     isr_Timer1_StartEx(PID_ISR);
 }
 
+/*
+ * This function ramp loads the PWM of
+ * the motors to max value at a constant speed.
+ */
 void ramp_loader(){
         if (startCounter == 12){
             PWM_2_WriteCompare(175);
@@ -144,7 +148,6 @@ void ramp_loader(){
         }
         startCounter--;
 }
-
 
 void m_stop(){
     SetpointA = STOP_MOTOR;

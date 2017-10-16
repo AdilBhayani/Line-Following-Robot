@@ -67,46 +67,5 @@ void init_rf(){
     start = 0;
 }
 
-uint8 asciiMethod() {
-    char cha;
-    int firstValue[3] = {0, 0, 0};
-    cha = RF_UART_GetChar();
-    if (cha != 0){
-        if (cha == '#'){
-            static char streamArray[96];
-            int index = 0;
-            int flag = 0;
-            while(flag == 0){  
-                cha = RF_UART_GetChar();
-                firstValue[index] = cha - 48;
-                if (cha == 10 || cha == 13){
-                    break;   
-                }
-                while (cha != ','){
-                    //usbPutChar(cha)
-                    index++;
-                    cha = RF_UART_GetChar();
-                    firstValue[index] = cha - 48;
-                    //append to something
-                    if (cha == '#'){
-                        break;
-                    }
-                }
-                flag = 1;
-            }
-            if (flag == 1) {
-                int i;
-                for (i = 0; i < 3; i++) {
-                    CyDelay(1000);
-                    usbPutInt(firstValue[i]);
-                    //usbPutInt(12);
-                }
-                return 1;
-            }
-            
-        }
-    }
-    return 1;
-}
-
 /* [] END OF FILE */
+
