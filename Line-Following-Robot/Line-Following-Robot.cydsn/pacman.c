@@ -222,7 +222,7 @@ void generate_directions() {
             prevPosition[0] = ret_steps[a][0];
             prevPosition[1] = ret_steps[a][1];
         }
-        enum robotTurns turnToAdd = NO_TURN;
+        enum robotTurns turnToAdd = STRAIGHT;
         if (a == 0 && firstPelletFlag == 0) {
             usbPutString("Entered first if statement\n");
             if (prevPosition[0] == ret_steps[a+1][0] && prevPosition[1] == ret_steps[a+1][1]) { //180 turn
@@ -237,17 +237,17 @@ void generate_directions() {
             }
         }
         else if (a == 0 && firstPelletFlag == 1) {
-            turnToAdd = NO_TURN;
+            turnToAdd = STRAIGHT;
         }
         else {
             turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
         }
 
-        ///////want to add NO_TURN too otherwise how will we know when to go straight??////////////
+        ///////want to add STRAIGHT too otherwise how will we know when to go straight??////////////
         pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
         pacmanDirectionsIndex++;
         if (turnToAdd == LEFT || turnToAdd == RIGHT) {
-            pacmanDirections[pacmanDirectionsIndex] = NO_TURN;
+            pacmanDirections[pacmanDirectionsIndex] = STRAIGHT;
             pacmanDirectionsIndex++;
         }
         usbPutString("The coordinate being considered is: ");
@@ -258,7 +258,7 @@ void generate_directions() {
         usbPutString("The converted direction is: ");
         usbPutInt(turnToAdd);
         usbPutString("\n");
-        turnToAdd = NO_TURN; //reset the value of turnToAdd
+        turnToAdd = STRAIGHT; //reset the value of turnToAdd
        
     }
     int b;
@@ -303,7 +303,7 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
             return LEFT;
         } 
     }
-    return NO_TURN; //else add straight
+    return STRAIGHT; //else add straight
 }
 
 void generate_movements() {
@@ -315,9 +315,9 @@ void generate_movements() {
         else if (pacmanDirections[i] == RIGHT) {
             //robot_right_turn();
         }
-        else if (pacmanDirections[i] == NO_TURN) {
+        else if (pacmanDirections[i] == STRAIGHT) {
             int forwardAmount = 0;
-            while (pacmanDirections[i] == NO_TURN) {
+            while (pacmanDirections[i] == STRAIGHT) {
                 i++;
                 forwardAmount++;
             }
@@ -325,9 +325,6 @@ void generate_movements() {
             usbPutInt(forwardAmount);
             usbPutString("\n");
             //robot_forward(forwardAmount); //move forward 1 grid space
-        }
-        else if (pacmanDirections[i] == STOP) {
-            //m_stop();
         }
         usbPutString("The value of i is: ");
         usbPutInt(i);

@@ -121,7 +121,6 @@ static int start_coordinate[2] = {1,1};
 static int end_coordinate[2] = {-1,-1};
 
 static int ret_steps[285][2] = {{0}}; //maximum steps could be 19 * 15 = 285
-enum robotTurns {LEFT, RIGHT, NO_TURN, STOP};
 static enum robotTurns pacmanDirections[300] = {STOP};
 enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPosRow, int currentPosCol, int nextPosRow, int nextPosCol);
 static int pacmanDirectionsIndex = 0;

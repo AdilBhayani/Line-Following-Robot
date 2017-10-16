@@ -242,6 +242,84 @@ void set_speed_B(float speed){
 }
 
 /*
+ * Robot autonomously follows the line it is currently on until
+ * the next intersection. Accepts a direction to turn to immediately
+ * as a arguement. The robot will take a turn in this direction at the
+ * current intersection and then continue straight to the next
+ * intersection, where the robot stops moving and the function returns
+ * the type of intersection that it currently faces.
+ * 
+ * @params Direction to take at current intersection
+ * @returns Type of intersection that the robot is currently at
+ */
+enum intersectionType robot_follow_line(enum robotTurns turnDirection){
+    uint8 left_sensor = 0;
+    uint8 right_sensor = 0;
+    uint8 center_left = 0;
+    uint8 center_right = 0;
+    uint8 center_front = 0;
+    if (turnDirection == LEFT) {
+        m_turn_left();
+        center_left = Sensor_1_Read();
+        while(center_left == 1){
+            center_left = Sensor_1_Read();
+        }
+        CyDelay(100);
+        m_straight();
+    } else if (turnDirection == RIGHT) {
+        m_turn_right();
+        center_right = Sensor_2_Read();
+        while(center_right == 1){
+            center_right = Sensor_2_Read();
+        }
+        CyDelay(100);
+        m_straight();
+    } else if (turnDirection == STRAIGHT) {
+        m_straight();
+        CyDelay(100);
+    } else if (turnDirection == U_TURN) {
+        m_turn_right();
+        while(center_right == 1){
+            center_right = Sensor_2_Read();
+        }
+        CyDelay(200);
+        m_straight();
+    }
+
+    while(1) {
+        center_left = Sensor_1_Read();
+        center_right = Sensor_2_Read();
+        left_sensor = Sensor_3_Read();
+        right_sensor = Sensor_5_Read();
+        if (center_left > 0) {
+            if (center_right > 0) {
+                m_straight();
+                if (left_sensor > 0) {
+                    if (right_sensor > 0) {
+                        m_stop();
+                        return CROSSROADS;
+                    } else {
+                        m_stop();
+                        return LEFT_FORK;
+                    }
+                } else if (right_sensor > 0) {
+                    m_stop();
+                    return RIGHT_FORK;
+                }
+            } else {
+                m_adjust_left_minor();
+            }
+        } else if (center_right > 0) {
+            m_adjust_right_minor();
+        } else if (left_sensor > 0) {
+            m_adjust_left_major();
+        } else if (right_sensor > 0) {
+            m_adjust_right_major();
+        }
+    }
+}
+
+/*
  * Robot moves forward value number of grid spaces.
  */
 void robot_forward(uint8 value, uint8 direction){ 

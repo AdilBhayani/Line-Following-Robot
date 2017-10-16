@@ -51,6 +51,9 @@
 #define GRIDSIZE 130
 #define GRIDSIZEOTHER 140
 
+enum robotTurns {LEFT, RIGHT, STRAIGHT, U_TURN};
+enum intersectionType {LEFT_FORK, RIGHT_FORK, CROSSROADS};
+
 static volatile float quad_a_old;
 static volatile float quad_b_old;
 static volatile float disp_a;
