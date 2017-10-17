@@ -139,7 +139,7 @@ The portion of the hardware that needed to be developed as part of this project 
 
 \subsection{Phototransistor output signal}
 
-The phototransistor can be configured in two ways: common emitter or common collector. In the common emitter configuration, the output signal was very flat $(Black: V_{avg} = 2.58V, V_{Pk-Pk} = 0.05V, White: V_{avg} = 2.74V, V_{Pk-Pk} = 0.10V)$ and difficult to differentiate between the black and white lines. On the other hand in the common collector configuration, there was a sharp difference between the black and white lines $(Black: V_{avg} = 4.09V, V_{Pk-Pk} = 0.09V, White: V_{avg} = 2.84V, V_{Pk-Pk} = 1.54V)$. As a result a decision was made to use the common collector configuration for the light sensors.
+The phototransistor can be configured in two ways: common emitter or common collector. In our design the common base configuration is not possible as the base of this transistor is not able to be connected to the circuit. In the common collector configuration, the output signal was very flat $(Black: V_{avg} = 2.58V, V_{Pk-Pk} = 0.05V, White: V_{avg} = 2.74V, V_{Pk-Pk} = 0.10V)$ and difficult to differentiate between the black and white lines. On the other hand in the common emitter configuration, there was a sharp difference between the black and white lines $(Black: V_{avg} = 4.09V, V_{Pk-Pk} = 0.09V, White: V_{avg} = 2.84V, V_{Pk-Pk} = 1.54V)$. As a result a decision was made to use the common emitter configuration for the light sensors.
 
 \subsection{Circuitry}
 
@@ -190,23 +190,39 @@ When trying to reach the target, DFS navigates by following a path till the dept
 
 On the other hand the A* algorithm is a much better transversal algorithm in most cases. Given a start \& end, A* prioritises which nodes to discover by using heuristic to estimate how far node is from goal. It then continues the search from the it thinks is closest to the goal. We have decided to use the Manhattan heuristic in our implementation. Manhattan distance is the distance between in a grid assuming strictly horizontal or vertical movements and the absence of objects. Often in multipath mazes where there is more than one path to the destination, finding the shortest path can take longer due to backtracking. Sometimes it is better to continue on a chosen path then to travers back a large distance to get the shortest path.
 
-\subsection{Line Following}
+\subsection{Motor Control \& PID}
 
-\subsection{Motion Control \& PID}
+When designing the motor control of the robot, there were two different ways to set this up. The H-Bridge used in the design of this robot have two Input Pins, Enable Pin, two disable pins \& slew rate of particular interest. Of these the slew rate pin must be high for a fast slew rate response of the H bridge, with the pin being low by default. We decided to keep this pin high to set the h bridge in high slew rate mode as there were no obvious disadvantages to this and it meant quicker response times for robot operation.
+
+Any one of the input pins, enable pins or disable pins can be used to modulate the power signal going to the robot and control the motor speed. At the time of development, we were unaware of the flexibility of this and choose to go with what we thought was most logical, that being keeping the enable and disable pins constant and pulse wave modulating the input pins. Looking back at this now, we can see that there are no major advantages to one method over another.
+
+\subsection{Motion Control \& Line Following}
+
+For the robot to autonomously line follow, there are three sources of information for the robot: RF localization data, Quadrature Decoder Readings, Light Sensors. Of these, it was found during the course of the project that the RF localization data was very unreliable and very hard to use.
+
+Quadrature Decoder readings allow us to see the distance that the robot's wheels have travelled over a certain time period. This allows us to track the speed and distance travelled of the robot. Relying solely on quadrature readings for navigating the maze was considered and explored. It was found that the concave shape of the projector lens resulted in the sizes of a grid being different depending on the part of the maze the robot is in. This lead us to make the decision to not use the quadrature readings as the primary source of information for following the lines.
+
+The data coming from the light sensors were much more reliable and were the primary source of information used by the robot to make decisions on how to move. As much of the processing of the light sensor data is done in the analogue domain, it was sufficient to just read the pins current level.
+
+Two methods of maze traversal were considered by the group: moving one grid at a time and moving one intersection at a time. Both methods presented many challenges and advantages.
+
+Moving one grid at a time allowed more finer control as to how the robot traverses the maze and allows us to interleave the maze solving and robot movements at greater level. The main disadvantage with this method is that it is impossible to interpret when grid spaces finish using light sensors and we must therefore rely on quadrature readings/ RF data to ascertain this. Due to the reasons mentioned above, this made this method almost impossible.
+
+However when moving one intersection at a time, the light sensors are able to very accurately and precisely detect and stop the robot at each intersection. This method also simplified coding as less instructions need to be made to traverse any particular maze.
 
 \subsection{RF \& Bluetooth}
 
 RF and Bluetooth are two methods of wireless communication that the robot can interface with. With RF communication, the serial stream coming from the projector control computer can be received as in binary form as a C Struct or a space separated ASCII string. The ASCII string is human readable and easier to work with initially. The processing time required to convert this into something usable is much greater than for receiving and storing the binary C Struct. The coding required to achieve this is more tedious and repetitive but much easier than the binary method. As a result of weighing both sides, we decided to use the binary form C Struct method of RF reception.
 
-The Bluetooth module used enabled bi-direction wireless communication between the robot and a computer. This present numerous oppurtunities, a few of which were explored in this project. The possibility of Bluetooth boot loading the PSoC was on of the more ambitious ideas that was considered. After setting this up, it was found that it took 45+ seconds to download the program to the PSoC over Bluetooth and it was prone to cut-outs due to signal loss. Due to this, this possibility was not explored any further and was not used in the final project.
+The Bluetooth module used enabled bi-direction wireless communication between the robot and a computer. This present numerous opportunities, a few of which were explored in this project. The possibility of Bluetooth boot loading the PSoC was on of the more ambitious ideas that was considered. After setting this up, it was found that it took 45+ seconds to download the program to the PSoC over Bluetooth and it was prone to cut-outs due to signal loss. Due to this, this possibility was not explored any further and was not used in the final project.
 
 Other uses of the Bluetooth module including passing in input arguments for particular modes of operations, outputting status information about the robot and using this as a channel for debugging. These options were well used and were critical to saving a lot of development time and keeping the final project flexible.
+
+\subsection{Data Structures}
 
 \subsection{Testing and Verification}
 
 \subsection{Final Design}
-
-\subsection{Data Structures}
 
 %----------------------------------------------------------------------------------------
 %	CONCLUSIONS
