@@ -178,9 +178,7 @@ void play_pacman_2(){
     int i = 0;
     for (i = 0; i < 5; i++) {
         set_start_end(i);
-        print_ret_steps();
         generate_directions();
-        
         //Convert coordinates to directions for robot
         //Implement directions
         //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
@@ -248,9 +246,7 @@ void generate_directions() {
         }
         enum robotTurns turnToAdd = STRAIGHT;
         if (a == 0 && firstPelletFlag == 0) {
-            usbPutString("Entered first if statement\n");
             if (prevPosition[0] == ret_steps[a+1][0] && prevPosition[1] == ret_steps[a+1][1]) { //180 turn
-                usbPutString("Entered second if statement\n");
                 pacmanDirections[pacmanDirectionsIndex] = RIGHT;
                 pacmanDirectionsIndex++;
                 pacmanDirections[pacmanDirectionsIndex] = RIGHT;
@@ -262,6 +258,8 @@ void generate_directions() {
         }
         else if (a == 0 && firstPelletFlag == 1) {
             turnToAdd = STRAIGHT;
+            pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
+            pacmanDirectionsIndex++;
         }
         else {
             turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
@@ -271,23 +269,8 @@ void generate_directions() {
             pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
             pacmanDirectionsIndex++;
         }
-        
-        usbPutString("The coordinate being considered is: ");
-        usbPutInt(ret_steps[a][0]);
-        usbPutString(", ");
-        usbPutInt(ret_steps[a][1]);
-        usbPutString("\n");
-        usbPutString("The converted direction is: ");
-        usbPutInt(turnToAdd);
-        usbPutString("\n");
         turnToAdd = STRAIGHT; //reset the value of turnToAdd
        
-    }
-    int b;
-    for(b = 0; b < pacmanDirectionsIndex; b++) {
-        usbPutString("The robot needs to turn: ");
-        usbPutInt(pacmanDirections[b]);
-        usbPutString("\n");
     }
     firstPelletFlag = 0;
 }
@@ -332,6 +315,7 @@ void generate_movements() {
     int i = 0;
     while (i != pacmanDirectionsIndex) {
         enum intersectionType currentIntersection;
+        LED_Write(1);
         currentIntersection = robot_follow_line(pacmanDirections[i]);
         i++;
     }
