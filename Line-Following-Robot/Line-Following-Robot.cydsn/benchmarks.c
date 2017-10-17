@@ -51,7 +51,7 @@ CY_ISR(LINE_FOLLOWING){
 void benchmark_1(){
     CyDelay(1000);
     uint8 flag;
-    uint8 dist = 105 * 11.3397;
+    float dist = 105 * 11.3397;
     m_straight_fast();
     
     while(flag == 0) {

@@ -39,7 +39,7 @@ void switch_mode(){
     
     if (Switch_1_Read() > 0) {
         if (Switch_2_Read() > 0) {
-            if (Switch_3_Read() > 0) play_pacman_2();
+            if (Switch_3_Read() > 0) remote_control_mode();
             else benchmark_4();
         } else {
             if (Switch_3_Read() > 0) play_pacman_1();
@@ -56,13 +56,12 @@ void switch_mode(){
 
 int main()
 {
-    //init_motion_control();
+    init_motion_control();
     CYGlobalIntEnable;
-    init_usb();
-    //init_rf();
-    CyDelay(1000);
-    //switch_mode();
-    play_pacman_2();
+    init_battery_management();
+    init_rf();
+    init_bluetooth();
+    switch_mode();
     while(1);
 }
 

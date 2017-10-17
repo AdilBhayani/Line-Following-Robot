@@ -121,7 +121,7 @@ static int start_coordinate[2] = {1,1};
 static int end_coordinate[2] = {-1,-1};
 
 static int ret_steps[285][2] = {{0}}; //maximum steps could be 19 * 15 = 285
-static enum robotTurns pacmanDirections[300] = {STOP};
+static enum robotTurns pacmanDirections[300] = {STRAIGHT};
 enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPosRow, int currentPosCol, int nextPosRow, int nextPosCol);
 static int pacmanDirectionsIndex = 0;
 static int firstPelletFlag = 1;
@@ -129,7 +129,7 @@ static int prevPosition[2] = {-1,-1};
 
 void play_pacman_1();
 void play_pacman_2();
-void play_pacman_3();
+void remote_control_mode();
 void a_star();
 void set_start_end(uint8 next_pellet);
 void print_ret_steps();

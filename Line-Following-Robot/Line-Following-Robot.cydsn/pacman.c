@@ -189,6 +189,30 @@ void play_pacman_2(){
     while(1);
 }
 
+/*
+ * Remote control mode for manually traversing a maze.
+ * 
+ * The user can tell the robot which way to turn at an intersection
+ * using the WSAD keys on a remote terminal connected via bluetooth.
+ * Robot autonomously follows lines and waits at intersections 
+ * for further instructions.
+ */
+void remote_control_mode(){
+    btPutString("-----------------------------------------------------\n");
+    btPutString("--------- Remote Control Operation Group 7 ----------\n");
+    btPutString("-----------------------------------------------------\n");
+    btPutString("Use the WSAD keys to remotely control the robot.\n");
+
+    char cha;
+    while(1) {
+        cha = btGetChar();
+        if (cha == 87) robot_follow_line(STRAIGHT);
+        if (cha == 83) robot_follow_line(U_TURN);
+        if (cha == 65) robot_follow_line(LEFT);
+        if (cha == 68) robot_follow_line(RIGHT);
+    }
+}
+
 void set_start_end(uint8 next_pellet) {
     if (next_pellet > 0) {
         start_coordinate[0] = food_list[next_pellet - 1][0];
