@@ -267,13 +267,11 @@ void generate_directions() {
             turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
         }
 
-        ///////want to add STRAIGHT too otherwise how will we know when to go straight??////////////
-        pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
-        pacmanDirectionsIndex++;
-        if (turnToAdd == LEFT || turnToAdd == RIGHT) {
-            pacmanDirections[pacmanDirectionsIndex] = STRAIGHT;
+        if (turnToAdd != STRAIGHT) {
+            pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
             pacmanDirectionsIndex++;
         }
+        
         usbPutString("The coordinate being considered is: ");
         usbPutInt(ret_steps[a][0]);
         usbPutString(", ");
@@ -331,28 +329,11 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
 }
 
 void generate_movements() {
-    int i;
-    for(i = 0; i < pacmanDirectionsIndex; i++) {
-        if (pacmanDirections[i] == LEFT) {
-            //robot_left_turn();
-        }
-        else if (pacmanDirections[i] == RIGHT) {
-            //robot_right_turn();
-        }
-        else if (pacmanDirections[i] == STRAIGHT) {
-            int forwardAmount = 0;
-            while (pacmanDirections[i] == STRAIGHT) {
-                i++;
-                forwardAmount++;
-            }
-            usbPutString("The forward amount is: ");
-            usbPutInt(forwardAmount);
-            usbPutString("\n");
-            //robot_forward(forwardAmount); //move forward 1 grid space
-        }
-        usbPutString("The value of i is: ");
-        usbPutInt(i);
-        usbPutString("\n");
+    int i = 0;
+    while (i != pacmanDirectionsIndex) {
+        enum intersectionType currentIntersection;
+        currentIntersection = robot_follow_line(pacmanDirections[i]);
+        i++;
     }
 }
 
