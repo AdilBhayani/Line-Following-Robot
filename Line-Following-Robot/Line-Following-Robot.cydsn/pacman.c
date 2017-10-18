@@ -183,6 +183,7 @@ void play_pacman_2(){
         //Implement directions
         //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     }
+    //LED_Write(1);
     generate_movements();
     while(1);
 }
@@ -218,7 +219,7 @@ void set_start_end(uint8 next_pellet) {
         end_coordinate[0] = food_list[next_pellet][0];
         end_coordinate[1] = food_list[next_pellet][1];
     }
-    a_star();
+    a_star(); 
 }
 
 void print_ret_steps() {
@@ -231,6 +232,27 @@ void print_ret_steps() {
             usbPutString("\n");
         }
     }
+}
+
+enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
+   
+    if (pacoFacing == NORTH || pacoFacing == SOUTH) {
+        if ( (currentMap[currentPosRow][currentPosCol - 1] == '0') ||
+            (currentMap[currentPosRow][currentPosCol + 1] == '0') ) {
+            return IS_INTERSECTION;
+        } else {
+            return NOT_INTERSECTION;
+        }
+    } else if (pacoFacing == EAST || pacoFacing == WEST) {
+        if ( (currentMap[currentPosRow - 1][currentPosCol] == '0') ||
+            (currentMap[currentPosRow + 1][currentPosCol] == '0') ) {
+            return IS_INTERSECTION;
+        } else {
+            return NOT_INTERSECTION;
+        }
+    }
+    
+             
 }
 
 void generate_directions() {
@@ -264,13 +286,24 @@ void generate_directions() {
         else {
             turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
         }
-
         if (turnToAdd != STRAIGHT) {
+            if (flagIntersection(ret_steps[a][0], ret_steps[a][1]) == IS_INTERSECTION) {
+                intersectionArray[intersectionArrayIndex] = TURNING;
+                intersectionArrayIndex++;
+                //add turning to intersection array
+            }
             pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
             pacmanDirectionsIndex++;
         }
-        turnToAdd = STRAIGHT; //reset the value of turnToAdd
-       
+        else {
+            if (flagIntersection(ret_steps[a][0], ret_steps[a][1]) == IS_INTERSECTION) {
+                intersectionArray[intersectionArrayIndex] = NOT_TURNING;
+                intersectionArrayIndex++;
+                //add turning to intersection array
+            }
+            //add non-turning to intersection array
+        }
+        turnToAdd = STRAIGHT; //reset the value of turnToAdd       
     }
     firstPelletFlag = 0;
 }
@@ -283,6 +316,7 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
         else if (prevPosRow > currentPosRow) { //if row is decreasing then robot is going north, and needs to turn right
             return RIGHT; 
         }
+        pacoFacing = EAST;
     }
     else if (nextPosCol < currentPosCol) { // column has decreased
         if (prevPosRow < currentPosRow) { //if row is increasing then robot is going south, and needs to turn right
@@ -291,6 +325,7 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
         else if (prevPosRow > currentPosRow) { //if row is decreasing then robot is going north, and needs to turn left
             return LEFT;
         }
+        pacoFacing = WEST;
     }
     else if (nextPosRow < currentPosRow) { // row has decreased
         if (prevPosCol < currentPosCol) { //if column is increasing then robot is going east, and needs to turn left
@@ -299,6 +334,7 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
         else if (prevPosCol > currentPosCol) { //if column is decreasing then robot is going west, and needs to turn right
             return RIGHT;
         }
+        pacoFacing = NORTH;
     }
     else if (nextPosRow > currentPosRow) { // row has increased
         if (prevPosCol < currentPosCol) { //if column is increasing then robot is going east, and needs to turn right
@@ -307,17 +343,26 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
         else if (prevPosCol > currentPosCol) { //if column is decreasing then robot is going west, and needs to turn left
             return LEFT;
         } 
+        pacoFacing = SOUTH;
     }
     return STRAIGHT; //else add straight
 }
 
 void generate_movements() {
     int i = 0;
+    enum intersectionType currentIntersection;
+    enum robotTurns directionToTurnAtNextIntersection = STRAIGHT;
     while (i != pacmanDirectionsIndex) {
-        enum intersectionType currentIntersection;
-        LED_Write(1);
-        currentIntersection = robot_follow_line(pacmanDirections[i]);
-        i++;
+        currentIntersection = robot_follow_line(directionToTurnAtNextIntersection);
+        if (intersectionArray[intersectionArrayIterator] == TURNING) {
+            directionToTurnAtNextIntersection = pacmanDirections[i];
+            i++;
+        }
+        else {
+            directionToTurnAtNextIntersection = STRAIGHT;
+        }
+        intersectionArrayIterator++;
+        //robot is now stopped at an intersection, we need to decide whether to turn here or not.
     }
 }
 

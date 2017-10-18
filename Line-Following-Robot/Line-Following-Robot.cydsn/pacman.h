@@ -110,11 +110,11 @@ static int currentMap[15][19] = {
 };
     
 static int food_list[5][2] = 
-{{1,3},
-{9,12},
-{11,5},
-{13,9},
-{3,17}};
+{{5,4},
+{11,3},
+{12,15},
+{4,17},
+{6,11}};
 
 static int start_coordinate[2] = {1,1};
 
@@ -122,10 +122,16 @@ static int end_coordinate[2] = {-1,-1};
 
 static int ret_steps[285][2] = {{0}}; //maximum steps could be 19 * 15 = 285
 static enum robotTurns pacmanDirections[300] = {STRAIGHT};
+static enum intersectionOrNot {TURNING, NOT_TURNING, IS_INTERSECTION, NOT_INTERSECTION};
+static enum intersectionOrNot intersectionArray[300] = {NOT_TURNING};
 enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPosRow, int currentPosCol, int nextPosRow, int nextPosCol);
 static int pacmanDirectionsIndex = 0;
 static int firstPelletFlag = 1;
 static int prevPosition[2] = {-1,-1};
+static enum robotOrientation {NORTH, SOUTH, EAST, WEST};
+static enum robotOrientation pacoFacing = SOUTH;
+static int intersectionArrayIndex = 0;
+static int intersectionArrayIterator = 0;
 
 void play_pacman_1();
 void play_pacman_2();
@@ -135,6 +141,7 @@ void set_start_end(uint8 next_pellet);
 void print_ret_steps();
 void generate_directions();
 void generate_movements();
+enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol);
 
 int find_lowest_f_square(int f_values[15][19], int open_list[285][2], int open_index);
 int in_list(int x_pos, int y_pos, int list[285][2], int max_index);
