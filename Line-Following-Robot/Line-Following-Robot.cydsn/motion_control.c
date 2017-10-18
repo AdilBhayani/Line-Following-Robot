@@ -286,10 +286,13 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
         CyDelay(100);
     } else if (turnDirection == U_TURN) {
         m_turn_right();
+        CyDelay(1250);
+        m_stop();
+        m_adjust_right_major();
+        center_right = Sensor_2_Read();
         while(center_right == 0){
             center_right = Sensor_2_Read();
         }
-        CyDelay(300);
         m_straight();
     }
 
