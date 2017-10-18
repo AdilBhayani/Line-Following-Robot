@@ -204,10 +204,10 @@ void remote_control_mode(){
     char cha;
     while(1) {
         cha = btGetChar();
-        if (cha == 87) robot_follow_line(STRAIGHT);
-        if (cha == 83) robot_follow_line(U_TURN);
-        if (cha == 65) robot_follow_line(LEFT);
-        if (cha == 68) robot_follow_line(RIGHT);
+        if (cha == 119) robot_follow_line(STRAIGHT);
+        if (cha == 115) robot_follow_line(U_TURN);
+        if (cha == 97) robot_follow_line(LEFT);
+        if (cha == 100) robot_follow_line(RIGHT);
     }
 }
 

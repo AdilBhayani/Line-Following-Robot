@@ -260,55 +260,64 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
     uint8 right_sensor = 0;
     uint8 center_left = 0;
     uint8 center_right = 0;
-    uint8 center_front = 0;
+    uint8 extreme_right = 0;
+    uint8 extreme_left = 0;
+
     if (turnDirection == LEFT) {
-        m_turn_left();
+        m_adjust_left_major();
         center_left = Sensor_1_Read();
-        while(center_left == 1){
+        CyDelay(350);
+        while(center_left == 0){
             center_left = Sensor_1_Read();
         }
-        CyDelay(100);
+        CyDelay(150);
         m_straight();
     } else if (turnDirection == RIGHT) {
-        m_turn_right();
+        m_adjust_right_major();
+        CyDelay(100);
         center_right = Sensor_2_Read();
-        while(center_right == 1){
+        while(center_right == 0){
             center_right = Sensor_2_Read();
         }
-        CyDelay(100);
+        CyDelay(150);
         m_straight();
     } else if (turnDirection == STRAIGHT) {
         m_straight();
         CyDelay(100);
     } else if (turnDirection == U_TURN) {
         m_turn_right();
-        while(center_right == 1){
+        while(center_right == 0){
             center_right = Sensor_2_Read();
         }
-        CyDelay(200);
+        CyDelay(300);
         m_straight();
     }
 
     while(1) {
+        CyDelayUs(100);
         center_left = Sensor_1_Read();
         center_right = Sensor_2_Read();
         left_sensor = Sensor_3_Read();
         right_sensor = Sensor_5_Read();
+        extreme_right = Sensor_4_Read();
+        extreme_left = Sensor_6_Read();
+        if ((center_left > 0) || (center_right > 0)) {
+            if (extreme_left > 0) {
+                if (extreme_right > 0) {
+                    m_stop();
+                    return CROSSROADS;
+                } else {
+                    m_stop();
+                    return LEFT_FORK;
+                }
+            } else if (extreme_right > 0) {
+                m_stop();
+                return RIGHT_FORK;
+            }
+        }
         if (center_left > 0) {
             if (center_right > 0) {
                 m_straight();
-                if (left_sensor > 0) {
-                    if (right_sensor > 0) {
-                        m_stop();
-                        return CROSSROADS;
-                    } else {
-                        m_stop();
-                        return LEFT_FORK;
-                    }
-                } else if (right_sensor > 0) {
-                    m_stop();
-                    return RIGHT_FORK;
-                }
             } else {
                 m_adjust_left_minor();
             }
