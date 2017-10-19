@@ -176,14 +176,16 @@ void play_pacman_2(){
     end_coordinate[1] = food_list[0][1]; 
 
     int i = 0;
-    for (i = 0; i < 5; i++) {
+       
+    for (i = 0; i < 1; i++) {
         set_start_end(i);
+        //print_ret_steps();
         generate_directions();
         //Convert coordinates to directions for robot
         //Implement directions
         //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
     }
-    //LED_Write(1);
+    LED_Write(1);
     generate_movements();
     while(1);
 }
@@ -235,24 +237,21 @@ void print_ret_steps() {
 }
 
 enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
-   
     if (pacoFacing == NORTH || pacoFacing == SOUTH) {
-        if ( (currentMap[currentPosRow][currentPosCol - 1] == '0') ||
-            (currentMap[currentPosRow][currentPosCol + 1] == '0') ) {
+        if ( (currentMap[currentPosRow][currentPosCol - 1] == 0) ||
+            (currentMap[currentPosRow][currentPosCol + 1] == 0) ) {
             return IS_INTERSECTION;
         } else {
             return NOT_INTERSECTION;
         }
     } else if (pacoFacing == EAST || pacoFacing == WEST) {
-        if ( (currentMap[currentPosRow - 1][currentPosCol] == '0') ||
-            (currentMap[currentPosRow + 1][currentPosCol] == '0') ) {
+        if ( (currentMap[currentPosRow - 1][currentPosCol] == 0) ||
+            (currentMap[currentPosRow + 1][currentPosCol] == 0) ) {
             return IS_INTERSECTION;
         } else {
             return NOT_INTERSECTION;
         }
-    }
-    
-             
+    }     
 }
 
 void generate_directions() {
@@ -269,10 +268,8 @@ void generate_directions() {
         enum robotTurns turnToAdd = STRAIGHT;
         if (a == 0 && firstPelletFlag == 0) {
             if (prevPosition[0] == ret_steps[a+1][0] && prevPosition[1] == ret_steps[a+1][1]) { //180 turn
-                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
+                pacmanDirections[pacmanDirectionsIndex] = U_TURN;
                 pacmanDirectionsIndex++;
-                pacmanDirections[pacmanDirectionsIndex] = RIGHT;
-                pacmanDirectionsIndex++; 
             }
             else {
                 turnToAdd = convertCoordinates(prevPosition[0], prevPosition[1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
@@ -286,22 +283,19 @@ void generate_directions() {
         else {
             turnToAdd = convertCoordinates(ret_steps[a-1][0], ret_steps[a-1][1], ret_steps[a][0], ret_steps[a][1], ret_steps[a+1][0], ret_steps[a+1][1]);
         }
-        if (turnToAdd != STRAIGHT) {
-            if (flagIntersection(ret_steps[a][0], ret_steps[a][1]) == IS_INTERSECTION) {
-                intersectionArray[intersectionArrayIndex] = TURNING;
-                intersectionArrayIndex++;
-                //add turning to intersection array
-            }
+        if (turnToAdd != STRAIGHT) { //if paco needs to turn at current coordinate
             pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
             pacmanDirectionsIndex++;
-        }
-        else {
-            if (flagIntersection(ret_steps[a][0], ret_steps[a][1]) == IS_INTERSECTION) {
-                intersectionArray[intersectionArrayIndex] = NOT_TURNING;
+            if (flagIntersection(ret_steps[a][0], ret_steps[a][1]) == IS_INTERSECTION) { //if paco is at an intersection
+                intersectionArray[intersectionArrayIndex] = TURNING; //mark it as a turning intersection
                 intersectionArrayIndex++;
-                //add turning to intersection array
             }
-            //add non-turning to intersection array
+        }
+        else { //paco doesn't need to turn at current coordinate 
+            if (flagIntersection(ret_steps[a][0], ret_steps[a][1]) == IS_INTERSECTION) { //if current coordinate is an intersection
+                intersectionArray[intersectionArrayIndex] = NOT_TURNING; //mark it as a not-turning intersection
+                intersectionArrayIndex++;
+            }
         }
         turnToAdd = STRAIGHT; //reset the value of turnToAdd       
     }
