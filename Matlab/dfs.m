@@ -16,7 +16,7 @@ poppingArray = [startlocation(1),startlocation(2)];
 currentLocation = startlocation;
 retvisited(currentLocation(1), currentLocation(2)) = 0;
 
-while currentLocation(1) ~= targetlocation(1) || currentLocation(2) ~= targetlocation(2)
+while size(poppingArray,1) > 0 && (currentLocation(1) ~= targetlocation(1) || currentLocation(2) ~= targetlocation(2))
    if checkIntersection(retmap, retvisited, currentLocation) > 1
        poppingArray(end+1,:) = currentLocation;
    end
@@ -30,7 +30,7 @@ while currentLocation(1) ~= targetlocation(1) || currentLocation(2) ~= targetloc
        currentLocation(2) = currentLocation(2) - 1;
    else
        stepsIndex = size(retsteps,1);
-       while currentLocation(1) ~= poppingArray(size(poppingArray,1),1) || currentLocation(2) ~= poppingArray(size(poppingArray,1),2)
+       while size(poppingArray,1) > 0 && (currentLocation(1) ~= poppingArray(size(poppingArray,1),1) || currentLocation(2) ~= poppingArray(size(poppingArray,1),2))
            currentLocation = retsteps(stepsIndex,:);
            if stepsIndex > 0
               stepsIndex = stepsIndex - 1;
@@ -39,14 +39,16 @@ while currentLocation(1) ~= targetlocation(1) || currentLocation(2) ~= targetloc
            end
        end
 
-       if checkIntersection(retmap, retvisited, currentLocation) <= 1
+       if size(poppingArray,1) > 0 && checkIntersection(retmap, retvisited, currentLocation) <= 1
           poppingArray(size(poppingArray,1),:) = [];
        end
    end
    retsteps(end+1,:) = currentLocation;
    retvisited(currentLocation(1), currentLocation(2)) = 0;
    if size(retsteps,1) > 1
-      plotmap(retmap,retsteps);
+        plotmap(retmap,retsteps);
+        set(gcf,'numbertitle','off','name','Current Search Path')
+        pause(0.1); %Wait 0.1 seconds before continuing to allow time to visualise
    end
 end
 
