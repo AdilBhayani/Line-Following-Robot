@@ -188,26 +188,41 @@ void play_pacman_2(){
         set_start_end(i);
         //print_ret_steps();
         generate_directions();
-        //generate_movements();
     }
-    
+    /*
     firstPelletFlag = 1;
     LED_Write(1);
     for (j = 0; j < 1; j++) {
         generate_movements(pelletIntersectionArray[j]);
-    }
+    }*/
     //print_ret_steps();
-    /*int v;
+    int v;
+    for (v = 0; v < lastintersectionIndex+1; v++) {
+        usbPutString("Orientations at last intersections: ");
+        usbPutInt(intersectionOrientation[v]);
+        usbPutString("\n");
+    }
+    for (v = 0; v < lastintersectionIndex+1; v++) {
+        usbPutString("Last intersections : ");
+        usbPutString("   Row and column : ");
+        usbPutInt(lastIntersectionPosition[v][0]);
+        usbPutString(" , ");
+        usbPutInt(lastIntersectionPosition[v][1]);
+        usbPutString("\n");
+    }
+    //int v;
     for (v = 0; v < pacmanDirectionsIndex; v++) {
         usbPutString("Turns in the turn array in order are: ");
         usbPutInt(pacmanDirections[v]);
         usbPutString("\n");
     }
+    
     for (v = 0; v < intersectionArrayIndex; v++) {
         usbPutString("Intersection array: ");
         usbPutInt(intersectionArray[v]);
         usbPutString("\n");
     }
+    /*
     usbPutString("pellet index: ");
     usbPutInt(pelletIndex);
     usbPutString("\n");
@@ -299,25 +314,28 @@ enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
         usbPutInt(currentPosCol);
         usbPutString(" yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyay \n");*/
         pelletIndex++;
+        lastintersectionIndex++;
         pelletIntersectionArray[pelletIndex]--;
         return IS_INTERSECTION;
     }
     else if (pacoFacing == NORTH || pacoFacing == SOUTH) {
         if ( (currentMap[currentPosRow][currentPosCol - 1] == 0) ||
             (currentMap[currentPosRow][currentPosCol + 1] == 0) ) {
-            //usbPutString(" IS_INTERSECTION \n");
+            
+            lastIntersectionPosition[lastintersectionIndex][0] = currentPosRow;
+            lastIntersectionPosition[lastintersectionIndex][1] = currentPosCol;
             return IS_INTERSECTION;
         } else {
-            //usbPutString(" NOT_INTERSECTION \n");
             return NOT_INTERSECTION;
         }
     } else if (pacoFacing == EAST || pacoFacing == WEST) {
         if ( (currentMap[currentPosRow - 1][currentPosCol] == 0) ||
             (currentMap[currentPosRow + 1][currentPosCol] == 0) ) {
-            //usbPutString(" IS_INTERSECTION \n");
+            //intersectionOrientation[lastintersectionIndex] = pacoFacing; 
+            lastIntersectionPosition[lastintersectionIndex][0] = currentPosRow;
+            lastIntersectionPosition[lastintersectionIndex][1] = currentPosCol;
             return IS_INTERSECTION;
         } else {
-            //usbPutString(" NOT_INTERSECTION \n");
             return NOT_INTERSECTION;
         }
     }     
@@ -386,47 +404,72 @@ void generate_directions() {
             usbPutString(" \n");*/
             intersectionArrayIndex++;
         }
-        turnToAdd = STRAIGHT; //reset the value of turnToAdd   
+        turnToAdd = STRAIGHT; //reset the value of turnToAdd  
+        
+        intersectionOrientation[lastintersectionIndex] = pacoFacing;
     }
     firstPelletFlag = 0;
 }
 
 enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPosRow, int currentPosCol, int nextPosRow, int nextPosCol) {
+    /*usbPutString("current coordinates : ");
+    usbPutInt(prevPosRow);
+    usbPutString(" , ");
+    usbPutInt(prevPosCol); 
+    usbPutString(" , ");
+    usbPutInt(currentPosRow); 
+    usbPutString(" , ");
+    usbPutInt(currentPosCol); 
+    usbPutString(" , ");
+    usbPutInt(nextPosRow);
+    usbPutString(" , ");
+    usbPutInt(nextPosCol);
+    usbPutString(" \n");*/
+
+    
     if (nextPosCol > currentPosCol) { // column has increased
         if (prevPosRow < currentPosRow) { //if row is increasing then robot is going south, and needs to turn left
+            pacoFacing = EAST;
             return LEFT;
         }
         else if (prevPosRow > currentPosRow) { //if row is decreasing then robot is going north, and needs to turn right
+            pacoFacing = EAST;
             return RIGHT; 
         }
-        pacoFacing = EAST;
+        
     }
     else if (nextPosCol < currentPosCol) { // column has decreased
         if (prevPosRow < currentPosRow) { //if row is increasing then robot is going south, and needs to turn right
+            pacoFacing = WEST;
             return RIGHT;
         }
         else if (prevPosRow > currentPosRow) { //if row is decreasing then robot is going north, and needs to turn left
+            pacoFacing = WEST;
             return LEFT;
         }
-        pacoFacing = WEST;
+        
     }
     else if (nextPosRow < currentPosRow) { // row has decreased
         if (prevPosCol < currentPosCol) { //if column is increasing then robot is going east, and needs to turn left
+            pacoFacing = NORTH;
             return LEFT;
         }
         else if (prevPosCol > currentPosCol) { //if column is decreasing then robot is going west, and needs to turn right
+            pacoFacing = NORTH;
             return RIGHT;
         }
-        pacoFacing = NORTH;
+        
     }
     else if (nextPosRow > currentPosRow) { // row has increased
         if (prevPosCol < currentPosCol) { //if column is increasing then robot is going east, and needs to turn right
+            pacoFacing = SOUTH;
             return RIGHT;
         }
         else if (prevPosCol > currentPosCol) { //if column is decreasing then robot is going west, and needs to turn left
+            pacoFacing = SOUTH;
             return LEFT;
         } 
-        pacoFacing = SOUTH;
+        
     }
     return STRAIGHT; //else add straight
 }
@@ -460,6 +503,7 @@ void generate_movements(int numOfIntersections) {
             pacman_right_turn();
         }
     }
+    //call function here to tell adils function how far forward to go and in what direction it is travelling 
     robot_forward(2, 1); //call adils function to make the robot go straight
     
     //turn robot to get ready to go get next pellet
