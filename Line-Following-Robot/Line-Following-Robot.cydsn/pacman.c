@@ -190,6 +190,7 @@ void play_pacman_2(){
         generate_directions();
         //generate_movements();
     }
+    firstPelletFlag = 1;
     for (j = 0; j < 1; j++) {
         generate_movements();
     }
@@ -422,6 +423,7 @@ void generate_movements() {
     enum intersectionType pacoAt;
     if (firstPelletFlag == 1) {
         pacoAt = robot_follow_line(directionToTurnAtIntersection);
+        firstPelletFlag = 0;
     }
     for (i = 0; i < intersectionArrayIndex - 1; i++) {
         if (intersectionArray[i] == TURNING) {
