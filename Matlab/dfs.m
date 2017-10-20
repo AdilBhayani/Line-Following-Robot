@@ -29,6 +29,19 @@ while size(poppingArray,1) > 0 && (currentLocation(1) ~= targetlocation(1) || cu
    elseif currentLocation(2) > 1 && retmap(currentLocation(1), currentLocation(2)-1) == 0 && retvisited(currentLocation(1), currentLocation(2)-1) == 1
        currentLocation(2) = currentLocation(2) - 1;
    else
+        i = 1;
+        while i <= size(poppingArray,1)
+            if size(poppingArray,1) >= i
+                currentLocation = poppingArray(i,:);
+                if  checkIntersection(retmap, retvisited, currentLocation) < 1
+                    poppingArray(i,:) = [];
+                    if i > 1
+                       i = i - 1; 
+                    end
+                end
+            end
+            i = i + 1;
+        end
        stepsIndex = size(retsteps,1);
        while size(poppingArray,1) > 0 && (currentLocation(1) ~= poppingArray(size(poppingArray,1),1) || currentLocation(2) ~= poppingArray(size(poppingArray,1),2))
            currentLocation = retsteps(stepsIndex,:);
@@ -38,12 +51,10 @@ while size(poppingArray,1) > 0 && (currentLocation(1) ~= targetlocation(1) || cu
                break
            end
        end
-
-       if size(poppingArray,1) > 0 && checkIntersection(retmap, retvisited, currentLocation) <= 1
-          poppingArray(size(poppingArray,1),:) = [];
-       end
    end
-   retsteps(end+1,:) = currentLocation;
+   if retsteps(end,1) ~= currentLocation(1) || retsteps(end,2) ~= currentLocation(2)
+       retsteps(end+1,:) = currentLocation;
+   end
    retvisited(currentLocation(1), currentLocation(2)) = 0;
    if size(retsteps,1) > 1
         plotmap(retmap,retsteps);

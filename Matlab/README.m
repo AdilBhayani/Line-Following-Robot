@@ -6,13 +6,13 @@ viewmap('map_1.txt',1); % shows track
 
 %or else
 
-[m]=map_convert('map_1.txt');
+[m]=map_convert('current_map.txt');
 plotmap(m);
 %Here   'm' is the map file returned as a matrix
 
 
 % Your simulations will use this structure
-[m,v,s]=dfs('current_map.txt',[14,1],[1,1]);
+[m,v,s]=dfs('current_map.txt',[2,2],[1,1]);
 %Here   'm' is the map file returned as a matrix
 %       'v' is a matrix that shows which cells have been visited, '0' means
 %       visited, '1' means not visited
