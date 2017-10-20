@@ -186,11 +186,16 @@ void play_pacman_2(){
     //print_ret_steps();
     /*int v;
     for (v = 0; v < pacmanDirectionsIndex; v++) {
-        btPutString("Turns in the turn array in order are: ");
-        btPutInt(pacmanDirections[v]);
-        btPutString("\n");
+        usbPutString("Turns in the turn array in order are: ");
+        usbPutInt(pacmanDirections[v]);
+        usbPutString("\n");
+    }
+    for (v = 0; v < intersectionArrayIndex; v++) {
+        usbPutString("Intersection array: ");
+        usbPutInt(intersectionArray[v]);
+        usbPutString("\n");
     }*/
-    //generate_movements();
+    generate_movements();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
@@ -245,20 +250,26 @@ void print_ret_steps() {
 }
 
 enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
-    if (currentPosRow == end_coordinate[0] && currentPosCol == end_coordinate[1]){
-        return IS_INTERSECTION;
-    } else if (pacoFacing == NORTH || pacoFacing == SOUTH) {
+    /*usbPutString(" Row and column : ");
+    usbPutInt(currentPosRow);
+    usbPutString(" , ");
+    usbPutInt(currentPosCol);*/
+    if (pacoFacing == NORTH || pacoFacing == SOUTH) {
         if ( (currentMap[currentPosRow][currentPosCol - 1] == 0) ||
             (currentMap[currentPosRow][currentPosCol + 1] == 0) ) {
+            //usbPutString(" IS_INTERSECTION \n");
             return IS_INTERSECTION;
         } else {
+            //usbPutString(" NOT_INTERSECTION \n");
             return NOT_INTERSECTION;
         }
     } else if (pacoFacing == EAST || pacoFacing == WEST) {
         if ( (currentMap[currentPosRow - 1][currentPosCol] == 0) ||
             (currentMap[currentPosRow + 1][currentPosCol] == 0) ) {
+            //usbPutString(" IS_INTERSECTION \n");
             return IS_INTERSECTION;
         } else {
+            //usbPutString(" NOT_INTERSECTION \n");
             return NOT_INTERSECTION;
         }
     }     
@@ -279,8 +290,7 @@ void generate_directions() {
         if (firstPelletFlag == 0 && a == 0) { //take into account 180 turns, for the cases where the robot needs to turn around after getting first pellet
             if (prevPosition[0] == ret_steps[a+1][0] && prevPosition[1] == ret_steps[a+1][1]) { //180 turn
                 //add a u turn without needing to convert coordinates
-                pacmanDirections[pacmanDirectionsIndex] = U_TURN;
-                pacmanDirectionsIndex++;
+                turnToAdd = U_TURN;
             }
             else {
                 //decide if we need to turn, and which way to turn
@@ -301,12 +311,27 @@ void generate_directions() {
         }
         
         //determine whether each point is an intersection, and update intersection array accordingly
-        if ((flagIntersection(ret_steps[a][0], ret_steps[a][1]) == IS_INTERSECTION) && (turnToAdd != STRAIGHT)) { //if paco is at an intersection
+        enum intersectionOrNot intersectionFlag = flagIntersection(ret_steps[a][0], ret_steps[a][1]);
+        if ((intersectionFlag == IS_INTERSECTION) && (turnToAdd != STRAIGHT)) { //if paco is at an intersection
             intersectionArray[intersectionArrayIndex] = TURNING; //mark it as a turning intersection
+            /*usbPutString("Intersection array value : ");
+            usbPutInt(intersectionArray[intersectionArrayIndex]);
+            usbPutString("Row and column : ");
+            usbPutInt(ret_steps[a][0]);
+            usbPutString(" , ");
+            usbPutInt(ret_steps[a][1]);
+            usbPutString(" \n");*/
             intersectionArrayIndex++;          
         }
-        else if ((flagIntersection(ret_steps[a][0], ret_steps[a][1]) == IS_INTERSECTION) && (turnToAdd == STRAIGHT)) {
+        else if ((intersectionFlag == IS_INTERSECTION) && (turnToAdd == STRAIGHT)) {
             intersectionArray[intersectionArrayIndex] = NOT_TURNING; //mark it as a turning intersection
+            /*usbPutString("Intersection array value : ");
+            usbPutInt(intersectionArray[intersectionArrayIndex]);
+            usbPutString("Row and column : ");
+            usbPutInt(ret_steps[a][0]);
+            usbPutString(" , ");
+            usbPutInt(ret_steps[a][1]);
+            usbPutString(" \n");*/
             intersectionArrayIndex++;
         }
         turnToAdd = STRAIGHT; //reset the value of turnToAdd   
@@ -355,35 +380,19 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
 }
 
 void generate_movements() {
-    int i = 0;
-    enum intersectionType currentIntersection;
-    enum robotTurns directionToTurnAtNextIntersection = STRAIGHT;
-    
-    while (i <= pacmanDirectionsIndex) {
-        /*btPutString("The intersection array index is: ");
-        btPutInt(intersectionArrayIterator);
-        btPutString("\n");
-        btPutString("The intersection array value is: ");
-        btPutInt(intersectionArray[intersectionArrayIterator]);
-        btPutString("\n");
-        btPutString("The turn array index is: ");
-        btPutInt(i);
-        btPutString("\n");
-        btPutString("The turn array value is: ");
-        btPutInt(pacmanDirections[i]);
-        btPutString("\n");*/
-        
-        currentIntersection = robot_follow_line(directionToTurnAtNextIntersection);
-        if (intersectionArray[intersectionArrayIterator] == TURNING) {
-            directionToTurnAtNextIntersection = pacmanDirections[i];
-            i++;
+    int i;
+    int pacmanDirectionsCounter = 0;
+    enum robotTurns directionToTurnAtIntersection = STRAIGHT;
+    enum intersectionType pacoAt = robot_follow_line(directionToTurnAtIntersection);
+    for (i = 0; i < intersectionArrayIndex; i++) {
+        if (intersectionArray[i] == TURNING) {
+            directionToTurnAtIntersection = pacmanDirections[pacmanDirectionsCounter];
+            pacmanDirectionsCounter++;
         }
         else {
-            directionToTurnAtNextIntersection = STRAIGHT;
+            directionToTurnAtIntersection = STRAIGHT;
         }
-        intersectionArrayIterator++;
-
-        //robot is now stopped at an intersection, we need to decide whether to turn here or not.
+        pacoAt = robot_follow_line(directionToTurnAtIntersection);
     }
 }
 
