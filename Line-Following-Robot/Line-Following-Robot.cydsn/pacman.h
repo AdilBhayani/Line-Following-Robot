@@ -134,10 +134,10 @@ static enum robotOrientation pacoFacing = SOUTH; //will need to hard code this v
 static int intersectionArrayIndex = 0;
 static int pelletIndex = 0;
 static int pelletIntersectionArray[5] = {0};
-static int lastintersectionIndex = 0;
+static int lastIntersectionIndex = 0;
 static enum robotOrientation intersectionOrientation[5] = {SOUTH}; //will need to hard code this value when given map on the day of testing
 static int lastIntersectionPosition[5][2] = {{0,0},{0,0},{0,0},{0,0},{0,0}};
-
+static int distanceToPellet(int intersectionRow, int intersectionCol, int pelletRow, int pelletCol);
 
 void play_pacman_1();
 void play_pacman_2();

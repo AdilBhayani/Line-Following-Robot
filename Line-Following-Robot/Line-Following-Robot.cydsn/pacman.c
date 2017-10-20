@@ -197,12 +197,12 @@ void play_pacman_2(){
     }*/
     //print_ret_steps();
     int v;
-    for (v = 0; v < lastintersectionIndex+1; v++) {
+    for (v = 0; v < lastIntersectionIndex+1; v++) {
         usbPutString("Orientations at last intersections: ");
         usbPutInt(intersectionOrientation[v]);
         usbPutString("\n");
     }
-    for (v = 0; v < lastintersectionIndex+1; v++) {
+    for (v = 0; v < lastIntersectionIndex+1; v++) {
         usbPutString("Last intersections : ");
         usbPutString("   Row and column : ");
         usbPutInt(lastIntersectionPosition[v][0]);
@@ -222,6 +222,14 @@ void play_pacman_2(){
         usbPutInt(intersectionArray[v]);
         usbPutString("\n");
     }
+    /*
+    int result;
+    for (v = 0; v < lastIntersectionIndex+1; v++) {
+        usbPutString("distance to go: ");
+        result = distanceToPellet(lastIntersectionPosition[v][0], lastIntersectionPosition[v][1], food_list[v][0],food_list[v][1]);
+        usbPutInt(result);
+        usbPutString("\n");
+    }*/
     /*
     usbPutString("pellet index: ");
     usbPutInt(pelletIndex);
@@ -314,7 +322,7 @@ enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
         usbPutInt(currentPosCol);
         usbPutString(" yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyay \n");*/
         pelletIndex++;
-        lastintersectionIndex++;
+        lastIntersectionIndex++;
         pelletIntersectionArray[pelletIndex]--;
         return IS_INTERSECTION;
     }
@@ -322,8 +330,8 @@ enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
         if ( (currentMap[currentPosRow][currentPosCol - 1] == 0) ||
             (currentMap[currentPosRow][currentPosCol + 1] == 0) ) {
             
-            lastIntersectionPosition[lastintersectionIndex][0] = currentPosRow;
-            lastIntersectionPosition[lastintersectionIndex][1] = currentPosCol;
+            lastIntersectionPosition[lastIntersectionIndex][0] = currentPosRow;
+            lastIntersectionPosition[lastIntersectionIndex][1] = currentPosCol;
             return IS_INTERSECTION;
         } else {
             return NOT_INTERSECTION;
@@ -331,9 +339,9 @@ enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
     } else if (pacoFacing == EAST || pacoFacing == WEST) {
         if ( (currentMap[currentPosRow - 1][currentPosCol] == 0) ||
             (currentMap[currentPosRow + 1][currentPosCol] == 0) ) {
-            //intersectionOrientation[lastintersectionIndex] = pacoFacing; 
-            lastIntersectionPosition[lastintersectionIndex][0] = currentPosRow;
-            lastIntersectionPosition[lastintersectionIndex][1] = currentPosCol;
+            //intersectionOrientation[lastIntersectionIndex] = pacoFacing; 
+            lastIntersectionPosition[lastIntersectionIndex][0] = currentPosRow;
+            lastIntersectionPosition[lastIntersectionIndex][1] = currentPosCol;
             return IS_INTERSECTION;
         } else {
             return NOT_INTERSECTION;
@@ -406,7 +414,7 @@ void generate_directions() {
         }
         turnToAdd = STRAIGHT; //reset the value of turnToAdd  
         
-        intersectionOrientation[lastintersectionIndex] = pacoFacing;
+        intersectionOrientation[lastIntersectionIndex] = pacoFacing;
     }
     firstPelletFlag = 0;
 }
@@ -474,9 +482,28 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
     return STRAIGHT; //else add straight
 }
 
+static int distanceToPellet(int intersectionRow, int intersectionCol, int pelletRow, int pelletCol) {
+    int rowDiff = intersectionRow - pelletRow;
+    int colDiff = intersectionCol - pelletCol;
+    if (rowDiff < 0) {
+        rowDiff = rowDiff * (-1);
+    }
+    if (colDiff < 0) {
+        colDiff = colDiff * (-1);
+    }
+    if (rowDiff > 0) {
+        return rowDiff;
+    }
+    if (colDiff > 0) {
+        return colDiff;
+    }   
+}
+
 void generate_movements(int numOfIntersections) {
     int i;
+    int distanceForward = 0;
     int pacmanDirectionsCounter = 0;
+    int j;
     enum robotTurns directionToTurnAtIntersection = STRAIGHT;
     enum intersectionType pacoAt;
     if (firstPelletFlag == 1) {
@@ -503,9 +530,10 @@ void generate_movements(int numOfIntersections) {
             pacman_right_turn();
         }
     }
-    //call function here to tell adils function how far forward to go and in what direction it is travelling 
-    robot_forward(2, 1); //call adils function to make the robot go straight
-    
+    distanceForward = distanceToPellet(lastIntersectionPosition[j][0], lastIntersectionPosition[j][1], food_list[j][0],food_list[j][1]);   
+    //call function here to tell adils function how far forward to go and in what direction it is travelling///////////////////////
+    robot_forward(distanceForward, intersectionOrientation[j]); //call adils function to make the robot go straight
+    j++;
     //turn robot to get ready to go get next pellet
     if (pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
         //btPutString("Going in here\n");
