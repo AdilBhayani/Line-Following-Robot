@@ -443,6 +443,7 @@ void pacman_u_turn(){
     while(center_right == 0){
         center_right = Sensor_2_Read();
     }
+    CyDelay(150);
 }
 
 /*

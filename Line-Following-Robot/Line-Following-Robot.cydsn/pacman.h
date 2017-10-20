@@ -132,7 +132,8 @@ static int prevPosition[2] = {-1,-1};
 static enum robotOrientation {NORTH, SOUTH, EAST, WEST};
 static enum robotOrientation pacoFacing = SOUTH;
 static int intersectionArrayIndex = 0;
-static int intersectionArrayIterator = 0;
+static int pelletIndex = 0;
+static int pelletIntersectionArray[5] = {0};
 
 void play_pacman_1();
 void play_pacman_2();
@@ -141,7 +142,7 @@ void a_star();
 void set_start_end(uint8 next_pellet);
 void print_ret_steps();
 void generate_directions();
-void generate_movements();
+void generate_movements(int numOfIntersections);
 enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol);
 
 int find_lowest_f_square(int f_values[15][19], int open_list[285][2], int open_index);
