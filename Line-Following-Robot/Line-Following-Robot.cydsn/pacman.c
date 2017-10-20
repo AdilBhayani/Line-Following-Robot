@@ -183,13 +183,15 @@ void play_pacman_2(){
     end_coordinate[0] = food_list[0][0]; //set x and y coordinates of first item in food list
     end_coordinate[1] = food_list[0][1]; 
     int i;
-    for (i = 0; i < 5; i++) {
+    int j;
+    for (i = 0; i < 2; i++) {
         set_start_end(i);
         //print_ret_steps();
         generate_directions();
-        //Convert coordinates to directions for robot
-        //Implement directions
-        //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
+        //generate_movements();
+    }
+    for (j = 0; j < 1; j++) {
+        generate_movements();
     }
     //print_ret_steps();
     /*int v;
@@ -203,7 +205,6 @@ void play_pacman_2(){
         usbPutInt(intersectionArray[v]);
         usbPutString("\n");
     }*/
-    generate_movements();
     //Convert coordinates to directions for robot
     //Implement directions
     //Raise flag after it reaches there to indicate robot need to re-orientate for next food item
@@ -273,8 +274,21 @@ enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
     /*usbPutString(" Row and column : ");
     usbPutInt(currentPosRow);
     usbPutString(" , ");
-    usbPutInt(currentPosCol);*/
-    if (pacoFacing == NORTH || pacoFacing == SOUTH) {
+    usbPutInt(currentPosCol);
+    usbPutString(" End row and column : ");
+    usbPutInt(end_coordinate[0]);
+    usbPutString(" , ");
+    usbPutInt(end_coordinate[1]);
+    usbPutString(" \n");*/
+    if (currentPosRow == start_coordinate[0] && currentPosCol == start_coordinate[1] && firstPelletFlag == 0) {
+        /*usbPutString(" Row and column : ");
+        usbPutInt(currentPosRow);
+        usbPutString(" , ");
+        usbPutInt(currentPosCol);
+        usbPutString(" yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyay \n");*/
+        return IS_INTERSECTION;
+    }
+    else if (pacoFacing == NORTH || pacoFacing == SOUTH) {
         if ( (currentMap[currentPosRow][currentPosCol - 1] == 0) ||
             (currentMap[currentPosRow][currentPosCol + 1] == 0) ) {
             //usbPutString(" IS_INTERSECTION \n");
@@ -308,7 +322,9 @@ void generate_directions() {
         }
         enum robotTurns turnToAdd = STRAIGHT;
         if (firstPelletFlag == 0 && a == 0) { //take into account 180 turns, for the cases where the robot needs to turn around after getting first pellet
+            //save previous coordinates
             if (prevPosition[0] == ret_steps[a+1][0] && prevPosition[1] == ret_steps[a+1][1]) { //180 turn
+                //usbPutString("U_TURN put in array\n");
                 //add a u turn without needing to convert coordinates
                 turnToAdd = U_TURN;
             }
@@ -336,7 +352,7 @@ void generate_directions() {
             intersectionArray[intersectionArrayIndex] = TURNING; //mark it as a turning intersection
             /*usbPutString("Intersection array value : ");
             usbPutInt(intersectionArray[intersectionArrayIndex]);
-            usbPutString("Row and column : ");
+            usbPutString(" Row and column : ");
             usbPutInt(ret_steps[a][0]);
             usbPutString(" , ");
             usbPutInt(ret_steps[a][1]);
@@ -403,8 +419,11 @@ void generate_movements() {
     int i;
     int pacmanDirectionsCounter = 0;
     enum robotTurns directionToTurnAtIntersection = STRAIGHT;
-    enum intersectionType pacoAt = robot_follow_line(directionToTurnAtIntersection);
-    for (i = 0; i < intersectionArrayIndex; i++) {
+    enum intersectionType pacoAt;
+    if (firstPelletFlag == 1) {
+        pacoAt = robot_follow_line(directionToTurnAtIntersection);
+    }
+    for (i = 0; i < intersectionArrayIndex - 1; i++) {
         if (intersectionArray[i] == TURNING) {
             directionToTurnAtIntersection = pacmanDirections[pacmanDirectionsCounter];
             pacmanDirectionsCounter++;
@@ -413,6 +432,23 @@ void generate_movements() {
             directionToTurnAtIntersection = STRAIGHT;
         }
         pacoAt = robot_follow_line(directionToTurnAtIntersection);
+    }
+    if (intersectionArray[i] == TURNING) { //turn at intersection to orient correctly to get food pellet
+        directionToTurnAtIntersection = pacmanDirections[pacmanDirectionsCounter];
+        pacmanDirectionsCounter++;
+        if (directionToTurnAtIntersection == LEFT) {
+            pacman_left_turn();
+        }
+        else {
+            pacman_right_turn();
+        }
+    }
+    robot_forward(1, 1); //call adils function to make the robot go straight
+    
+    //turn robot to get ready to go get next pellet
+    if (pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
+        //btPutString("Going in here\n");
+        pacman_u_turn(); //call uturn function here
     }
 }
 

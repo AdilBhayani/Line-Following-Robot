@@ -105,6 +105,10 @@ void robot_right_turn();
 void robot_left_turn();
 void robot_turn();
 
+void pacman_right_turn();
+void pacman_left_turn();
+void pacman_u_turn();
+
 void init_pid();
 void ComputeA();
 void ComputeB();

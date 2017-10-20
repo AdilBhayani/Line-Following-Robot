@@ -413,6 +413,38 @@ void robot_turn(){
     
 }
 
+void pacman_right_turn(){
+    uint8 center_right = 0;
+    m_adjust_right_major();
+    CyDelay(100);
+    center_right = Sensor_2_Read();
+    while(center_right == 0){
+        center_right = Sensor_2_Read();
+    }
+}
+
+void pacman_left_turn(){
+    uint8 center_left = 0;
+    m_adjust_left_major();
+    center_left = Sensor_1_Read();
+    CyDelay(350);
+    while(center_left == 0){
+        center_left = Sensor_1_Read();
+    }
+}
+
+void pacman_u_turn(){
+    uint8 center_right = 0;
+    m_turn_right();
+    CyDelay(1250);
+    m_stop();
+    m_adjust_right_major();
+    center_right = Sensor_2_Read();
+    while(center_right == 0){
+        center_right = Sensor_2_Read();
+    }
+}
+
 /*
  * Initializes two PID systems, one for
  * each motor of the robot.

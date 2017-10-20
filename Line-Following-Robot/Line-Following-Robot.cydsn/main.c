@@ -58,10 +58,13 @@ int main()
 {
     init_motion_control();
     CYGlobalIntEnable;
-    init_battery_management();
-    init_rf();
-    init_bluetooth();
-    switch_mode();
+    //init_battery_management();
+    //init_rf();
+    //init_usb();
+    //init_bluetooth();
+    //LED_Write(1);
+    play_pacman_2();
+    //switch_mode();
     while(1);
 }
 
