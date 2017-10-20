@@ -35,7 +35,7 @@
 
 #define MAP_HEIGHT 15
 #define MAP_WIDTH 19
-
+#define DFS_RET_STEPS_SIZE 1000
 
 static int map[15][19] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -121,6 +121,7 @@ static int start_coordinate[2] = {1,1};
 static int end_coordinate[2] = {-1,-1};
 
 static int ret_steps[285][2] = {{0}}; //maximum steps could be 19 * 15 = 285
+static int ret_steps_dfs[DFS_RET_STEPS_SIZE][2];
 static enum robotTurns pacmanDirections[300] = {STRAIGHT};
 static enum intersectionOrNot {TURNING, NOT_TURNING, IS_INTERSECTION, NOT_INTERSECTION};
 static enum intersectionOrNot intersectionArray[300] = {NOT_TURNING};
@@ -148,6 +149,9 @@ int in_list(int x_pos, int y_pos, int list[285][2], int max_index);
 void add_square(int parent_x, int parent_y, int x, int y, int open_list[285][2], int f_values[15][19], int g_values[15][19], int h_values[15][19], int parents_x[15][19], int parents_y[15][19], int* open_index);
 void update_square(int index, int parent_x, int parent_y, int x, int y, int open_list[285][2], int f_values[15][19], int g_values[15][19], int h_values[15][19], int parents_x[15][19], int parents_y[15][19]);
 
+void dfs();
+int check_intersection(int ret_visited[15][19], int current_location[2]);
+void print_ret_steps_dfs();
 #endif /* PACMAN_H_ */
 
 /* [] END OF FILE */

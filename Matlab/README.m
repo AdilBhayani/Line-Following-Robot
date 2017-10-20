@@ -25,6 +25,5 @@ figure();
 set(gcf,'numbertitle','off','name','Final path')
 plotmap(m,s);
 
-disp(size(s,1));
-disp(s);
-
+disp(s - 1);
+disp(size(s,1));%Total number of steps taken

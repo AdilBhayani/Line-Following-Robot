@@ -38,131 +38,139 @@
  * level within the time-limit. 
  */
 void play_pacman_1(){
-    CyDelay(1000);
-    uint8 left_sensor = 0;
-    uint8 right_sensor = 0;
-    uint8 center_left = 0;
-    uint8 center_right = 0;
-    uint8 center_front = 0;
-    uint8 direction = 0;
-    uint8 prio = 0;
-    uint8 kodi = 0;
-    while(1) {
-        CyDelayUs(100);
-        left_sensor = Sensor_3_Read();
-        right_sensor = Sensor_5_Read();
-        center_left = Sensor_1_Read();
-        center_right = Sensor_2_Read();
-        center_front = Sensor_4_Read();
-        if ((left_sensor > 0) && (right_sensor > 0)) {
-            prio = (int)(rand() % 3);
-            if (prio == 2) {
-                m_straight();
-                kodi = 0;
-            } else if (prio == 1) {
-                m_adjust_right_major();
-                direction = 1;
-                kodi = 1;
-            } else {
-                m_adjust_left_major();
-                direction = 0;
-                kodi = 1;
-            }
-
-            if (kodi > 0) {
-                CyDelay(100);
-                if (direction > 0){
-                    m_turn_right();
-                    while(center_right == 1){
-                        center_right = Sensor_2_Read();
-                    }
-                    CyDelay(100);
-                    m_straight();
-                    prio = (int)(rand() % 2);
-                } else {
-                    m_turn_left();
-                    while(center_left == 1){
-                        center_left = Sensor_1_Read();
-                    }
-                    CyDelay(100);
-                    m_straight();
-                    prio = (int)(rand() % 2);
-                }
-            }
-        }
-        if (prio > 0) {
-            if (center_right > 0){
-                if (center_left > 0){
-                    m_straight();
-                } else {
-                    m_adjust_right_minor();
-                }
-            } else if (center_left > 0){
-                m_adjust_left_minor();
-            } else if (right_sensor > 0)  {
-                m_adjust_right_major();
-                direction = 1;
-            } else if (left_sensor > 0){
-                m_adjust_left_major();
-                direction = 0;
-            } else if (center_front == 0){
-                if (direction > 0){
-                    m_turn_right();
-                    while(center_right == 1){
-                        center_right = Sensor_2_Read();
-                    }
-                    CyDelay(100);
-                    m_straight();
-                    prio = (int)(rand() % 2);
-                } else {
-                    m_turn_left();
-                    while(center_left == 1){
-                        center_left = Sensor_1_Read();
-                    }
-                    CyDelay(100);
-                    m_straight();
-                    prio = (int)(rand() % 2);
-                }
-            }
-        } else {
-            if (center_left > 0){
-                if (center_right > 0){
-                    m_straight();
-                } else {
-                    m_adjust_left_minor();
-                }
-            } else if (center_right > 0){
-                m_adjust_right_minor();
-            } else if (left_sensor > 0)  {
-                m_adjust_left_major();
-                direction = 0;
-            } else if (right_sensor > 0){
-                m_adjust_right_major();
-                direction = 1;
-            } else if (center_front == 0){
-                if (direction > 0){
-                    m_turn_right();
-                    while(center_right == 1){
-                        center_right = Sensor_2_Read();
-                    }
-                    CyDelay(100);
-                    m_straight();
-                    prio = (int)(rand() % 2);
-                } else {
-                    m_turn_left();
-                    while(center_left == 1){
-                        center_left = Sensor_1_Read();
-                    }
-                    CyDelay(100);
-                    m_straight();
-                    prio = (int)(rand() % 2);
-                }
-            }
-        }
-    }
-    return;
+    //printf("Inside play_pacman_1()\n");
+    end_coordinate[0] = 0;
+    end_coordinate[1] = 0;
+    dfs();
+    print_ret_steps_dfs();
+    //Same drill as Astar movements to go here
 }
 
+void dfs(){
+    //printf("Inside dfs()\n");
+    int x, y;
+    static int ret_visited[15][19];
+    for(x = 0; x < 15; x ++) {
+        for(y = 0; y < 19; y ++) ret_visited[x][y] = 1;
+    }
+    int steps_index = 1;
+    ret_steps_dfs[0][0] = start_coordinate[0];
+    ret_steps_dfs[0][1] = start_coordinate[1];
+    for(x = 1; x < DFS_RET_STEPS_SIZE; x ++) {
+        for(y = 0; y < 2; y ++) {
+            ret_steps_dfs[x][y] = -1;
+        }
+    }
+    
+    static int popping_array[285][2];
+    int popping_index = 1;
+    popping_array[0][0] = start_coordinate[0];
+    popping_array[0][1] = start_coordinate[1];
+    for(x = 1; x < 285; x ++) {
+        for(y = 0; y < 2; y ++) {
+            popping_array[x][y] = -1;
+        }
+    }
+    
+    static int current_location[2];
+    current_location[0] = start_coordinate[0];
+    current_location[1] = start_coordinate[1]; 
+    
+    ret_visited[current_location[0]][current_location[1]] = 0;
+
+    static int target_location[2];
+    target_location[0] = 0;
+    target_location[1] = 0;
+    
+    int iteration = 500;
+    while (iteration > 0 && popping_index > 0 && (current_location[0] != target_location[0] || current_location[1] != target_location[1])){
+    if (check_intersection(ret_visited, current_location) > 1){
+        //printf("Inside check_intersection if statement at %d %d\n", current_location[0], current_location[1]);
+        //Add to popping_array
+        popping_array[popping_index][0] = current_location[0];
+        popping_array[popping_index][1] = current_location[1];
+        popping_index++;
+    }
+    if (current_location[0] > 0 && currentMap[current_location[0] - 1][current_location[1]] == 0 && ret_visited[current_location[0] - 1][current_location[1]] == 1){
+        current_location[0] -= 1;
+    }else if (current_location[1] < (MAP_WIDTH - 1) && currentMap[current_location[0]][current_location[1] + 1] == 0 && ret_visited[current_location[0]][current_location[1] + 1] == 1){
+        current_location[1] += 1;
+    }else if (current_location[0] < (MAP_HEIGHT - 1) && currentMap[current_location[0] + 1][current_location[1]] == 0 && ret_visited[current_location[0] + 1][current_location[1]] == 1){
+        current_location[0] += 1;
+    }else if (current_location[1] > 0 && currentMap[current_location[0]][current_location[1] - 1] == 0 && ret_visited[current_location[0]][current_location[1] - 1] == 1){
+        current_location[1] -= 1;
+    }else{
+        //printf("Starting backtrack\n");
+        int k = 0;
+        int last_valid_k = -1;
+        while (k < popping_index){
+            if (popping_index > k && popping_array[k][0] != -1){
+                int temp_current_location[2];
+                temp_current_location[0] = popping_array[k][0];
+                temp_current_location[1] = popping_array[k][1];
+                //printf("Test check\n");
+                if (check_intersection(ret_visited,temp_current_location) < 1){
+                    popping_array[k][0] = -1;
+                    popping_array[k][1] = -1;
+                }else{
+                    last_valid_k = k;
+                }
+            }
+            k++;
+        }
+        //printf("last_valid_k is: %d\n", last_valid_k);
+        if (last_valid_k != -1){
+            start_coordinate[0] = current_location[0];
+            start_coordinate[1] = current_location[1];
+            end_coordinate[0] = popping_array[last_valid_k][0];
+            end_coordinate[1] = popping_array[last_valid_k][1];
+            a_star();
+            int index = 1;
+            while (ret_steps[index][0] != -1){
+                ret_steps_dfs[steps_index][0] = ret_steps[index][0];
+                ret_steps_dfs[steps_index][1] = ret_steps[index][1];
+                steps_index++;
+                index++;
+            }
+            ret_steps_dfs[steps_index][0] = -1;
+            ret_steps_dfs[steps_index][1] = -1;
+            steps_index--;
+            current_location[0] = popping_array[last_valid_k][0];
+            current_location[1] = popping_array[last_valid_k][1];
+        }else{
+            break;
+        }
+    }
+    ret_steps_dfs[steps_index][0] = current_location[0];
+    ret_steps_dfs[steps_index][1] = current_location[1];
+    steps_index++;
+    ret_visited[current_location[0]][current_location[1]] = 0;
+    iteration--;
+    }
+}
+
+int check_intersection(int ret_visited[15][19], int current_location[2]){
+    //printf("Inside check_intersection() at %d %d\n", current_location[0], current_location[1]);
+    int count = 0;
+    if (current_location[0] > 0 && currentMap[current_location[0] - 1][current_location[1]] == 0 && ret_visited[current_location[0] - 1][current_location[1]] == 1){
+        //printf("North\n");
+        count++;
+    }
+    if (current_location[1] < (MAP_WIDTH - 1) && currentMap[current_location[0]][current_location[1] + 1] == 0 && ret_visited[current_location[0]][current_location[1] + 1] == 1){
+        //printf("East\n");
+        count++;
+    }
+    if (current_location[0] < (MAP_HEIGHT - 1) && currentMap[current_location[0] + 1][current_location[1]] == 0 && ret_visited[current_location[0] + 1][current_location[1]] == 1){
+        //printf("South\n");
+        count++;
+    }
+    if (current_location[1] > 0 && currentMap[current_location[0]][current_location[1] - 1] == 0 && ret_visited[current_location[0]][current_location[1] - 1] == 1){
+        //printf("West\n");
+        count++;
+    }
+    //printf("Count is: %d\n", count);
+    return count;
+}
 
 /*
  * In this level, 5 pellets will be placed across the field. The
@@ -244,6 +252,18 @@ void print_ret_steps() {
             usbPutInt(ret_steps[i][0]);
             usbPutString(",");
             usbPutInt(ret_steps[i][1]);
+            usbPutString("\n");
+        }
+    }
+}
+
+void print_ret_steps_dfs() {
+    int i;
+    for (i = 0; i < DFS_RET_STEPS_SIZE; i++){ 
+        if (ret_steps_dfs[i][0] != -1){
+            usbPutInt(ret_steps_dfs[i][0]);
+            usbPutString(",");
+            usbPutInt(ret_steps_dfs[i][1]);
             usbPutString("\n");
         }
     }
@@ -540,13 +560,6 @@ void a_star(){
                 for (int j=0; j<2; j++) {
                     ret_steps[i][j] = temp_ret_steps[ret_step_index + i][j];
                 }
-            }
-            
-            for (int i=0; i<255 ; i++) {
-                for (int j=0; j<2; j++) {
-                    //printf(" %d", ret_steps[i][j]);
-                }
-                //printf("\n");
             }
             break;
         }

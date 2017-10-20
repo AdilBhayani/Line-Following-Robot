@@ -42,6 +42,9 @@ while size(poppingArray,1) > 0 && (currentLocation(1) ~= targetlocation(1) || cu
             end
             i = i + 1;
         end
+       if size(poppingArray,1) > 0
+          currentLocation = poppingArray(size(poppingArray,1),:);
+       end
        stepsIndex = size(retsteps,1);
        while size(poppingArray,1) > 0 && (currentLocation(1) ~= poppingArray(size(poppingArray,1),1) || currentLocation(2) ~= poppingArray(size(poppingArray,1),2))
            currentLocation = retsteps(stepsIndex,:);
