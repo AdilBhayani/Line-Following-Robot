@@ -63,8 +63,7 @@ int main()
     //init_usb();
     //init_bluetooth();
     //LED_Write(1);
-    play_pacman_2();
-    //switch_mode();
+    switch_mode();
     while(1);
 }
 

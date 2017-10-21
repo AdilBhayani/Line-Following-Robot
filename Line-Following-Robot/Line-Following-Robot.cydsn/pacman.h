@@ -110,7 +110,7 @@ static int currentMap[15][19] = {
 };
     
 static int food_list[5][2] = 
-{{5,4},
+{{10,17},
 {11,3},
 {12,15},
 {4,17},

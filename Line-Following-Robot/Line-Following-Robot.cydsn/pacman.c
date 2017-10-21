@@ -189,14 +189,14 @@ void play_pacman_2(){
         //print_ret_steps();
         generate_directions();
     }
-    /*
+    
     firstPelletFlag = 1;
-    LED_Write(1);
+    //LED_Write(1);
     for (j = 0; j < 1; j++) {
         generate_movements(pelletIntersectionArray[j]);
-    }*/
+    }
     //print_ret_steps();
-    int v;
+   /* int v;
     for (v = 0; v < lastIntersectionIndex+1; v++) {
         usbPutString("Orientations at last intersections: ");
         usbPutInt(intersectionOrientation[v]);
@@ -211,17 +211,17 @@ void play_pacman_2(){
         usbPutString("\n");
     }
     //int v;
-    for (v = 0; v < pacmanDirectionsIndex; v++) {
+   for (v = 0; v < pacmanDirectionsIndex; v++) {
         usbPutString("Turns in the turn array in order are: ");
         usbPutInt(pacmanDirections[v]);
         usbPutString("\n");
-    }
+    }*/
     
-    for (v = 0; v < intersectionArrayIndex; v++) {
+ /*   for (v = 0; v < intersectionArrayIndex; v++) {
         usbPutString("Intersection array: ");
         usbPutInt(intersectionArray[v]);
         usbPutString("\n");
-    }
+    }*/
     /*
     int result;
     for (v = 0; v < lastIntersectionIndex+1; v++) {
@@ -532,13 +532,15 @@ void generate_movements(int numOfIntersections) {
     }
     distanceForward = distanceToPellet(lastIntersectionPosition[j][0], lastIntersectionPosition[j][1], food_list[j][0],food_list[j][1]);   
     //call function here to tell adils function how far forward to go and in what direction it is travelling///////////////////////
-    robot_forward(distanceForward, intersectionOrientation[j]); //call adils function to make the robot go straight
-    j++;
+    robot_forward(1, 1);
+    //robot_forward(distanceForward, intersectionOrientation[j]); //call adils function to make the robot go straight
+    m_stop();
+    /*j++;
     //turn robot to get ready to go get next pellet
     if (pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
         //btPutString("Going in here\n");
         pacman_u_turn(); //call uturn function here
-    }
+    }*/
 }
 
 void a_star(){
