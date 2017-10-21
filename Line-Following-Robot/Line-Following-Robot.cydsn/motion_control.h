@@ -103,7 +103,7 @@ void set_speed_B(float speed);
 
 enum intersectionType robot_follow_line(enum robotTurns turnDirection);
 enum robotOrientation {NORTH, SOUTH, EAST, WEST};
-void robot_forward(uint8 value, enum robotOrientation direction);
+void robot_forward(int value, enum robotOrientation direction);
 void robot_right_turn();
 void robot_left_turn();
 void robot_turn();

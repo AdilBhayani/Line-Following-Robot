@@ -192,7 +192,7 @@ void play_pacman_2(){
     
     firstPelletFlag = 1;
     //LED_Write(1);
-    for (j = 0; j < 1; j++) {
+    for (j = 0; j < 5; j++) {
         generate_movements(pelletIntersectionArray[j]);
     }
     //print_ret_steps();
@@ -502,7 +502,6 @@ static int distanceToPellet(int intersectionRow, int intersectionCol, int pellet
 void generate_movements(int numOfIntersections) {
     int i;
     int distanceForward = 0;
-    int pacmanDirectionsCounter = 0;
     int j;
     enum robotTurns directionToTurnAtIntersection = STRAIGHT;
     enum intersectionType pacoAt;
@@ -510,7 +509,7 @@ void generate_movements(int numOfIntersections) {
         pacoAt = robot_follow_line(directionToTurnAtIntersection);
         firstPelletFlag = 0;
     }
-    for (i = 0; i < numOfIntersections - 1; i++) {
+    for (i = intersectionArrayIterator; i < (numOfIntersections + intersectionArrayIterator - 1); i++) {
         if (intersectionArray[i] == TURNING) {
             directionToTurnAtIntersection = pacmanDirections[pacmanDirectionsCounter];
             pacmanDirectionsCounter++;
@@ -519,6 +518,7 @@ void generate_movements(int numOfIntersections) {
             directionToTurnAtIntersection = STRAIGHT;
         }
         pacoAt = robot_follow_line(directionToTurnAtIntersection);
+        intersectionArrayIterator++;
     }
     if (intersectionArray[i] == TURNING) { //turn at intersection to orient correctly to get food pellet
         directionToTurnAtIntersection = pacmanDirections[pacmanDirectionsCounter];
@@ -532,15 +532,17 @@ void generate_movements(int numOfIntersections) {
     }
     distanceForward = distanceToPellet(lastIntersectionPosition[j][0], lastIntersectionPosition[j][1], food_list[j][0],food_list[j][1]);   
     //call function here to tell adils function how far forward to go and in what direction it is travelling///////////////////////
-    robot_forward(1, 1);
-    //robot_forward(distanceForward, intersectionOrientation[j]); //call adils function to make the robot go straight
-    m_stop();
-    /*j++;
+    //robot_forward(distanceForward, );
+    robot_forward(distanceForward, intersectionOrientation[j]); //call adils function to make the robot go straight
+    //m_stop();
+    j++;
     //turn robot to get ready to go get next pellet
     if (pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
         //btPutString("Going in here\n");
         pacman_u_turn(); //call uturn function here
-    }*/
+        pacoAt = robot_follow_line(STRAIGHT);
+        //robot_forward(1, intersectionOrientation[j] - 1);
+    }
 }
 
 void a_star(){

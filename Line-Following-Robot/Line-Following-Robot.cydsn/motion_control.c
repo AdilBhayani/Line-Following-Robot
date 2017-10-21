@@ -342,7 +342,11 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
 /*
  * Robot moves forward value number of grid spaces.
  */
-void robot_forward(uint8 value, enum robotOrientation direction){ 
+void robot_forward(int value, enum robotOrientation direction){ 
+    if (value == 1) {
+        value = 2;
+    }
+        
     uint16 distance;
     if (direction == NORTH || direction == SOUTH) distance = ((GRIDSIZE * value) - 60) * 1.13397;
     else distance = ((GRIDSIZEOTHER * value) - 60) * 1.13397;
@@ -452,6 +456,7 @@ void pacman_u_turn(){
     }
     CyDelay(10);
     m_stop();
+    CyDelay(1000);
 }
 
 /*
