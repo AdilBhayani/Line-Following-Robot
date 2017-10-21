@@ -39,11 +39,25 @@
  */
 void play_pacman_1(){
     //printf("Inside play_pacman_1()\n");
-    end_coordinate[0] = 0;
-    end_coordinate[1] = 0;
+    end_coordinate[0] = 1;
+    end_coordinate[1] = 6;
     dfs();
-    print_ret_steps_dfs();
+    //print_ret_steps_dfs();
+    generate_directions_1();
+    generate_movements_1();
+    /*int v;
+    for (v = 0; v < pacmanDirectionsIndex; v++) {
+        usbPutString("Turns in the turn array in order are: ");
+        usbPutInt(pacmanDirections[v]);
+        usbPutString("\n");
+    }
+    for (v = 0; v < pacman1OrientationsIndex; v++) {
+        usbPutString("Paco's orientation is: ");
+        usbPutInt(pacman1Orientations[v]);
+        usbPutString("\n");
+    }*/
     //Same drill as Astar movements to go here
+    
 }
 
 void dfs(){
@@ -422,6 +436,34 @@ void generate_directions() {
     firstPelletFlag = 0;
 }
 
+void generate_directions_1() {
+    int i = 0;
+    while (ret_steps_dfs[i][0] != -1) {
+        i++;
+    }
+    int a;
+    for (a = 0; a < i - 1; a++) { 
+        enum robotTurns turnToAdd = STRAIGHT;
+        if (a != 0) { //don't generate diections for first coordinate because there is no prev coordinate to check
+            if (ret_steps_dfs[a-1][0] == ret_steps_dfs[a+1][0] && ret_steps_dfs[a-1][1] == ret_steps_dfs[a+1][1]) { //180 turn
+                turnToAdd = U_TURN;
+            }
+            else {
+                turnToAdd = convertCoordinates(ret_steps_dfs[a-1][0], ret_steps_dfs[a-1][1], ret_steps_dfs[a][0], ret_steps_dfs[a][1], ret_steps_dfs[a+1][0], ret_steps_dfs[a+1][1]);
+            }
+        }
+        pacman1Orientations[pacman1OrientationsIndex] = pacoFacing;
+        pacman1OrientationsIndex++;
+        pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
+        pacmanDirectionsIndex++;
+        if (turnToAdd != STRAIGHT) { //add another straight after the turn to progress to next coordinate
+            pacmanDirections[pacmanDirectionsIndex] = STRAIGHT;
+            pacmanDirectionsIndex++;
+        }
+        
+    }
+}
+
 enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPosRow, int currentPosCol, int nextPosRow, int nextPosCol) {
     /*usbPutString("current coordinates : ");
     usbPutInt(prevPosRow);
@@ -501,6 +543,93 @@ static int distanceToPellet(int intersectionRow, int intersectionCol, int pellet
         return colDiff;
     }   
 }
+
+void updateDirections(enum robotTurns turn) {
+    if (turn == RIGHT) { 
+        if (pacoFacing == SOUTH) {
+            pacoFacing = WEST;
+        }
+        else if (pacoFacing == NORTH) {
+            pacoFacing = EAST;
+        }
+        else if (pacoFacing == EAST) {
+            pacoFacing = SOUTH;
+        }
+        else if (pacoFacing == WEST) {
+            pacoFacing = NORTH;
+        }
+    }
+    else if (turn == LEFT) {
+        if (pacoFacing == SOUTH) {
+            pacoFacing = EAST;
+        }
+        else if (pacoFacing == NORTH) {
+            pacoFacing = WEST;
+        }
+        else if (pacoFacing == EAST) {
+            pacoFacing = NORTH;
+        }
+        else if (pacoFacing == WEST) {
+            pacoFacing = SOUTH;
+        }
+    }
+    else if (turn == U_TURN) {
+        if (pacoFacing == SOUTH) {
+            pacoFacing = NORTH;
+        }
+        else if (pacoFacing == NORTH) {
+            pacoFacing = SOUTH;
+        }
+        else if (pacoFacing == EAST) {
+            pacoFacing = WEST;
+        }
+        else if (pacoFacing == WEST) {
+            pacoFacing = EAST;
+        }
+    }
+    robot_forward(1, pacoFacing);
+}
+
+void generate_movements_1() {
+    int i;
+    int straightCounter = 0;
+    pacoFacing = SOUTH;
+    for (i = 0; i < pacmanDirectionsIndex; i++) {
+        /*usbPutString("i : ");
+        usbPutInt(i);
+        usbPutString("\n");*/
+        while (pacmanDirections[i] == STRAIGHT) {
+            straightCounter++;
+            i++;
+        }
+        
+        if (straightCounter != 0) {
+           /* usbPutString("Pacos orientation is : ");
+            usbPutInt(pacoFacing);
+            usbPutString("\n");*/
+            robot_forward(straightCounter, pacman1Orientations[pacman1OrientationIterator]); //move robot straight for specified straightCounter amount, using calculated robot orientation
+            straightCounter = 0; //reset straightCounter amount  
+            i--;
+        }  //else turn robot and move straight one coordinate        
+        else if (pacmanDirections[i] == U_TURN){
+            pacman_u_turn();
+            updateDirections(U_TURN); 
+            i++;
+        }
+        else if (pacmanDirections[i] == LEFT){
+            pacman_left_turn(); 
+            updateDirections(LEFT); 
+            i++;
+        }
+        else if (pacmanDirections[i] == RIGHT){
+            pacman_right_turn();
+            updateDirections(RIGHT);
+            i++;
+        }       
+    }
+}
+
+
 
 void generate_movements(int numOfIntersections) {
     enum intersectionType pacoAt;

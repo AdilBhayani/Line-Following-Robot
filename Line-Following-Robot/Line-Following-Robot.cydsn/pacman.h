@@ -112,7 +112,7 @@ static int currentMap[15][19] = {
 static int food_list[5][2] = 
 {{5,4},
 {11,3},
-{10,17},
+{12,15},
 {4,17},
 {6,11}};
 
@@ -150,6 +150,13 @@ void print_ret_steps();
 void generate_directions();
 void generate_movements(int numOfIntersections);
 enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol);
+
+void generate_directions_1();
+
+void generate_movements_1();
+static enum robotOrientation pacman1Orientations[DFS_RET_STEPS_SIZE] = {SOUTH};
+static int pacman1OrientationsIndex = 0;
+static int pacman1OrientationIterator = 0;
 
 int find_lowest_f_square(int f_values[15][19], int open_list[285][2], int open_index);
 int in_list(int x_pos, int y_pos, int list[285][2], int max_index);
