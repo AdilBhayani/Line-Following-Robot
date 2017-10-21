@@ -54,7 +54,7 @@
 #define GRIDSIZEOTHER 140
 
 enum robotTurns {LEFT, RIGHT, STRAIGHT, U_TURN};
-enum intersectionType {LEFT_FORK, RIGHT_FORK, CROSSROADS};
+enum intersectionType {LEFT_FORK, RIGHT_FORK, CROSSROADS, DEAD_END};
 
 static volatile float quad_a_old;
 static volatile float quad_b_old;
@@ -102,6 +102,7 @@ void set_speed_A(float speed);
 void set_speed_B(float speed);
 
 enum intersectionType robot_follow_line(enum robotTurns turnDirection);
+enum intersectionType robot_follow_line_1(enum robotTurns turnDirection);
 enum robotOrientation {NORTH, SOUTH, EAST, WEST};
 void robot_forward(int value, enum robotOrientation direction);
 void robot_right_turn();

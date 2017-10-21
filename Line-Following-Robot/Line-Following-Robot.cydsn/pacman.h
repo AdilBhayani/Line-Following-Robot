@@ -141,6 +141,10 @@ static int intersectionArrayIterator = 0;
 static int pacmanDirectionsCounter = 0;
 static int pelletIterator = 0;
 
+static int numOfIntersectionsToDeadEndArray[50] = {0};
+static int prevPosBeforeDeadEndArray[50][2] = {{0,0}};
+static int intersectionBeforeDeadEndIndex = 0;
+
 void play_pacman_1();
 void play_pacman_2();
 void remote_control_mode();
@@ -151,12 +155,10 @@ void generate_directions();
 void generate_movements(int numOfIntersections);
 enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol);
 
+enum intersectionOrNot flagIntersection_1(int currentPosRow, int currentPosCol);
 void generate_directions_1();
-
 void generate_movements_1();
-static enum robotOrientation pacman1Orientations[DFS_RET_STEPS_SIZE] = {SOUTH};
-static int pacman1OrientationsIndex = 0;
-static int pacman1OrientationIterator = 0;
+enum intersectionType detectDeadEnd(int currentRow, int currentCol);
 
 int find_lowest_f_square(int f_values[15][19], int open_list[285][2], int open_index);
 int in_list(int x_pos, int y_pos, int list[285][2], int max_index);

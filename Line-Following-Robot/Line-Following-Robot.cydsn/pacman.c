@@ -39,12 +39,14 @@
  */
 void play_pacman_1(){
     //printf("Inside play_pacman_1()\n");
-    end_coordinate[0] = 1;
-    end_coordinate[1] = 6;
+    end_coordinate[0] = 0;
+    end_coordinate[1] = 0;
     dfs();
     //print_ret_steps_dfs();
     generate_directions_1();
-    generate_movements_1();
+    //int i;
+    //for (i = 0; i < intersectionBeforeDeadEndIndex; i++
+    //generate_movements_1();
     /*int v;
     for (v = 0; v < pacmanDirectionsIndex; v++) {
         usbPutString("Turns in the turn array in order are: ");
@@ -281,10 +283,10 @@ void remote_control_mode(){
     char cha;
     while(1) {
         cha = btGetChar();
-        if (cha == 119) robot_follow_line(STRAIGHT);
-        if (cha == 115) robot_follow_line(U_TURN);
-        if (cha == 97) robot_follow_line(LEFT);
-        if (cha == 100) robot_follow_line(RIGHT);
+        if (cha == 119) robot_follow_line_1(STRAIGHT);
+        if (cha == 115) robot_follow_line_1(U_TURN);
+        if (cha == 97) robot_follow_line_1(LEFT);
+        if (cha == 100) robot_follow_line_1(RIGHT);
     }
 }
 
@@ -320,6 +322,57 @@ void print_ret_steps_dfs() {
             usbPutString("\n");
         }
     }
+}
+
+enum intersectionType detectDeadEnd(int currentRow, int currentCol) {
+    int i = 0;
+    if (currentMap[currentRow+1][currentCol] == 1) {
+        i++;
+    }
+    if (currentMap[currentRow-1][currentCol] == 1) {
+        i++;
+    }
+    if (currentMap[currentRow][currentCol+1] == 1) {
+        i++;
+    }
+    if (currentMap[currentRow][currentCol-1] == 1) {
+        i++;
+    }
+    if (i == 3) {
+        return DEAD_END;
+    } else {
+        return CROSSROADS; 
+    }
+}
+
+enum intersectionOrNot flagIntersection_1(int currentPosRow, int currentPosCol) {
+    if (detectDeadEnd(currentPosRow, currentPosCol) == DEAD_END) {
+        intersectionBeforeDeadEndIndex++; //increment the position in the dead end intersection counter array
+        return IS_INTERSECTION;
+    }
+    if (pacoFacing == NORTH || pacoFacing == SOUTH) {
+        if ( (currentMap[currentPosRow][currentPosCol - 1] == 0) ||
+            (currentMap[currentPosRow][currentPosCol + 1] == 0) ) {
+            //keep track of coordinates of current intersection and increment the intersection count for dead ends
+            prevPosBeforeDeadEndArray[intersectionBeforeDeadEndIndex][0] = currentPosRow;
+            prevPosBeforeDeadEndArray[intersectionBeforeDeadEndIndex][1] = currentPosCol;
+            numOfIntersectionsToDeadEndArray[intersectionBeforeDeadEndIndex]++;
+            return IS_INTERSECTION;
+        } else {
+            return NOT_INTERSECTION;
+        }
+    } else if (pacoFacing == EAST || pacoFacing == WEST) {
+        if ( (currentMap[currentPosRow - 1][currentPosCol] == 0) ||
+            (currentMap[currentPosRow + 1][currentPosCol] == 0) ) {
+            //keep track of coordinates of current intersection and increment the intersection count for dead ends
+            prevPosBeforeDeadEndArray[intersectionBeforeDeadEndIndex][0] = currentPosRow;
+            prevPosBeforeDeadEndArray[intersectionBeforeDeadEndIndex][1] = currentPosCol;
+            numOfIntersectionsToDeadEndArray[intersectionBeforeDeadEndIndex]++;
+            return IS_INTERSECTION;
+        } else {
+            return NOT_INTERSECTION;
+        }
+    }     
 }
 
 enum intersectionOrNot flagIntersection(int currentPosRow, int currentPosCol) {
@@ -444,23 +497,48 @@ void generate_directions_1() {
     int a;
     for (a = 0; a < i - 1; a++) { 
         enum robotTurns turnToAdd = STRAIGHT;
-        if (a != 0) { //don't generate diections for first coordinate because there is no prev coordinate to check
+        if (a != 0) { //don't generate a turn for the first direction because its going straight anyways and we cant access a-1
             if (ret_steps_dfs[a-1][0] == ret_steps_dfs[a+1][0] && ret_steps_dfs[a-1][1] == ret_steps_dfs[a+1][1]) { //180 turn
+                //usbPutString("U_TURN put in array\n");
+                //add a u turn without needing to convert coordinates
                 turnToAdd = U_TURN;
             }
             else {
+                //decide if we need to turn, and which way to turn
                 turnToAdd = convertCoordinates(ret_steps_dfs[a-1][0], ret_steps_dfs[a-1][1], ret_steps_dfs[a][0], ret_steps_dfs[a][1], ret_steps_dfs[a+1][0], ret_steps_dfs[a+1][1]);
             }
         }
-        pacman1Orientations[pacman1OrientationsIndex] = pacoFacing;
-        pacman1OrientationsIndex++;
-        pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
-        pacmanDirectionsIndex++;
-        if (turnToAdd != STRAIGHT) { //add another straight after the turn to progress to next coordinate
-            pacmanDirections[pacmanDirectionsIndex] = STRAIGHT;
+        //only add turns to the turn array, not straights
+        if (turnToAdd != STRAIGHT) { //if paco needs to turn at current coordinate
+            pacmanDirections[pacmanDirectionsIndex] = turnToAdd;
             pacmanDirectionsIndex++;
         }
         
+        //determine whether each point is an intersection, and update intersection array accordingly
+        enum intersectionOrNot intersectionFlag = flagIntersection_1(ret_steps_dfs[a][0], ret_steps_dfs[a][1]);
+        if ((intersectionFlag == IS_INTERSECTION) && (turnToAdd != STRAIGHT)) { //if paco is at an intersection
+            intersectionArray[intersectionArrayIndex] = TURNING; //mark it as a turning intersection
+            
+            /*usbPutString("Intersection array value : ");
+            usbPutInt(intersectionArray[intersectionArrayIndex]);
+            usbPutString(" Row and column : ");
+            usbPutInt(ret_steps[a][0]);
+            usbPutString(" , ");
+            usbPutInt(ret_steps[a][1]);
+            usbPutString(" \n");*/
+            intersectionArrayIndex++;          
+        }
+        else if ((intersectionFlag == IS_INTERSECTION) && (turnToAdd == STRAIGHT)) {
+            intersectionArray[intersectionArrayIndex] = NOT_TURNING; //mark it as a turning intersection
+            /*usbPutString("Intersection array value : ");
+            usbPutInt(intersectionArray[intersectionArrayIndex]);
+            usbPutString("Row and column : ");
+            usbPutInt(ret_steps[a][0]);
+            usbPutString(" , ");
+            usbPutInt(ret_steps[a][1]);
+            usbPutString(" \n");*/
+            intersectionArrayIndex++;
+        }
     }
 }
 
@@ -544,88 +622,27 @@ static int distanceToPellet(int intersectionRow, int intersectionCol, int pellet
     }   
 }
 
-void updateDirections(enum robotTurns turn) {
-    if (turn == RIGHT) { 
-        if (pacoFacing == SOUTH) {
-            pacoFacing = WEST;
-        }
-        else if (pacoFacing == NORTH) {
-            pacoFacing = EAST;
-        }
-        else if (pacoFacing == EAST) {
-            pacoFacing = SOUTH;
-        }
-        else if (pacoFacing == WEST) {
-            pacoFacing = NORTH;
-        }
-    }
-    else if (turn == LEFT) {
-        if (pacoFacing == SOUTH) {
-            pacoFacing = EAST;
-        }
-        else if (pacoFacing == NORTH) {
-            pacoFacing = WEST;
-        }
-        else if (pacoFacing == EAST) {
-            pacoFacing = NORTH;
-        }
-        else if (pacoFacing == WEST) {
-            pacoFacing = SOUTH;
-        }
-    }
-    else if (turn == U_TURN) {
-        if (pacoFacing == SOUTH) {
-            pacoFacing = NORTH;
-        }
-        else if (pacoFacing == NORTH) {
-            pacoFacing = SOUTH;
-        }
-        else if (pacoFacing == EAST) {
-            pacoFacing = WEST;
-        }
-        else if (pacoFacing == WEST) {
-            pacoFacing = EAST;
-        }
-    }
-    robot_forward(1, pacoFacing);
-}
 
 void generate_movements_1() {
     int i;
-    int straightCounter = 0;
-    pacoFacing = SOUTH;
-    for (i = 0; i < pacmanDirectionsIndex; i++) {
-        /*usbPutString("i : ");
-        usbPutInt(i);
-        usbPutString("\n");*/
-        while (pacmanDirections[i] == STRAIGHT) {
-            straightCounter++;
-            i++;
+    int turnCounter = 0;
+    enum intersectionType pacoAt = robot_follow_line(STRAIGHT); //tell paco to go straight at the very beginning of his journey
+    for (i = 0; i < intersectionArrayIndex; i++) {
+        if (intersectionArray[i] == TURNING) {
+            if (pacmanDirections[turnCounter] == LEFT) {
+                pacoAt = robot_follow_line(LEFT);
+            }
+            else if (pacmanDirections[turnCounter] == RIGHT) {
+                pacoAt = robot_follow_line(RIGHT);
+            }
+            else if (pacmanDirections[turnCounter] == U_TURN) {
+                pacoAt = robot_follow_line(U_TURN);
+            }
+            turnCounter++;
         }
-        
-        if (straightCounter != 0) {
-           /* usbPutString("Pacos orientation is : ");
-            usbPutInt(pacoFacing);
-            usbPutString("\n");*/
-            robot_forward(straightCounter, pacman1Orientations[pacman1OrientationIterator]); //move robot straight for specified straightCounter amount, using calculated robot orientation
-            straightCounter = 0; //reset straightCounter amount  
-            i--;
-        }  //else turn robot and move straight one coordinate        
-        else if (pacmanDirections[i] == U_TURN){
-            pacman_u_turn();
-            updateDirections(U_TURN); 
-            i++;
+        else {
+            pacoAt = robot_follow_line(STRAIGHT);
         }
-        else if (pacmanDirections[i] == LEFT){
-            pacman_left_turn(); 
-            updateDirections(LEFT); 
-            i++;
-        }
-        else if (pacmanDirections[i] == RIGHT){
-            pacman_right_turn();
-            updateDirections(RIGHT);
-            i++;
-        }       
     }
 }
 

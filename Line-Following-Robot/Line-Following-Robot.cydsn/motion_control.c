@@ -335,7 +335,7 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
             m_adjust_left_major();
         } else if (right_sensor > 0) {
             m_adjust_right_major();
-        }
+        } 
     }
 }
 
@@ -423,22 +423,22 @@ void robot_turn(){
 }
 
 void pacman_right_turn(){
-    uint8 center_right = 0;
+    uint8 center_left = 0;
     m_adjust_right_major();
     CyDelay(100);
-    center_right = Sensor_2_Read();
-    while(center_right == 0){
-        center_right = Sensor_2_Read();
+    center_left = Sensor_1_Read();
+    while(center_left == 0){
+        center_left = Sensor_1_Read();
     }
 }
 
 void pacman_left_turn(){
-    uint8 center_left = 0;
+    uint8 center_right = 0;
     m_adjust_left_major();
-    center_left = Sensor_1_Read();
+    center_right = Sensor_2_Read();
     CyDelay(350);
-    while(center_left == 0){
-        center_left = Sensor_1_Read();
+    while(center_right == 0){
+        center_right = Sensor_2_Read();
     }
 }
 
