@@ -204,6 +204,11 @@ void m_turn_right(){
     SetpointB = M_FORWARD_SLOW;
 }
 
+void m_u_turner(){
+    SetpointA = M_BACKWARD_MEDIUM;
+    SetpointB = M_FORWARD_MEDIUM;
+}
+
 void m_sleep(){
     m_stop();
     CONTROL_Write(0x03);
@@ -434,16 +439,19 @@ void pacman_left_turn(){
 }
 
 void pacman_u_turn(){
+    CyDelay(100);
     uint8 center_right = 0;
-    m_turn_right();
-    CyDelay(1250);
+    m_u_turner();
+    CyDelay(1000);
     m_stop();
-    m_adjust_right_major();
+    CyDelay(100);
+    m_u_turner();
     center_right = Sensor_2_Read();
     while(center_right == 0){
         center_right = Sensor_2_Read();
     }
-    CyDelay(150);
+    CyDelay(10);
+    m_stop();
 }
 
 /*

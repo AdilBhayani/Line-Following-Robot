@@ -43,7 +43,9 @@
 #define M_BACKWARD_MAX (-10.85)
 #define M_FORWARD 5
 #define M_FORWARD_SLOW 3
+#define M_FORWARD_MEDIUM 3.6
 #define M_BACKWARD (-5)
+#define M_BACKWARD_MEDIUM (-3.6)
 #define M_BACKWARD_SLOW (-3)
 #define SampleTimeInSec 0.01
 // Following defines are in mm
@@ -104,6 +106,7 @@ void robot_forward(uint8 value, uint8 direction);
 void robot_right_turn();
 void robot_left_turn();
 void robot_turn();
+void m_u_turner();
 
 void pacman_right_turn();
 void pacman_left_turn();
