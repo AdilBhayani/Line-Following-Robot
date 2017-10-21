@@ -342,9 +342,9 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
 /*
  * Robot moves forward value number of grid spaces.
  */
-void robot_forward(uint8 value, uint8 direction){ 
+void robot_forward(uint8 value, enum robotOrientation direction){ 
     uint16 distance;
-    if (direction == 0) distance = ((GRIDSIZE * value) - 60) * 1.13397;
+    if (direction == NORTH || direction == SOUTH) distance = ((GRIDSIZE * value) - 60) * 1.13397;
     else distance = ((GRIDSIZEOTHER * value) - 60) * 1.13397;
     int16 originalCount = QuadDec_M1_GetCounter();
     m_straight();

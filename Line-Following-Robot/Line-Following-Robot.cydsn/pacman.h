@@ -129,7 +129,6 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
 static int pacmanDirectionsIndex = 0;
 static int firstPelletFlag = 1;
 static int prevPosition[2] = {-1,-1};
-static enum robotOrientation {NORTH, SOUTH, EAST, WEST};
 static enum robotOrientation pacoFacing = SOUTH; //will need to hard code this value when given map on the day of testing
 static int intersectionArrayIndex = 0;
 static int pelletIndex = 0;
