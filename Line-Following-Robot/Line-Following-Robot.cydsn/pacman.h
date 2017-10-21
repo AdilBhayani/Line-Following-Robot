@@ -112,7 +112,7 @@ static int currentMap[15][19] = {
 static int food_list[5][2] = 
 {{5,4},
 {11,3},
-{12,15},
+{10,17},
 {4,17},
 {6,11}};
 
@@ -139,6 +139,7 @@ static int lastIntersectionPosition[5][2] = {{0,0},{0,0},{0,0},{0,0},{0,0}};
 static int distanceToPellet(int intersectionRow, int intersectionCol, int pelletRow, int pelletCol);
 static int intersectionArrayIterator = 0;
 static int pacmanDirectionsCounter = 0;
+static int pelletIterator = 0;
 
 void play_pacman_1();
 void play_pacman_2();

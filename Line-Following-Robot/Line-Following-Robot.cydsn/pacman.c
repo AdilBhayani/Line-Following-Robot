@@ -82,7 +82,7 @@ void dfs(){
     target_location[0] = 0;
     target_location[1] = 0;
     
-    int iteration = 500;
+    int iteration = DFS_RET_STEPS_SIZE;
     while (iteration > 0 && popping_index > 0 && (current_location[0] != target_location[0] || current_location[1] != target_location[1])){
     if (check_intersection(ret_visited, current_location) > 1){
         //printf("Inside check_intersection if statement at %d %d\n", current_location[0], current_location[1]);
@@ -183,7 +183,7 @@ void play_pacman_2(){
     end_coordinate[0] = food_list[0][0]; //set x and y coordinates of first item in food list
     end_coordinate[1] = food_list[0][1]; 
     int i;
-    int j;
+    int x;
     for (i = 0; i < 5; i++) {
         set_start_end(i);
         //print_ret_steps();
@@ -192,32 +192,38 @@ void play_pacman_2(){
     
     firstPelletFlag = 1;
     //LED_Write(1);
-    for (j = 0; j < 5; j++) {
-        generate_movements(pelletIntersectionArray[j]);
+    /*usbPutString("numOfIntersections is: ");
+    usbPutInt(pelletIntersectionArray[0]);
+    usbPutString("\n");
+    usbPutString("intersectionArrayIterator is: ");
+    usbPutInt(intersectionArrayIterator);
+    usbPutString("\n");*/
+    //intersectionArrayIterator = 0;
+    //pelletIterator = 0;
+    
+    /*usbPutString("iAI is 0 : ");
+    usbPutInt(intersectionArrayIterator);
+    usbPutString("\n");
+    usbPutString("PDC is 0 : ");
+    usbPutInt(pacmanDirectionsCounter);
+    usbPutString("\n");
+    usbPutString("pelletIterator is 0 : ");
+    usbPutInt(pelletIterator);
+    usbPutString("\n");*/
+
+    for (x = 0; x < 5; x++) {
+        generate_movements(pelletIntersectionArray[x]);
     }
+    
     //print_ret_steps();
-   /* int v;
-    for (v = 0; v < lastIntersectionIndex+1; v++) {
-        usbPutString("Orientations at last intersections: ");
-        usbPutInt(intersectionOrientation[v]);
-        usbPutString("\n");
-    }
-    for (v = 0; v < lastIntersectionIndex+1; v++) {
-        usbPutString("Last intersections : ");
-        usbPutString("   Row and column : ");
-        usbPutInt(lastIntersectionPosition[v][0]);
-        usbPutString(" , ");
-        usbPutInt(lastIntersectionPosition[v][1]);
-        usbPutString("\n");
-    }
-    //int v;
+   /*int v;
    for (v = 0; v < pacmanDirectionsIndex; v++) {
         usbPutString("Turns in the turn array in order are: ");
         usbPutInt(pacmanDirections[v]);
         usbPutString("\n");
-    }*/
+    }
     
- /*   for (v = 0; v < intersectionArrayIndex; v++) {
+  for (v = 0; v < intersectionArrayIndex; v++) {
         usbPutString("Intersection array: ");
         usbPutInt(intersectionArray[v]);
         usbPutString("\n");
@@ -229,11 +235,8 @@ void play_pacman_2(){
         result = distanceToPellet(lastIntersectionPosition[v][0], lastIntersectionPosition[v][1], food_list[v][0],food_list[v][1]);
         usbPutInt(result);
         usbPutString("\n");
-    }*/
-    /*
-    usbPutString("pellet index: ");
-    usbPutInt(pelletIndex);
-    usbPutString("\n");
+    }
+   int v;
     for (v = 0; v < pelletIndex+1; v++) {
         usbPutString("Pellet array: ");
         usbPutInt(pelletIntersectionArray[v]);
@@ -500,48 +503,44 @@ static int distanceToPellet(int intersectionRow, int intersectionCol, int pellet
 }
 
 void generate_movements(int numOfIntersections) {
-    int i;
-    int distanceForward = 0;
-    int j;
-    enum robotTurns directionToTurnAtIntersection = STRAIGHT;
     enum intersectionType pacoAt;
-    if (firstPelletFlag == 1) {
-        pacoAt = robot_follow_line(directionToTurnAtIntersection);
-        firstPelletFlag = 0;
+    int distanceForward;
+    //iterate through the intersection array up to the intersection just before the food pellet
+    pacoAt = robot_follow_line(STRAIGHT); //tell paco to go straight at the very beginning of his journey
+    int temp = intersectionArrayIterator;   
+    for (intersectionArrayIterator = intersectionArrayIterator; intersectionArrayIterator < (numOfIntersections+temp - 1); intersectionArrayIterator++) {      
+        if (intersectionArray[intersectionArrayIterator] == TURNING) { //paco needs to turn 
+            pacoAt = robot_follow_line(pacmanDirections[pacmanDirectionsCounter]);
+            pacmanDirectionsCounter++;
+        } else {
+            pacoAt = robot_follow_line(STRAIGHT); 
+        }
     }
-    for (i = intersectionArrayIterator; i < (numOfIntersections + intersectionArrayIterator - 1); i++) {
-        if (intersectionArray[i] == TURNING) {
-            directionToTurnAtIntersection = pacmanDirections[pacmanDirectionsCounter];
+    //paco will be stopped at the intersection just before the food pellet.
+    if (intersectionArray[intersectionArrayIterator] == TURNING) { //orient paco to move straight towards food pellet
+        if (pacmanDirections[pacmanDirectionsCounter] == LEFT) {
+            pacman_left_turn(); //turn to orientate 
+            pacmanDirectionsCounter++;
+        } 
+        else if (pacmanDirections[pacmanDirectionsCounter] == RIGHT) {
+            pacman_right_turn();
             pacmanDirectionsCounter++;
         }
-        else {
-            directionToTurnAtIntersection = STRAIGHT;
-        }
-        pacoAt = robot_follow_line(directionToTurnAtIntersection);
-        intersectionArrayIterator++;
     }
-    if (intersectionArray[i] == TURNING) { //turn at intersection to orient correctly to get food pellet
-        directionToTurnAtIntersection = pacmanDirections[pacmanDirectionsCounter];
-        pacmanDirectionsCounter++;
-        if (directionToTurnAtIntersection == LEFT) {
-            pacman_left_turn();
-        }
-        else {
-            pacman_right_turn();
-        }
-    }
-    distanceForward = distanceToPellet(lastIntersectionPosition[j][0], lastIntersectionPosition[j][1], food_list[j][0],food_list[j][1]);   
-    //call function here to tell adils function how far forward to go and in what direction it is travelling///////////////////////
-    //robot_forward(distanceForward, );
-    robot_forward(distanceForward, intersectionOrientation[j]); //call adils function to make the robot go straight
-    //m_stop();
-    j++;
-    //turn robot to get ready to go get next pellet
+    intersectionArrayIterator++;
+     
+    //work out distance to travel forward to next pellet
+    distanceForward = distanceToPellet(lastIntersectionPosition[pelletIterator][0], lastIntersectionPosition[pelletIterator][1], food_list[pelletIterator][0], food_list[pelletIterator][1]);
+    
+    //move paco straight the correct amount to reach the food pellet
+    robot_forward(distanceForward, intersectionOrientation[pelletIterator]);
+    pelletIterator++; //increment the array to indicate that we have reached the current pellet
+    intersectionArrayIterator++; //increment the intersection array iterator to take into account that the pellet is an intersection that has been acknowledged
+    
+    //check if paco needs to u turn to get back on track
     if (pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
-        //btPutString("Going in here\n");
-        pacman_u_turn(); //call uturn function here
-        pacoAt = robot_follow_line(STRAIGHT);
-        //robot_forward(1, intersectionOrientation[j] - 1);
+        pacman_u_turn(); //make u turn if needed
+        pacmanDirectionsCounter++;
     }
 }
 
