@@ -47,7 +47,7 @@ void play_pacman_1(){
     generate_directions_1();
     
     //print_ret_steps_dfs();
-    for (x = 0; x < intersectionBeforeDeadEndIndex; x++) {
+   for (x = 0; x < intersectionBeforeDeadEndIndex; x++) {
         generate_movements_1(numOfIntersectionsToDeadEndArray[x]);
     }
     /*
@@ -69,8 +69,8 @@ void play_pacman_1(){
         usbPutInt(intersectionOrientation[i]);
         usbPutString("\n");
     }
-
-    int v;
+    */
+    /*int v;
     for (v = 0; v < pacmanDirectionsIndex; v++) {
         usbPutString("Turns in the turn array in order are: ");
         usbPutInt(pacmanDirections[v]);
@@ -696,10 +696,10 @@ void generate_movements_1(int numOfIntersections) {
     //paco will be stopped at the intersection just before the dead end.
     if (intersectionArray[intersectionArrayIterator] == TURNING) { //orient paco to move straight towards dead end
         if (pacmanDirections[pacmanDirectionsCounter] == LEFT) {
-            robot_left_turn(); //turn to orientate 
+            pacman_left_turn(); //turn to orientate 
         } 
         else if (pacmanDirections[pacmanDirectionsCounter] == RIGHT) {
-            robot_right_turn();
+            pacman_right_turn();
         }
         pacmanDirectionsCounter++;
     }
