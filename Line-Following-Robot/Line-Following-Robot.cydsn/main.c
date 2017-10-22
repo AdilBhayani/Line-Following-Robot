@@ -61,7 +61,7 @@ int main()
     //init_battery_management();
     //init_rf();
     //init_usb();
-    //init_bluetooth();
+    init_bluetooth();
     //LED_Write(1);
     switch_mode();
     while(1);
