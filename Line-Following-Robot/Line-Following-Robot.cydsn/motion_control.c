@@ -335,8 +335,8 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
  */
 void robot_forward(int value, enum robotOrientation direction){  
     uint16 distance;
-    if (direction == NORTH || direction == SOUTH) distance = ((GRIDSIZE * value) - 85) * 1.13397;
-    else distance = ((GRIDSIZEOTHER * value) - 85) * 1.13397;
+    if (direction == EAST || direction == WEST) distance = ((GRIDSIZE * value) - 95) * 1.13397;
+    else distance = ((GRIDSIZEOTHER * value) - 95) * 1.13397;
     int16 originalCount = QuadDec_M1_GetCounter();
     m_straight();
     while (QuadDec_M1_GetCounter() < (originalCount + distance)){

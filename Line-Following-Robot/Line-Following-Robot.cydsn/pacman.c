@@ -734,9 +734,9 @@ void generate_movements(int numOfIntersections) {
     //work out distance to travel forward to next pellet
     distanceForward = distanceToPellet(lastIntersectionPosition[pelletIterator][0], lastIntersectionPosition[pelletIterator][1], food_list[pelletIterator][0], food_list[pelletIterator][1]);
     
-    if (distanceForward == 1 && pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
+    /*if (distanceForward == 1 && pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
         distanceForward = 2;
-    }
+    }*/
     
     //move paco straight the correct amount to reach the food pellet
     robot_forward(distanceForward, intersectionOrientation[pelletIterator]);
