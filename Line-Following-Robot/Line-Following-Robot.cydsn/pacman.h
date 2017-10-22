@@ -91,7 +91,7 @@ static int map8[15][19] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 };
 
-static int currentMap[15][19] = {
+/*static int currentMap[15][19] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1},
@@ -107,14 +107,32 @@ static int currentMap[15][19] = {
     {1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-};
+}; */
+
+static int currentMap[15][19] = 
+{{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+ {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
+ {1,1,1,1,0,0,0,1,1,0,1,1,0,1,0,1,1,0,1},
+ {1,0,0,0,0,1,1,0,0,0,1,0,0,0,0,1,1,0,1},
+ {1,1,1,1,0,0,0,0,1,1,1,0,1,1,0,0,0,0,1},
+ {1,0,0,0,0,1,0,1,1,0,0,0,1,0,0,1,0,1,1},
+ {1,1,0,1,1,1,0,0,0,0,1,0,0,0,1,1,0,1,1},
+ {1,0,0,0,0,1,0,1,1,1,1,0,1,0,1,0,1,0,1},
+ {1,0,1,1,0,0,0,0,1,0,0,0,1,0,1,0,1,0,1},
+ {1,0,0,1,1,1,1,0,1,0,1,0,1,0,0,0,0,0,1},
+ {1,0,1,0,0,0,1,0,0,0,1,0,1,0,1,1,1,1,1},
+ {1,0,0,1,0,1,0,0,1,0,0,0,0,0,1,0,0,0,1},
+ {1,0,1,1,0,1,1,0,1,1,1,0,1,0,0,0,1,0,1},
+ {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1},
+ {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+ };
     
 static int food_list[5][2] = 
-{{1,6},
-{5,8},
-{11,13},
-{7,15},
-{13,5}};
+{{2,5},
+{1,9},
+{2,12},
+{3,13},
+{4,16}};
 
 static int start_coordinate[2] = {1,1};
 
@@ -129,12 +147,12 @@ enum robotTurns convertCoordinates(int prevPosRow, int prevPosCol, int currentPo
 static int pacmanDirectionsIndex = 0;
 static int firstPelletFlag = 1;
 static int prevPosition[2] = {-1,-1};
-static enum robotOrientation pacoFacing = SOUTH; //will need to hard code this value when given map on the day of testing
+static enum robotOrientation pacoFacing = EAST; //will need to hard code this value when given map on the day of testing
 static int intersectionArrayIndex = 0;
 static int pelletIndex = 0;
 static int pelletIntersectionArray[5] = {0};
 static int lastIntersectionIndex = 0;
-static enum robotOrientation intersectionOrientation[5] = {SOUTH}; //will need to hard code this value when given map on the day of testing
+static enum robotOrientation intersectionOrientation[5] = {EAST}; //will need to hard code this value when given map on the day of testing
 static int lastIntersectionPosition[5][2] = {{0,0},{0,0},{0,0},{0,0},{0,0}};
 static int distanceToPellet(int intersectionRow, int intersectionCol, int pelletRow, int pelletCol);
 static int intersectionArrayIterator = 0;

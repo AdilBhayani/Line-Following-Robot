@@ -414,11 +414,15 @@ void pacman_right_turn(){
     m_stop();
     CyDelay(100);
     m_right_turner();
+    uint8 flag_right = 0;
     center_left = Sensor_1_Read();
     center_right = Sensor_2_Read();
     while(center_right == 0 || center_left == 0){
         center_left = Sensor_1_Read();
-        center_right = Sensor_2_Read();
+        center_right = Sensor_2_Read() || flag_right;
+        if (center_right > 0){
+            flag_right = 1;   
+        }
     }
     CyDelay(10);
     m_stop();
@@ -439,11 +443,15 @@ void pacman_left_turn(){
     m_stop();
     CyDelay(100);
     m_left_turner();
+    uint8 flag_left = 0;
     center_left = Sensor_1_Read();
     center_right = Sensor_2_Read();
     while(center_left == 0 || center_right == 0){
-        center_left = Sensor_1_Read();
+        center_left = Sensor_1_Read() || flag_left;
         center_right = Sensor_2_Read();
+        if (center_left > 0){
+            flag_left = 1;   
+        }
     }
     CyDelay(10);
     m_stop();

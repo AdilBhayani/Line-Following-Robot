@@ -47,7 +47,7 @@ void play_pacman_1(){
     generate_directions_1();
     
     //print_ret_steps_dfs();
-   for (x = 0; x < intersectionBeforeDeadEndIndex; x++) {
+    for (x = 0; x < intersectionBeforeDeadEndIndex; x++) {
         generate_movements_1(numOfIntersectionsToDeadEndArray[x]);
     }
     /*
@@ -80,8 +80,8 @@ void play_pacman_1(){
         usbPutString("Intersection in the intersection array are: ");
         usbPutInt(intersectionArray[v]);
         usbPutString("\n");
-    }
-    */
+    }*/
+    
     //Same drill as Astar movements to go here
     
 }
