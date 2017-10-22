@@ -292,7 +292,7 @@ Integration & 30\%                            & 0\%                             
 
 \clearpage
 
-\section{Appendices}
+\section{Appendix A}
 
 \begin{figure}[!h]
 \centerline{\includegraphics[width=0.5\textwidth]{transistor-config}}
@@ -343,5 +343,110 @@ Integration & 30\%                            & 0\%                             
 \end{figure}
 
 \vfill
+
+\clearpage
+
+\section{Appendix B: Sensors}
+
+\subsection{Sensor Layout}
+
+The circuit used to process the sensor data and the layout used to place the sensors on the PCB were essential to making a successful project. This appendix covers these two components of the project in greater detail.
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{outer_edge_sensor}}
+\caption{Outer Edge Sensor Layout}
+\label{fig:outer_edge_sensor}
+\end{figure}
+
+Various layouts for the sensors were considered during the course of the project, these are outlined below. The first sensor layout to be considered was the Outer Edge Sensor layout, shown in \Cref{fig:outer_edge_sensor}. This is a sensor arrangement with all the sensors at the extreme ends of the board. This allows us to capture a wider picture of where the robot is. This will be able to to detect intersections in advance of arriving at them. This layout also doesn't have the capability to closely track a line.
+
+Another layout that was considered was the Circular Sensor Arrangement as in \Cref{fig:circular_sensor}. This layout won't be able to detect that the robot is deviating off the line, until the robot has fully come of the line. This makes it harder to keep the oscillations shallow and follow the line reasonably straight. This layout will also take a while to notice intersections, as the side sensors are further back from the edge, this means there might not be enough notice to break in time.
+
+The next sensor considered was in a parabola shape (\Cref{fig:parabola_sensor}). In this arrangement the robot will be able to very closely follow the line applying only small corrections to ensure that the robot follows the line.
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{circular_sensor}}
+\caption{Circular Sensor Layout}
+\label{fig:circular_sensor}
+\end{figure}
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{parabola_sensor}}
+\caption{Parabolla Sensor Layout}
+\label{fig:parabola_sensor}
+\end{figure}
+
+Another arrangement that was considered was the straight line sensor arrangement (\Cref{fig:the_straight_line_sensor}). This arrangement was a slight improvement over the parabola layout. This was far easier to design and assemble as the sensors just need to be placed in an equidistant manner in a straight line. This layout will allow the robot to calculate the deviation from the line and apply accurate corrections to return to the line.
+
+The modified straight line sensor  (\Cref{fig:modified_straight_line_sensor}) was what was used in the final design. This was chosen purely to keep the group members happy, as it provided no significant advantages over the previous straight line sensor layout.
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{the_straight_line_sensor}}
+\caption{The Straight Line Sensor Layout}
+\label{fig:the_straight_line_sensor}
+\end{figure}
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{modified_straight_line_sensor}}
+\caption{The Modified Line Sensor Layout}
+\label{fig:modified_straight_line_sensor}
+\end{figure}
+
+\clearpage
+
+\subsection{Sensor Processing Circuit}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Summary of Sensor Output Signal}
+    \begin{tabular}{rrr}
+          & \multicolumn{1}{l}{\textbf{BLACK LIGHT}} & \multicolumn{1}{l}{\textbf{WHITE LIGHT}} \\
+          &       &  \\
+    \multicolumn{1}{l}{MAX} & 2.0650 & 2.2180 \\
+    \multicolumn{1}{l}{MIN} & 1.9060 & 0.4679 \\
+    \multicolumn{1}{l}{PK-PK} & 0.1590 & 1.7501 \\
+    \multicolumn{1}{l}{\textbf{AVG}} & \textbf{1.9913} & \textbf{1.4281} \\
+    \multicolumn{1}{l}{RMS} & 1.9918 & 1.5475 \\
+    \multicolumn{1}{l}{\textbf{Amp}} & \textbf{0.0795} & \textbf{0.8751} \\
+          &       &  \\
+    \end{tabular}%
+  \label{tab:addlabel}%
+\end{table}%
+
+The sensor circuit used in this project consisted of four components; a RC High pass filter, gain stage, Peak detector \& Schmitt trigger. The first stage in the processing circuit was a RC high pass filter. This was a first order filter with a cut-off frequency of 106.1Hz. This cut off frequency was chosen as this was between the signal we wanted (120Hz) and the main source of noise (100Hz). The resulting signal had removed most of the noise and was centred around 0V.
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{stage_1}}
+\caption{Signal from Phototransistor}
+\label{fig:stage1}
+\end{figure}
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{stage_2}}
+\caption{After the RC High pass filter}
+\label{fig:stage2}
+\end{figure}
+
+The resulting signal from after the RC high pass filter was quite small in amplitude and needed to be amplified before it could be further processed. A 20x gain stage was used in a non-inverting op-amp configuration. The op-amp used was supplied from a single supply and therefore the bottom half of the signal was discarded, this was not necessary for our final output and therefore is not a concern.
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{stage_3}}
+\caption{Signal after the Gain stage}
+\label{fig:stage3}
+\end{figure}
+
+The next stage of the circuit is a peak detector circuit which allows us to quickly capture just the peak amplitude of the signal and discard all other information. This was used as the peak amplitude was the main characteristic that differentiated the black and white lights and therefore was enough for this project. Finally a Schmitt trigger circuit was used with a carefully selected cut-off of 2.67V to produce a digital output of either a HIGH or LOW to represent whether the light sensor was currently on or off the line.
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{stage_4}}
+\caption{Signal after peak detector circuit}
+\label{fig:stage4}
+\end{figure}
+
+\begin{figure}[!h]
+\centerline{\includegraphics[width=0.5\textwidth]{stage_5}}
+\caption{Final signal send to PSoC}
+\label{fig:stage5}
+\end{figure}
 
 \end{document}
