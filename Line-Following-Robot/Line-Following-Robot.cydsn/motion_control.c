@@ -407,22 +407,25 @@ void robot_turn(){
 
 void pacman_right_turn(){
     CyDelay(100);
+    uint8 center_left = 0;
     uint8 center_right = 0;
     m_right_turner();
     CyDelay(500);
     m_stop();
     CyDelay(100);
     m_right_turner();
+    center_left = Sensor_1_Read();
     center_right = Sensor_2_Read();
-    while(center_right == 0){
+    while(center_right == 0 || center_left == 0){
+        center_left = Sensor_1_Read();
         center_right = Sensor_2_Read();
     }
     CyDelay(10);
     m_stop();
     CyDelay(600);
-    if (Sensor_4_Read() > 0 || Sensor_5_Read() > 0){
+    if (Sensor_4_Read() > 0 || Sensor_6_Read() > 0){
         m_reverse();
-        CyDelay(75);
+        CyDelay(150);
         m_stop();
     }
 }
@@ -430,21 +433,24 @@ void pacman_right_turn(){
 void pacman_left_turn(){
     CyDelay(100);
     uint8 center_left = 0;
+    uint8 center_right = 0;
     m_left_turner();
     CyDelay(500);
     m_stop();
     CyDelay(100);
     m_left_turner();
-    center_left = Sensor_2_Read();
-    while(center_left == 0){
-        center_left = Sensor_2_Read();
+    center_left = Sensor_1_Read();
+    center_right = Sensor_2_Read();
+    while(center_left == 0 || center_right == 0){
+        center_left = Sensor_1_Read();
+        center_right = Sensor_2_Read();
     }
     CyDelay(10);
     m_stop();
     CyDelay(600);
-    if (Sensor_4_Read() > 0 || Sensor_5_Read() > 0){
+    if (Sensor_4_Read() > 0 || Sensor_6_Read() > 0){
         m_reverse();
-        CyDelay(75);
+        CyDelay(150);
         m_stop();
     }
 }
