@@ -344,22 +344,18 @@ void robot_forward(int value, enum robotOrientation direction){
         isr_center_right = Sensor_2_Read();
         isr_left_sensor = Sensor_3_Read();
         isr_right_sensor = Sensor_5_Read();
-        if (QuadDec_M1_GetCounter() < (originalCount + distance) * 0.9){
-            if (isr_center_left > 0){
-                if (isr_center_right > 0){
-                    m_straight();
-                } else {
-                    m_adjust_left_minor();
-                }
-            } else if (isr_center_right > 0){
-                m_adjust_right_minor();
-            } else if (isr_left_sensor > 0){
-                m_adjust_left_major();
-            } else if (isr_right_sensor > 0){
-                m_adjust_right_major();
+        if (isr_center_left > 0){
+            if (isr_center_right > 0){
+                m_straight();
+            } else {
+                m_adjust_left_minor();
             }
-        }else{
-            m_straight();
+        } else if (isr_center_right > 0){
+            m_adjust_right_minor();
+        } else if (isr_left_sensor > 0){
+            m_adjust_left_major();
+        } else if (isr_right_sensor > 0){
+            m_adjust_right_major();
         }
     }
     m_stop();
@@ -467,7 +463,11 @@ void pacman_u_turn(){
     }
     CyDelay(10);
     m_stop();
-    CyDelay(1000);
+    CyDelay(600);
+    m_right_turner();
+    while (Sensor_4_Read() > 0);
+    CyDelay(15);
+    m_stop();
 }
 
 /*
