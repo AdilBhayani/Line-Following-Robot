@@ -110,11 +110,11 @@ static int currentMap[15][19] = {
 };
     
 static int food_list[5][2] = 
-{{5,4},
-{11,3},
-{12,15},
-{4,17},
-{6,11}};
+{{1,6},
+{5,8},
+{11,13},
+{7,15},
+{13,5}};
 
 static int start_coordinate[2] = {1,1};
 
@@ -144,6 +144,8 @@ static int pelletIterator = 0;
 static int numOfIntersectionsToDeadEndArray[50] = {0};
 static int prevPosBeforeDeadEndArray[50][2] = {{0,0}};
 static int intersectionBeforeDeadEndIndex = 0;
+static int deadEndIterator = 0;
+static int deadEndPosArray[50][2] = {{0,0}};
 
 void play_pacman_1();
 void play_pacman_2();

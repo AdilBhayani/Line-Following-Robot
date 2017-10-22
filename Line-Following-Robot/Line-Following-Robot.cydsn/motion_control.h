@@ -113,6 +113,8 @@ void m_u_turner();
 void pacman_right_turn();
 void pacman_left_turn();
 void pacman_u_turn();
+void m_right_turner();
+void m_left_turner();
 
 void init_pid();
 void ComputeA();

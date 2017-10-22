@@ -209,6 +209,16 @@ void m_u_turner(){
     SetpointB = M_FORWARD_MEDIUM;
 }
 
+void m_right_turner(){
+    SetpointA = STOP_MOTOR;
+    SetpointB = M_FORWARD_MEDIUM;
+}
+
+void m_left_turner(){
+    SetpointA = M_FORWARD_MEDIUM;
+    SetpointB = STOP_MOTOR;
+}
+
 void m_sleep(){
     m_stop();
     CONTROL_Write(0x03);
@@ -269,35 +279,16 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
     uint8 extreme_left = 0;
 
     if (turnDirection == LEFT) {
-        m_adjust_left_major();
-        center_left = Sensor_1_Read();
-        CyDelay(350);
-        while(center_left == 0){
-            center_left = Sensor_1_Read();
-        }
-        CyDelay(150);
+        pacman_left_turn();
         m_straight();
     } else if (turnDirection == RIGHT) {
-        m_adjust_right_major();
-        CyDelay(100);
-        center_right = Sensor_2_Read();
-        while(center_right == 0){
-            center_right = Sensor_2_Read();
-        }
-        CyDelay(150);
+        pacman_right_turn();
         m_straight();
     } else if (turnDirection == STRAIGHT) {
         m_straight();
         CyDelay(100);
     } else if (turnDirection == U_TURN) {
-        m_turn_right();
-        CyDelay(1250);
-        m_stop();
-        m_adjust_right_major();
-        center_right = Sensor_2_Read();
-        while(center_right == 0){
-            center_right = Sensor_2_Read();
-        }
+        pacman_u_turn();
         m_straight();
     }
 
@@ -335,18 +326,14 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
             m_adjust_left_major();
         } else if (right_sensor > 0) {
             m_adjust_right_major();
-        } 
+        }
     }
 }
 
 /*
  * Robot moves forward value number of grid spaces.
  */
-void robot_forward(int value, enum robotOrientation direction){ 
-    if (value == 1) {
-        value = 2;
-    }
-        
+void robot_forward(int value, enum robotOrientation direction){  
     uint16 distance;
     if (direction == NORTH || direction == SOUTH) distance = ((GRIDSIZE * value) - 60) * 1.13397;
     else distance = ((GRIDSIZEOTHER * value) - 60) * 1.13397;
@@ -423,23 +410,37 @@ void robot_turn(){
 }
 
 void pacman_right_turn(){
-    uint8 center_left = 0;
-    m_adjust_right_major();
     CyDelay(100);
-    center_left = Sensor_1_Read();
-    while(center_left == 0){
-        center_left = Sensor_1_Read();
-    }
-}
-
-void pacman_left_turn(){
     uint8 center_right = 0;
-    m_adjust_left_major();
+    m_right_turner();
+    CyDelay(300);
+    m_stop();
+    CyDelay(100);
+    m_right_turner();
     center_right = Sensor_2_Read();
-    CyDelay(350);
     while(center_right == 0){
         center_right = Sensor_2_Read();
     }
+    CyDelay(10);
+    m_stop();
+    CyDelay(1000);
+}
+
+void pacman_left_turn(){
+    CyDelay(100);
+    uint8 center_left = 0;
+    m_left_turner();
+    CyDelay(500);
+    m_stop();
+    CyDelay(100);
+    m_left_turner();
+    center_left = Sensor_2_Read();
+    while(center_left == 0){
+        center_left = Sensor_2_Read();
+    }
+    CyDelay(10);
+    m_stop();
+    CyDelay(1000);
 }
 
 void pacman_u_turn(){
