@@ -335,8 +335,8 @@ enum intersectionType robot_follow_line(enum robotTurns turnDirection){
  */
 void robot_forward(int value, enum robotOrientation direction){  
     uint16 distance;
-    if (direction == NORTH || direction == SOUTH) distance = ((GRIDSIZE * value) - 75) * 1.13397;
-    else distance = ((GRIDSIZEOTHER * value) - 75) * 1.13397;
+    if (direction == NORTH || direction == SOUTH) distance = ((GRIDSIZE * value) - 85) * 1.13397;
+    else distance = ((GRIDSIZEOTHER * value) - 85) * 1.13397;
     int16 originalCount = QuadDec_M1_GetCounter();
     m_straight();
     while (QuadDec_M1_GetCounter() < (originalCount + distance)){
@@ -413,7 +413,7 @@ void pacman_right_turn(){
     CyDelay(100);
     uint8 center_right = 0;
     m_right_turner();
-    CyDelay(300);
+    CyDelay(500);
     m_stop();
     CyDelay(100);
     m_right_turner();
@@ -423,7 +423,12 @@ void pacman_right_turn(){
     }
     CyDelay(10);
     m_stop();
-    CyDelay(1000);
+    CyDelay(600);
+    if (Sensor_4_Read() > 0 || Sensor_5_Read() > 0){
+        m_reverse();
+        CyDelay(75);
+        m_stop();
+    }
 }
 
 void pacman_left_turn(){
@@ -440,7 +445,12 @@ void pacman_left_turn(){
     }
     CyDelay(10);
     m_stop();
-    CyDelay(1000);
+    CyDelay(600);
+    if (Sensor_4_Read() > 0 || Sensor_5_Read() > 0){
+        m_reverse();
+        CyDelay(75);
+        m_stop();
+    }
 }
 
 void pacman_u_turn(){

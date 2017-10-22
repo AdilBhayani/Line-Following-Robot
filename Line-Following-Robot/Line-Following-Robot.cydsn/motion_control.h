@@ -43,9 +43,9 @@
 #define M_BACKWARD_MAX (-10.85)
 #define M_FORWARD 5
 #define M_FORWARD_SLOW 3
-#define M_FORWARD_MEDIUM 3.6
+#define M_FORWARD_MEDIUM 3.8
 #define M_BACKWARD (-5)
-#define M_BACKWARD_MEDIUM (-3.6)
+#define M_BACKWARD_MEDIUM (-3.8)
 #define M_BACKWARD_SLOW (-3)
 #define SampleTimeInSec 0.01
 // Following defines are in mm

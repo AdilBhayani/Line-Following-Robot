@@ -669,30 +669,11 @@ void generate_movements_1(int numOfIntersections) {
     for (intersectionArrayIterator = intersectionArrayIterator; intersectionArrayIterator < (numOfIntersections+temp - 1); intersectionArrayIterator++) {          
         if (intersectionArray[intersectionArrayIterator] == TURNING) { //paco needs to turn 
             pacoAt = robot_follow_line(pacmanDirections[pacmanDirectionsCounter]);
-            /*usbPutString("turning/notTurning in for loop: ");
-            usbPutInt(intersectionArray[intersectionArrayIterator]);
-            usbPutString("\n");
-            usbPutString("turn direction: ");
-            usbPutInt(pacmanDirections[pacmanDirectionsCounter]);
-            usbPutString("\n");*/
             pacmanDirectionsCounter++;
         } else {
-            /*usbPutString("turning/notTurning in for loop: ");
-            usbPutInt(intersectionArray[intersectionArrayIterator]);
-            usbPutString("\n");
-            usbPutString("turn direction: ");
-            usbPutInt(pacmanDirections[pacmanDirectionsCounter]);
-            usbPutString("\n");*/
             pacoAt = robot_follow_line(STRAIGHT); 
         }
     }
-    
-    /*usbPutString("turning/notTurning stopped at intersection before dead end: ");
-    usbPutInt(intersectionArray[intersectionArrayIterator]);
-    usbPutString("\n");
-    usbPutString("turn direction: ");
-    usbPutInt(pacmanDirections[pacmanDirectionsCounter]);
-    usbPutString("\n");*/
     //paco will be stopped at the intersection just before the dead end.
     if (intersectionArray[intersectionArrayIterator] == TURNING) { //orient paco to move straight towards dead end
         if (pacmanDirections[pacmanDirectionsCounter] == LEFT) {
@@ -704,16 +685,7 @@ void generate_movements_1(int numOfIntersections) {
         pacmanDirectionsCounter++;
     }
     intersectionArrayIterator++;
-    
-    /*usbPutString("turning/notTurning oriented to go straight towards dead end: ");
-    usbPutInt(intersectionArray[intersectionArrayIterator]);
-    usbPutString("\n");
-    usbPutString("turn direction: ");
-    usbPutInt(pacmanDirections[pacmanDirectionsCounter]);
-    usbPutString("\n");*/
-    
- 
-     
+         
     //work out distance to travel forward to next pellet
     distanceForward = distanceToPellet(prevPosBeforeDeadEndArray[deadEndIterator][0], prevPosBeforeDeadEndArray[deadEndIterator][1], deadEndPosArray[deadEndIterator][0], deadEndPosArray[deadEndIterator][1]);
     
@@ -721,36 +693,13 @@ void generate_movements_1(int numOfIntersections) {
     robot_forward(distanceForward, intersectionOrientation[deadEndIterator]);
     deadEndIterator++; //increment the array to indicate that we have reached the current dead end
     intersectionArrayIterator++; //increment the intersection array iterator to take into account that the pellet is an intersection that has been acknowledged
-    
-    /*usbPutString("turning/notTurning stopped at end of dead end: ");
-    usbPutInt(intersectionArray[intersectionArrayIterator]);
-    usbPutString("\n");
-    usbPutString("turn direction: ");
-    usbPutInt(pacmanDirections[pacmanDirectionsCounter]);
-    usbPutString("\n");*/
-    
+       
     //check if paco needs to u turn to get back on track
     if (pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
         pacman_u_turn(); //make u turn if needed
         pacmanDirectionsCounter++;
     }
-    
-    /*usbPutString("turning/notTurning oriented to return from dead end: ");
-    usbPutInt(intersectionArray[intersectionArrayIterator]);
-    usbPutString("\n");
-    usbPutString("turn direction: ");
-    usbPutInt(pacmanDirections[pacmanDirectionsCounter]);
-    usbPutString("\n");*/
-    /*usbPutString("pacManDirectionsCounter : ");
-    usbPutInt(pacmanDirectionsCounter);
-    usbPutString("\n");
-    usbPutString("intersectionArrayIterator : ");
-    usbPutInt(intersectionArrayIterator);
-    usbPutString("\n");
-    usbPutString("deadEndIterator : ");
-    usbPutInt(deadEndIterator);
-    usbPutString("\n");*/
-    
+       
 }
 
 
