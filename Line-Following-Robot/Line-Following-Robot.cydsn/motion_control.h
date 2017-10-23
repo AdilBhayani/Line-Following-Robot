@@ -124,6 +124,7 @@ uint8 check_u_turn();
 void robot_random_1();
 uint8 check_if_intersection();
 uint8 check_execute_forward_path();
+void forward_deadend();
     
 #endif /* MOTION_CONTROL_H_ */
 

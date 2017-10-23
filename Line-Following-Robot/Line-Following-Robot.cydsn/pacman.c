@@ -686,7 +686,7 @@ void generate_movements_1(int numOfIntersections) {
 
     
     //move paco straight the correct amount to reach the dead end
-    robot_forward(distanceForward, intersectionOrientation[deadEndIterator]);
+    forward_deadend();
     deadEndIterator++; //increment the array to indicate that we have reached the current dead end
     intersectionArrayIterator++; //increment the intersection array iterator to take into account that the pellet is an intersection that has been acknowledged   
     

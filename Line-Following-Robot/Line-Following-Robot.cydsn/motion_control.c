@@ -632,4 +632,26 @@ uint8 check_if_intersection(){
     }
 }
 
+void forward_deadend(){
+    CyDelay(100);
+    while (check_u_turn() == 0){
+        isr_center_left = Sensor_1_Read();
+        isr_center_right = Sensor_2_Read();
+        isr_left_sensor = Sensor_3_Read();
+        isr_right_sensor = Sensor_5_Read();
+        if (isr_center_left > 0){
+            if (isr_center_right > 0){
+                m_straight();
+            } else {
+                m_adjust_left_minor();
+            }
+        } else if (isr_center_right > 0){
+            m_adjust_right_minor();
+        }else{
+            m_straight();
+        }
+    }
+    m_stop();
+}
+
 /* [] END OF FILE */
