@@ -117,7 +117,7 @@ We would like to thank our supervisors, Dr. Nitish Patel \& Dr. Muhammad Nadeem,
 
 \begin{abstract}
 
-This project consists of designing and developing a line following robot that can play a form of the Pacman game. The overall objective of this project is to develop professional engineering skills, including a methodology for both approaching a problem, and for budgeting time, effort and resources. 
+This project consisted of designing and developing a line following robot that can play a form of the Pacman game. Various analogue and digital design skills were incorporated and developed throughout the duration of this project. The objective was to develop professional engineering skills, including a methodology for both approaching a problem, and for budgeting time, effort and resources. 
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -255,7 +255,7 @@ The PID \& motor control part of the code was tested by using the Bluetooth modu
 
 \subsection{Final Design}
 
-Both the A* and DFS algorithms were used in the final design. The A* algorithm (\Cref{fig:astar}) was used for level 2 to find the shortest path to the next food pellet. The DFS algorithm (\Cref{fig:dfs}) was used in level1, with aspects of A* integrated into it to transverse the entire map in an efficient manner. The PID controller was used in the final implementation to ensure the motor wass travelling at the desired speed with minimal oscillations.
+Both the A* and DFS algorithms were used in the final design. The A* algorithm (\Cref{fig:astar}) was used in level two to find the shortest path to the next food pellet. The DFS algorithm (\Cref{fig:dfs}) was used in level one, with aspects of A* integrated into it to transverse the entire map in an efficient manner. The PID controller was used in the final implementation to ensure the motor was travelling at the desired speed with minimal oscillations. Digital input pins on the PSoC were used as the primary method of deducing the robot's position on the map by, reading input from the light sensor circuits.
 
 %----------------------------------------------------------------------------------------
 %	CONCLUSIONS
@@ -263,7 +263,7 @@ Both the A* and DFS algorithms were used in the final design. The A* algorithm (
 
 \section{Conclusions}
 
-As part of this project an autonomous line following robot that can play a form of pacman was designed and developed. The robot was able to traverse the maze, following the lines and collect the required food pallets in the shortest time/distance. A simple analogue circuit was developed to process the light sensor readings into digital signals for feeding into the PSoC. This was built using SMD components on a PCB design that took advantage of the `rooms' feature in Altium Designer. An effective sensor layout was devised such that the robot can follow a line with minimal deviations and accurately detect intersections. A* and DFS path finding algorithms were both used to effectively to best meet the reqirements of each level. A PID contoller was used to ensure the motors of the robot were used to effectively. Through undertaking this project, the group members were able to significantly develop their professional engineering skills. In particular, communications skills, both written and oral, of the group members were improved, as well as gaining more experience of working in a team to solve a problem. A methodology for both approaching a problem, and for budgeting time, effort and resources was also mastered as part of this project.
+As part of this project an autonomous line following robot that can play a form of pacman was designed and developed. The robot was able to traverse the maze, following the lines and collect the required food pellets in the shortest time/distance. A simple analogue circuit was developed to process the light sensor readings into digital signals for feeding into the PSoC. This was built using SMD components on a PCB design that took advantage of the `rooms' feature in Altium Designer. An effective sensor layout was devised such that the robot can follow a line with minimal deviations and accurately detect intersections. A* and DFS path finding algorithms were both used to effectively to best meet the reqirements of each level. A PID contoller was used to ensure the motors of the robot were used to effectively. Through undertaking this project, the group members were able to significantly develop their professional engineering skills. In particular, the communications skills, both written and oral, of the group members were improved, as well as gaining more experience of working in a team to solve a problem. A methodology for both approaching a problem, and for budgeting time, effort and resources was also developed as part of this project.
 
 \clearpage
 
@@ -352,7 +352,7 @@ Report				&25\%			&25\%				&25\%						&25\%			\\ \bottomrule
 
 \subsection{Sensor Layout}
 
-The circuit used to process the sensor data and the layout used to place the sensors on the PCB were essential to making a successful project. This appendix covers these two components of the project in greater detail.
+The circuit used to process the sensor data and the layout used to place the sensors on the PCB were essential to ensuring the success of the project. This appendix covers these two components of the project in greater detail.
 
 \begin{figure}[!h]
 \centerline{\includegraphics[width=0.5\textwidth]{outer_edge_sensor}}
@@ -360,11 +360,11 @@ The circuit used to process the sensor data and the layout used to place the sen
 \label{fig:outer_edge_sensor}
 \end{figure}
 
-Various layouts for the sensors were considered during the course of the project, these are outlined below. The first sensor layout to be considered was the Outer Edge Sensor layout, shown in \Cref{fig:outer_edge_sensor}. This is a sensor arrangement with all the sensors at the extreme ends of the board. This allows us to capture a wider picture of where the robot is. This will be able to to detect intersections in advance of arriving at them. This layout also doesn't have the capability to closely track a line.
+Various layouts for the sensors were considered during the course of the project, these are outlined below. The first sensor layout to considered was the Outer Edge Sensor layout, shown in \Cref{fig:outer_edge_sensor}. This is a sensor arrangement with all the sensors at the extreme ends of the board. This allows us to capture a wider picture of where the robot is. This will be able to to detect intersections in advance of arriving at them. This layout also doesn't have the capability to closely track a line.
 
-Another layout that was considered was the Circular Sensor Arrangement as in \Cref{fig:circular_sensor}. This layout won't be able to detect that the robot is deviating off the line, until the robot has fully come of the line. This makes it harder to keep the oscillations shallow and follow the line reasonably straight. This layout will also take a while to notice intersections, as the side sensors are further back from the edge, this means there might not be enough notice to break in time.
+Another layout that was considered was the Circular Sensor Arrangement as in \Cref{fig:circular_sensor}. This layout would not be able to detect that the robot is deviating off the line, until the robot has fully left the line. This would make it harder to keep the oscillations shallow and follow the line reasonably straight. This layout would also introduce a delay while detecting intersections, as the side sensors are further back from the edge. This means there might not be enough notice to brake in time.
 
-The next sensor considered was in a parabola shape (\Cref{fig:parabola_sensor}). In this arrangement the robot will be able to very closely follow the line applying only small corrections to ensure that the robot follows the line.
+The next sensor considered was in a parabola shape (\Cref{fig:parabola_sensor}). In this arrangement the robot would be able to very closely follow the line applying only small corrections to ensure that the robot follows the line.
 
 \begin{figure}[!h]
 \centerline{\includegraphics[width=0.5\textwidth]{circular_sensor}}
@@ -380,7 +380,7 @@ The next sensor considered was in a parabola shape (\Cref{fig:parabola_sensor}).
 
 Another arrangement that was considered was the straight line sensor arrangement (\Cref{fig:the_straight_line_sensor}). This arrangement was a slight improvement over the parabola layout. This was far easier to design and assemble as the sensors just need to be placed in an equidistant manner in a straight line. This layout will allow the robot to calculate the deviation from the line and apply accurate corrections to return to the line.
 
-The modified straight line sensor  (\Cref{fig:modified_straight_line_sensor}) was what was used in the final design. This was chosen purely to keep the group members happy, as it provided no significant advantages over the previous straight line sensor layout.
+The modified straight line sensor  (\Cref{fig:modified_straight_line_sensor}) was what was used in the final design. This was chosen with the aim of being able to see detect how far off the line the robot had travelled before turning, whilst also providing all the benefits of the straight line configuration.
 
 \begin{figure}[!h]
 \centerline{\includegraphics[width=0.5\textwidth]{the_straight_line_sensor}}
@@ -437,7 +437,7 @@ The resulting signal from after the RC high pass filter was quite small in ampli
 \label{fig:stage3}
 \end{figure}
 
-The next stage of the circuit is a peak detector circuit which allows us to quickly capture just the peak amplitude of the signal and discard all other information. This was used as the peak amplitude was the main characteristic that differentiated the black and white lights and therefore was enough for this project. Finally a Schmitt trigger circuit was used with a carefully selected cut-off of 2.67V to produce a digital output of either a HIGH or LOW to represent whether the light sensor was currently on or off the line.
+The next stage of the circuit is a peak detector circuit which allowed for quick capture of just the peak amplitude of the signal and discard all other information. This was used as the peak amplitude was the main characteristic that differentiated the black and white lights and therefore was enough for this project. Finally a Schmitt trigger circuit was used with a carefully selected cut-off of 2.67V to produce a digital output of either a HIGH or LOW to represent whether the light sensor was currently on or off the line.
 
 \begin{figure}[!h]
 \centerline{\includegraphics[width=0.5\textwidth]{stage_4}}
