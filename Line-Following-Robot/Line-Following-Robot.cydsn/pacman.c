@@ -47,9 +47,9 @@ void play_pacman_1(){
     generate_directions_1();
     
     //print_ret_steps_dfs();
-    /*for (x = 0; x < intersectionBeforeDeadEndIndex; x++) {
+    for (x = 0; x < intersectionBeforeDeadEndIndex; x++) {
         generate_movements_1(numOfIntersectionsToDeadEndArray[x]);
-    }*/
+    }
     
     /*int i;
     for (i = 0; i < intersectionBeforeDeadEndIndex; i++) {
@@ -70,7 +70,7 @@ void play_pacman_1(){
         usbPutString("\n");
     }
     */
-    int v;
+    /*int v;
     for (v = 0; v < pacmanDirectionsIndex; v++) {
         usbPutString("Turns in the turn array in order are: ");
         usbPutInt(pacmanDirections[v]);
@@ -80,7 +80,7 @@ void play_pacman_1(){
         usbPutString("Intersection in the intersection array are: ");
         usbPutInt(intersectionArray[v]);
         usbPutString("\n");
-    }
+    }*/
     
     //Same drill as Astar movements to go here
     
@@ -378,10 +378,6 @@ enum intersectionType detectDeadEnd(int currentRow, int currentCol) {
 }
 
 enum intersectionOrNot flagIntersection_1(int currentPosRow, int currentPosCol) {
-    if (detectDeadEnd(currentPosRow, currentPosCol) == DEAD_END) {
-        intersectionBeforeDeadEndIndex++; //increment the position in the dead end intersection counter array
-        return NOT_INTERSECTION;
-    }
     if (pacoFacing == NORTH || pacoFacing == SOUTH) {
         if ( (currentMap[currentPosRow][currentPosCol - 1] == 0) ||
             (currentMap[currentPosRow][currentPosCol + 1] == 0) ) {
@@ -535,7 +531,6 @@ void generate_directions_1() {
         enum robotTurns turnToAdd = STRAIGHT;
         if (a != 0) { //don't generate a turn for the first direction because its going straight anyways and we cant access a-1
             if (ret_steps_dfs[a-1][0] == ret_steps_dfs[a+1][0] && ret_steps_dfs[a-1][1] == ret_steps_dfs[a+1][1]) { //180 turn
-                //usbPutString("U_TURN put in array\n");
                 //add a u turn without needing to convert coordinates
                 turnToAdd = U_TURN;
                 intersectionArray[intersectionArrayIndex] = TURNING;
@@ -552,33 +547,19 @@ void generate_directions_1() {
             pacmanDirectionsIndex++;
         }
         
-        if (a != 0) {
+        if ((detectDeadEnd(ret_steps_dfs[a][0], ret_steps_dfs[a][1]) == DEAD_END) && (a!= 0)) {
+            intersectionBeforeDeadEndIndex++; //increment the position in the dead end intersection counter array
+        }
+        
+        if ((a != 0) && (turnToAdd != U_TURN)) {
             //determine whether each point is an intersection, and update intersection array accordingly
             enum intersectionOrNot intersectionFlag = flagIntersection_1(ret_steps_dfs[a][0], ret_steps_dfs[a][1]);
             if ((intersectionFlag == IS_INTERSECTION) && (turnToAdd != STRAIGHT)) { //if paco is at an intersection
                 intersectionArray[intersectionArrayIndex] = TURNING; //mark it as a turning intersection
-                
-                
-                /*usbPutString(" Row and column : ");
-                usbPutInt(ret_steps_dfs[a][0]);
-                usbPutString(" , ");
-                usbPutInt(ret_steps_dfs[a][1]);
-                usbPutString(" ");
-                usbPutString("Intersection array value : ");
-                usbPutInt(intersectionArray[intersectionArrayIndex]);
-                usbPutString(" \n");*/
                 intersectionArrayIndex++;          
             }
             else if ((intersectionFlag == IS_INTERSECTION) && (turnToAdd == STRAIGHT)) {
                 intersectionArray[intersectionArrayIndex] = NOT_TURNING; //mark it as a turning intersection
-                /*usbPutString(" Row and column : ");
-                usbPutInt(ret_steps_dfs[a][0]);
-                usbPutString(" , ");
-                usbPutInt(ret_steps_dfs[a][1]);
-                usbPutString(" ");
-                usbPutString("Intersection array value : ");
-                usbPutInt(intersectionArray[intersectionArrayIndex]);
-                usbPutString(" \n");*/
                 intersectionArrayIndex++;
             }
         }
