@@ -537,4 +537,99 @@ void ComputeB(){
     lastErrorB = error;
 }
 
+void robot_random_1(){
+    while (1){
+        uint8 intersection = check_if_intersection();
+        if (check_u_turn() == 1){
+            m_stop();
+            pacman_u_turn();
+        }else if (intersection > 0){
+            m_stop();
+            CyDelay(300);
+            uint8 random_number = rand()%4;
+            uint8 going_forward = 0;
+            if (random_number >= 2){
+                if (check_execute_forward_path() == 1){
+                    going_forward = 1;
+                }
+            }
+            if (intersection == 3 && going_forward == 0){
+                if (random_number == 0){
+                    pacman_left_turn();
+                }else{
+                    pacman_right_turn();
+                }
+            }else if (intersection == 2 && going_forward == 0){
+                pacman_left_turn();
+            }else if (going_forward == 0){
+                pacman_right_turn();
+            }
+        }else{
+            CyDelay(200);
+            while(Sensor_4_Read() == 0 && Sensor_6_Read() == 0){
+                if (check_u_turn()){
+                    m_stop();
+                    pacman_u_turn();
+                    break;
+                }
+                isr_center_left = Sensor_1_Read();
+                isr_center_right = Sensor_2_Read();
+                isr_left_sensor = Sensor_3_Read();
+                isr_right_sensor = Sensor_5_Read();
+                if (isr_center_left > 0){
+                    if (isr_center_right > 0){
+                        m_straight();
+                    } else {
+                        m_adjust_left_minor();
+                    }
+                } else if (isr_center_right > 0){
+                    m_adjust_right_minor();
+                }else{
+                    m_straight();
+                }
+            }
+        }
+    }
+    
+}
+
+uint8 check_execute_forward_path(){
+    m_stop();
+    m_straight();
+    CyDelay(125);
+    m_stop();
+    CyDelay(50);
+    if (Sensor_1_Read() > 0 || Sensor_2_Read() > 0){
+        return 1;
+    }else{
+        m_reverse();
+        CyDelay(175);
+        m_stop();
+    }
+    return 0;
+}
+
+uint8 check_u_turn(){
+    if (Sensor_1_Read() == 0 && Sensor_2_Read() == 0 && Sensor_3_Read() == 0 && Sensor_4_Read() == 0 && Sensor_5_Read() == 0 && Sensor_6_Read() == 0){
+        return 1;
+    }
+    return 0;
+}
+
+uint8 check_if_intersection(){
+    if (Sensor_4_Read() > 0){
+        if (Sensor_6_Read() > 0 ){
+            return 3;
+        }else{
+            return 1;
+        }
+    }else{
+        if (Sensor_6_Read() > 0){
+           return 2; 
+        }else{
+            return 0;
+        }
+    }
+}
+
 /* [] END OF FILE */

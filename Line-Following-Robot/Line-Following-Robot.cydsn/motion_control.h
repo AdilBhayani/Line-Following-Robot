@@ -119,6 +119,11 @@ void m_left_turner();
 void init_pid();
 void ComputeA();
 void ComputeB();
+
+uint8 check_u_turn();
+void robot_random_1();
+uint8 check_if_intersection();
+uint8 check_execute_forward_path();
     
 #endif /* MOTION_CONTROL_H_ */
 
