@@ -38,8 +38,11 @@
  * level within the time-limit. 
  */
 void play_pacman_1(){
-    //printf("Inside play_pacman_1()\n");
     int x;
+    
+    for (x = 0; x < 50; x++) {
+        numOfIntersectionsToDeadEndArray[x] = 0;
+    }
     
     end_coordinate[0] = 0;
     end_coordinate[1] = 0;
@@ -47,8 +50,13 @@ void play_pacman_1(){
     generate_directions_1();
     
     //print_ret_steps_dfs();
-    for (x = 0; x < intersectionBeforeDeadEndIndex; x++) {
-        generate_movements_1(numOfIntersectionsToDeadEndArray[x]);
+    if (numOfIntersectionsToDeadEndArray[0] > 0) { 
+        for (x = 0; x < intersectionBeforeDeadEndIndex; x++) {
+            generate_movements_1(numOfIntersectionsToDeadEndArray[x]);
+        }
+        generate_movements_last();
+    } else {
+       generate_movements_last();
     }
     
     /*int i;
@@ -698,7 +706,22 @@ void generate_movements_1(int numOfIntersections) {
 }
 
 
+void generate_movements_last() {
+    LED_Write(1);
+    enum intersectionType pacoAt;
 
+    pacoAt = robot_follow_line(STRAIGHT); //tell paco to go straight at the very beginning of his journey
+    //int temp = intersectionArrayIterator;   
+    
+    for (intersectionArrayIterator = intersectionArrayIterator; intersectionArrayIterator < intersectionArrayIndex; intersectionArrayIterator++) {          
+        if (intersectionArray[intersectionArrayIterator] == TURNING) { //paco needs to turn 
+            pacoAt = robot_follow_line(pacmanDirections[pacmanDirectionsCounter]);
+            pacmanDirectionsCounter++;
+        } else {
+            pacoAt = robot_follow_line(STRAIGHT); 
+        }
+    }
+}
 
 void generate_movements(int numOfIntersections) {
     enum intersectionType pacoAt;

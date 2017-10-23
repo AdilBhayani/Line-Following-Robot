@@ -189,6 +189,7 @@ void update_square(int index, int parent_x, int parent_y, int x, int y, int open
 void dfs();
 int check_intersection(int ret_visited[15][19], int current_location[2]);
 void print_ret_steps_dfs();
+void generate_movements_last();
 #endif /* PACMAN_H_ */
 
 /* [] END OF FILE */
