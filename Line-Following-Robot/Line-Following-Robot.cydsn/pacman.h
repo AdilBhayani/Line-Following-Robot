@@ -109,6 +109,7 @@ static int map8[15][19] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
 }; */
 
+//jilada's map
 static int currentMap[15][19] = 
 {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
  {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -134,7 +135,7 @@ static int food_list[5][2] =
 {3,13},
 {4,16}};
 
-static int start_coordinate[2] = {1,1};
+static int start_coordinate[2] = {10,3};
 
 static int end_coordinate[2] = {-1,-1};
 

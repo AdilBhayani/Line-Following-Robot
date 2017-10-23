@@ -386,7 +386,7 @@ enum intersectionOrNot flagIntersection_1(int currentPosRow, int currentPosCol) 
             prevPosBeforeDeadEndArray[intersectionBeforeDeadEndIndex][1] = currentPosCol;
             intersectionOrientation[intersectionBeforeDeadEndIndex] = pacoFacing;
             numOfIntersectionsToDeadEndArray[intersectionBeforeDeadEndIndex]++;
-            
+             
             return IS_INTERSECTION;
         } else {
             return NOT_INTERSECTION;
@@ -398,8 +398,7 @@ enum intersectionOrNot flagIntersection_1(int currentPosRow, int currentPosCol) 
             prevPosBeforeDeadEndArray[intersectionBeforeDeadEndIndex][0] = currentPosRow;
             prevPosBeforeDeadEndArray[intersectionBeforeDeadEndIndex][1] = currentPosCol;
             intersectionOrientation[intersectionBeforeDeadEndIndex] = pacoFacing;
-            numOfIntersectionsToDeadEndArray[intersectionBeforeDeadEndIndex]++;
-            
+            numOfIntersectionsToDeadEndArray[intersectionBeforeDeadEndIndex]++;             
             return IS_INTERSECTION;
         } else {
             return NOT_INTERSECTION;
@@ -466,7 +465,7 @@ void generate_directions() {
         if (firstPelletFlag == 0 && a == 0) { //take into account 180 turns, for the cases where the robot needs to turn around after getting first pellet
             //save previous coordinates
             if (prevPosition[0] == ret_steps[a+1][0] && prevPosition[1] == ret_steps[a+1][1]) { //180 turn
-                //usbPutString("U_TURN put in array\n");
+
                 //add a u turn without needing to convert coordinates
                 turnToAdd = U_TURN;
             }
@@ -533,8 +532,14 @@ void generate_directions_1() {
             if (ret_steps_dfs[a-1][0] == ret_steps_dfs[a+1][0] && ret_steps_dfs[a-1][1] == ret_steps_dfs[a+1][1]) { //180 turn
                 //add a u turn without needing to convert coordinates
                 turnToAdd = U_TURN;
+                
+                intersectionOrientation[intersectionBeforeDeadEndIndex] = pacoFacing;               
+                
+                numOfIntersectionsToDeadEndArray[intersectionBeforeDeadEndIndex]++;
                 intersectionArray[intersectionArrayIndex] = TURNING;
                 intersectionArrayIndex++;
+                
+
             }
             else {
                 //decide if we need to turn, and which way to turn
@@ -547,7 +552,8 @@ void generate_directions_1() {
             pacmanDirectionsIndex++;
         }
         
-        if ((detectDeadEnd(ret_steps_dfs[a][0], ret_steps_dfs[a][1]) == DEAD_END) && (a!= 0)) {
+        if ((detectDeadEnd(ret_steps_dfs[a][0], ret_steps_dfs[a][1]) == DEAD_END) && (a!= 0)) {           
+            numOfIntersectionsToDeadEndArray[intersectionBeforeDeadEndIndex]--;
             intersectionBeforeDeadEndIndex++; //increment the position in the dead end intersection counter array
         }
         
@@ -677,11 +683,13 @@ void generate_movements_1(int numOfIntersections) {
          
     //work out distance to travel forward to next pellet
     distanceForward = distanceToPellet(prevPosBeforeDeadEndArray[deadEndIterator][0], prevPosBeforeDeadEndArray[deadEndIterator][1], deadEndPosArray[deadEndIterator][0], deadEndPosArray[deadEndIterator][1]);
+
     
     //move paco straight the correct amount to reach the dead end
     robot_forward(distanceForward, intersectionOrientation[deadEndIterator]);
     deadEndIterator++; //increment the array to indicate that we have reached the current dead end
     intersectionArrayIterator++; //increment the intersection array iterator to take into account that the pellet is an intersection that has been acknowledged   
+    
     //check if paco needs to u turn to get back on track
     if (pacmanDirections[pacmanDirectionsCounter] == U_TURN) {
         pacman_u_turn(); //make u turn if needed
